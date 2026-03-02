@@ -1,0 +1,759 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Bản Đồ Lịch Sử - Quả Địa Cầu 3D</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #globeContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        /* Top Bar - Apple Maps Style */
+        .top-bar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 10px;
+            width: max-content;
+            max-width: 90%;
+        }
+        
+        .year-pill {
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 22px;
+            padding: 10px 24px;
+            font-size: clamp(14px, 4vw, 18px);
+            font-weight: 600;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .stats-pill {
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 18px;
+            padding: 8px 16px;
+            font-size: clamp(11px, 3vw, 13px);
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+        
+        /* Timeline - Bottom */
+        .timeline-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            z-index: 100;
+        }
+        
+        .timeline-bar {
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 16px 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .timeline-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            margin: 8px 0;
+        }
+        
+        .timeline-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(8px, 2vw, 11px);
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+        }
+        
+        .playback-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .playback-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .playback-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .playback-btn.active {
+            background: #007AFF;
+        }
+        
+        /* Layer Toggles - Left Side - Chỉ giữ lại Borders */
+        .layer-panel {
+            position: fixed;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+        }
+        
+        .layer-btn {
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #fff;
+        }
+        
+        .layer-btn:hover {
+            background: rgba(60, 60, 60, 0.9);
+            transform: scale(1.05);
+        }
+        
+        .layer-btn.active {
+            background: rgba(0, 122, 255, 0.8);
+            border-color: #007AFF;
+        }
+        
+        .layer-btn[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 60px;
+            background: rgba(0,0,0,0.9);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        /* Info Panel - Right Side */
+        .info-panel {
+            position: fixed;
+            right: 16px;
+            top: 80px;
+            width: min(320px, calc(100% - 32px));
+            max-height: calc(100vh - 200px);
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            display: none;
+            z-index: 100;
+        }
+        
+        .info-panel.visible {
+            display: block;
+        }
+        
+        .info-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-header-icon {
+            font-size: 24px;
+        }
+        
+        .info-header-title {
+            flex: 1;
+            font-weight: 600;
+            font-size: 16px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .info-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+        
+        .info-close:hover {
+            opacity: 1;
+        }
+        
+        .info-subtitle {
+            padding: 10px 16px;
+            background: rgba(0,0,0,0.3);
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .info-content {
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-disclaimer {
+            padding: 10px 16px;
+            background: rgba(255, 193, 7, 0.2);
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-top-color: #007AFF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* Territory tooltip */
+        .territory-tooltip {
+            background: rgba(0,0,0,0.9);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .timeline-container {
+                width: 95%;
+                bottom: 20px;
+            }
+            
+            .timeline-bar {
+                padding: 12px 16px;
+            }
+            
+            .playback-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            
+            .info-panel {
+                top: 70px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+                max-height: calc(100vh - 150px);
+            }
+            
+            .layer-panel {
+                left: 8px;
+            }
+            
+            .layer-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+            
+            .top-bar {
+                top: 12px;
+                gap: 8px;
+            }
+            
+            .year-pill {
+                padding: 8px 16px;
+            }
+            
+            .stats-pill {
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Đang tải dữ liệu lịch sử...</div>
+    </div>
+    
+    <!-- Globe Container -->
+    <div id="globeContainer"></div>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="year-pill" id="yearDisplay">1000 AD</div>
+        <div class="stats-pill" id="regionCount">0 quốc gia</div>
+    </div>
+    
+    <!-- Layer Toggles - Chỉ giữ lại Borders -->
+    <div class="layer-panel">
+        <button class="layer-btn active" data-layer="borders" data-tooltip="Biên giới">🗺️</button>
+    </div>
+    
+    <!-- Info Panel -->
+    <div class="info-panel" id="infoPanel">
+        <div class="info-header">
+            <span class="info-header-icon">🔍</span>
+            <span class="info-header-title" id="infoPanelTitle">Lịch Sử Địa Phương</span>
+            <button class="info-close" onclick="closeInfoPanel()">×</button>
+        </div>
+        <div class="info-subtitle" id="infoPanelSubtitle">Đang tải...</div>
+        <div class="info-content" id="infoPanelContent"></div>
+        <div class="info-disclaimer">⚠️ Bối cảnh lịch sử được tạo bởi AI. Hãy kiểm chứng những sự kiện quan trọng.</div>
+    </div>
+    
+    <!-- Timeline -->
+    <div class="timeline-container">
+        <div class="timeline-bar">
+            <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="100" value="50">
+            <div class="timeline-labels">
+                <span>10.000 TCN</span>
+                <span>5.000 TCN</span>
+                <span>1 CN</span>
+                <span>1.000 CN</span>
+                <span>2010</span>
+            </div>
+            <div class="playback-controls">
+                <button class="playback-btn" id="prevBtn">⏮</button>
+                <button class="playback-btn" id="playBtn">▶️</button>
+                <button class="playback-btn" id="nextBtn">⏭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/globe.gl@2.45.0/dist/globe.gl.min.js"></script>
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    
+    <script>
+        // Cấu hình
+        const GEMINI_API_KEY = 'AIzaSyDlW1T5NRkx5cKg_kkIYvy9dL73cIvCG0k';
+        const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
+        
+        // Các năm có sẵn với files GeoJSON
+        const availableYears = [
+            { year: -10000, file: 'world_bc10000.geojson', label: '10.000 TCN' },
+            { year: -5000, file: 'world_bc5000.geojson', label: '5.000 TCN' },
+            { year: -3000, file: 'world_bc3000.geojson', label: '3.000 TCN' },
+            { year: -2000, file: 'world_bc2000.geojson', label: '2.000 TCN' },
+            { year: -1500, file: 'world_bc1500.geojson', label: '1.500 TCN' },
+            { year: -1000, file: 'world_bc1000.geojson', label: '1.000 TCN' },
+            { year: -500, file: 'world_bc500.geojson', label: '500 TCN' },
+            { year: -323, file: 'world_bc323.geojson', label: '323 TCN' },
+            { year: -200, file: 'world_bc200.geojson', label: '200 TCN' },
+            { year: -1, file: 'world_bc1.geojson', label: '1 TCN' },
+            { year: 100, file: 'world_100.geojson', label: '100 CN' },
+            { year: 200, file: 'world_200.geojson', label: '200 CN' },
+            { year: 400, file: 'world_400.geojson', label: '400 CN' },
+            { year: 600, file: 'world_600.geojson', label: '600 CN' },
+            { year: 800, file: 'world_800.geojson', label: '800 CN' },
+            { year: 1000, file: 'world_1000.geojson', label: '1.000 CN' },
+            { year: 1200, file: 'world_1200.geojson', label: '1.200 CN' },
+            { year: 1279, file: 'world_1279.geojson', label: '1.279 CN' },
+            { year: 1400, file: 'world_1400.geojson', label: '1.400 CN' },
+            { year: 1492, file: 'world_1492.geojson', label: '1.492 CN' },
+            { year: 1600, file: 'world_1600.geojson', label: '1.600 CN' },
+            { year: 1700, file: 'world_1700.geojson', label: '1.700 CN' },
+            { year: 1783, file: 'world_1783.geojson', label: '1.783 CN' },
+            { year: 1815, file: 'world_1815.geojson', label: '1.815 CN' },
+            { year: 1880, file: 'world_1880.geojson', label: '1.880 CN' },
+            { year: 1914, file: 'world_1914.geojson', label: '1.914 CN' },
+            { year: 1938, file: 'world_1938.geojson', label: '1.938 CN' },
+            { year: 1945, file: 'world_1945.geojson', label: '1.945 CN' },
+            { year: 1960, file: 'world_1960.geojson', label: '1.960 CN' },
+            { year: 1994, file: 'world_1994.geojson', label: '1.994 CN' },
+            { year: 2010, file: 'world_2010.geojson', label: '2.010 CN' }
+        ];
+        
+        // Trạng thái
+        let globe = null;
+        let currentYearIndex = 15; // 1000 CN
+        let dataCache = {};
+        let isPlaying = false;
+        let playInterval = null;
+        let localHistoryCache = new Map();
+        
+        // Hiển thị layer - chỉ biên giới
+        let layers = {
+            borders: true
+        };
+        
+        // Bảng màu cho quốc gia
+        const colorPalette = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+            '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
+        ];
+        
+        // Khởi tạo quả địa cầu
+        async function init() {
+            // Lắng nghe sự kiện thay đổi kích thước để cập nhật renderer
+            window.addEventListener('resize', () => {
+                if (globe) {
+                    globe.width(window.innerWidth);
+                    globe.height(window.innerHeight);
+                }
+            });
+
+            globe = Globe()
+                .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+                .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+                .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+                .showAtmosphere(true)
+                .atmosphereColor('#3a7bd5')
+                .atmosphereAltitude(0.25)
+                .polygonsData([])
+                .polygonAltitude(0.01)
+                .polygonCapColor(d => d.color || '#444')
+                .polygonSideColor(() => 'rgba(100, 100, 100, 0.2)')
+                .polygonStrokeColor(() => '#fff')
+                .polygonLabel(d => `<div class="territory-tooltip">${d.properties?.NAME || d.properties?.SUBJECTO || 'Không xác định'}</div>`)
+                .onPolygonClick(handleTerritoryClick)
+                .labelsData([])
+                .labelText(d => d.name)
+                .labelSize(1.2)
+                .labelColor(() => 'rgba(255, 255, 255, 0.9)')
+                .labelResolution(2)
+                .labelAltitude(0.02)
+                (document.getElementById('globeContainer'));
+            
+            // Đặt góc nhìn ban đầu
+            globe.pointOfView({ lat: 30, lng: 0, altitude: 2.5 });
+            
+            // Tải năm ban đầu
+            await loadYear(currentYearIndex);
+            
+            // Thiết lập điều khiển
+            setupControls();
+            
+            // Ẩn màn hình loading
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+        
+        async function loadYear(index) {
+            if (index < 0 || index >= availableYears.length) return;
+            
+            currentYearIndex = index;
+            const yearData = availableYears[index];
+            
+            // Cập nhật UI
+            document.getElementById('yearDisplay').textContent = yearData.label;
+            document.getElementById('timelineSlider').value = (index / (availableYears.length - 1)) * 100;
+            
+            // Tải GeoJSON nếu chưa cache
+            if (!dataCache[yearData.file]) {
+                try {
+                    const response = await fetch(`data/geojson/${yearData.file}`);
+                    dataCache[yearData.file] = await response.json();
+                } catch (err) {
+                    console.error('Lỗi tải:', err);
+                    return;
+                }
+            }
+            
+            const data = dataCache[yearData.file];
+            renderBorders(data, yearData.year);
+        }
+        
+        function renderBorders(geojson, year) {
+            if (!layers.borders) {
+                globe.polygonsData([]);
+                document.getElementById('regionCount').textContent = '0 quốc gia';
+                return;
+            }
+            
+            // Gán màu cho quốc gia
+            const entities = [...new Set(geojson.features.map(f => f.properties.SUBJECTO || f.properties.NAME))];
+            
+            const polygons = geojson.features.map(f => ({
+                ...f,
+                color: colorPalette[entities.indexOf(f.properties.SUBJECTO || f.properties.NAME) % colorPalette.length] + '99'
+            }));
+            
+            globe.polygonsData(polygons);
+            document.getElementById('regionCount').textContent = `${geojson.features.length} quốc gia`;
+            
+            // Cập nhật nhãn cho các quốc gia lớn
+            updateLabels(geojson);
+        }
+        
+        function updateLabels(geojson) {
+            const labels = [];
+            const seen = new Set();
+            
+            geojson.features.forEach(f => {
+                const name = f.properties.SUBJECTO || f.properties.NAME;
+                if (!name || seen.has(name)) return;
+                
+                // Tính toán trọng tâm (gần đúng)
+                let coords = f.geometry.coordinates;
+                if (f.geometry.type === 'MultiPolygon') {
+                    coords = coords[0];
+                }
+                if (coords && coords[0]) {
+                    const ring = coords[0];
+                    if (ring.length > 0) {
+                        const lats = ring.map(c => c[1]);
+                        const lngs = ring.map(c => c[0]);
+                        const lat = lats.reduce((a, b) => a + b) / lats.length;
+                        const lng = lngs.reduce((a, b) => a + b) / lngs.length;
+                        
+                        // Chỉ gán nhãn cho các quốc gia lớn
+                        const area = (Math.max(...lats) - Math.min(...lats)) * (Math.max(...lngs) - Math.min(...lngs));
+                        if (area > 100) {
+                            labels.push({ name, lat, lng });
+                            seen.add(name);
+                        }
+                    }
+                }
+            });
+            
+            globe.labelsData(labels);
+        }
+        
+        function handleTerritoryClick(polygon, event, { lat, lng }) {
+            const name = polygon.properties?.SUBJECTO || polygon.properties?.NAME || 'Không xác định';
+            queryLocalHistory(lat, lng, name);
+        }
+        
+        async function queryLocalHistory(lat, lng, placeName) {
+            const year = availableYears[currentYearIndex].year;
+            const yearBucket = Math.round(year / 50) * 50;
+            const cacheKey = `${lat.toFixed(1)},${lng.toFixed(1)},${yearBucket}`;
+            
+            // Hiển thị panel
+            const panel = document.getElementById('infoPanel');
+            panel.classList.add('visible');
+            document.getElementById('infoPanelTitle').textContent = placeName;
+            document.getElementById('infoPanelSubtitle').textContent = `${availableYears[currentYearIndex].label} • Đang tìm kiếm...`;
+            document.getElementById('infoPanelContent').innerHTML = '<div style="text-align:center;padding:20px;"><div class="loading-spinner" style="width:30px;height:30px;margin:0 auto;"></div></div>';
+            
+            // Kiểm tra cache
+            if (localHistoryCache.has(cacheKey)) {
+                displayLocalHistory(localHistoryCache.get(cacheKey));
+                return;
+            }
+            
+            try {
+                const result = await queryGemini(lat, lng, placeName, year);
+                const data = { placeName, result, year };
+                localHistoryCache.set(cacheKey, data);
+                displayLocalHistory(data);
+            } catch (err) {
+                document.getElementById('infoPanelContent').innerHTML = `<div style="color:#ff6b6b;">Lỗi tải lịch sử: ${err.message}</div>`;
+            }
+        }
+        
+        async function queryGemini(lat, lng, placeName, year) {
+            const yearLabel = year < 0 ? `${Math.abs(year)} TCN` : `${year} CN`;
+            
+            const prompt = `Bạn là một chuyên gia lịch sử. Hãy cung cấp một cái nhìn tổng quát về ${placeName} trong thời kỳ ${yearLabel}.
+
+Bao gồm (nếu có liên quan):
+- Các dân tộc hoặc bộ tộc bản địa
+- Các khu định cư, thuộc địa hoặc thành phố
+- Kiểm soát chính trị (đế chế, vương quốc, bộ tộc)
+- Các sự kiện hoặc xung đột đáng chú ý
+- Hoạt động kinh tế
+- Các nhân vật lịch sử nổi tiếng
+
+Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
+
+            const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.3, maxOutputTokens: 400 }
+                })
+            });
+            
+            if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+            
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Không có thông tin';
+        }
+        
+        function displayLocalHistory(data) {
+            document.getElementById('infoPanelSubtitle').textContent = `${availableYears[currentYearIndex].label}`;
+            
+            let html = data.result
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^\* /gm, '• ')
+                .replace(/^- /gm, '• ')
+                .replace(/\n/g, '<br>');
+            
+            document.getElementById('infoPanelContent').innerHTML = html;
+        }
+        
+        function closeInfoPanel() {
+            document.getElementById('infoPanel').classList.remove('visible');
+        }
+        
+        function setupControls() {
+            // Slider timeline
+            document.getElementById('timelineSlider').addEventListener('input', (e) => {
+                const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
+                loadYear(index);
+            });
+            
+            // Nút phát lại
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                loadYear(Math.max(0, currentYearIndex - 1));
+            });
+            
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                loadYear(Math.min(availableYears.length - 1, currentYearIndex + 1));
+            });
+            
+            document.getElementById('playBtn').addEventListener('click', togglePlay);
+            
+            // Chuyển đổi layer - chỉ xử lý biên giới
+            document.querySelectorAll('.layer-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const layer = btn.dataset.layer;
+                    layers[layer] = !layers[layer];
+                    btn.classList.toggle('active');
+                    
+                    if (layer === 'borders') {
+                        loadYear(currentYearIndex);
+                    }
+                });
+            });
+        }
+        
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+            
+            if (isPlaying) {
+                btn.textContent = '⏸️';
+                btn.classList.add('active');
+                playInterval = setInterval(() => {
+                    if (currentYearIndex >= availableYears.length - 1) {
+                        currentYearIndex = -1;
+                    }
+                    loadYear(currentYearIndex + 1);
+                }, 2000);
+            } else {
+                btn.textContent = '▶️';
+                btn.classList.remove('active');
+                clearInterval(playInterval);
+            }
+        }
+        
+        // Bắt đầu
+        init();
+    </script>
+</body>
+</html>
