@@ -2,10 +2,9 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Bản Đồ Lịch Sử - Quả Địa Cầu 3D & Mindmap</title>
-    
-    <!-- Styles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Bản Đồ Lịch Sử 3D - Quả Địa Cầu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
@@ -17,26 +16,76 @@
 
         body {
             font-family: 'Inter', 'Playfair Display', sans-serif;
-            background-color: #000;
+            background-color: #000 !important;
             color: #fff;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
-            width: 100vw;
             height: 100vh;
         }
 
-        /* Màu sắc */
+        /* Màu sắc theo yêu cầu */
         :root {
-            --bg-total: #DCEEF3;
+            --bg-total: #000;
             --input-bg: #F4F7F8;
-            --card-bg: #F8F9F6;
-            --border-light: #E3E6E8;
-            --text-primary: #333333;
+            --card-bg: rgba(30, 30, 30, 0.95);
+            --border-light: rgba(255,255,255,0.1);
+            --text-primary: #ffffff;
             --text-secondary: #8A8F95;
             --button-cyan: #6EC6D9;
             --accent-orange: #F4A261;
         }
 
-        /* Globe Container */
+        /* Áp dụng màu nền tổng thể */
+        .bg-total {
+            background-color: var(--bg-total) !important;
+        }
+
+        .bg-input {
+            background-color: var(--input-bg) !important;
+        }
+
+        .bg-card {
+            background-color: var(--card-bg) !important;
+        }
+
+        .border-custom {
+            border-color: var(--border-light) !important;
+        }
+
+        .text-primary {
+            color: var(--text-primary) !important;
+        }
+
+        .text-secondary {
+            color: var(--text-secondary) !important;
+        }
+
+        .bg-button {
+            background-color: var(--button-cyan) !important;
+        }
+
+        .text-accent {
+            color: var(--accent-orange) !important;
+        }
+
+        .border-accent {
+            border-color: var(--accent-orange) !important;
+        }
+
+        .bg-accent {
+            background-color: var(--accent-orange) !important;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
         #globeContainer {
             position: fixed;
             top: 0;
@@ -46,306 +95,6 @@
             z-index: 1;
         }
 
-        /* Top Bar */
-        .top-bar {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 100;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 0 10px;
-            width: max-content;
-            max-width: 90%;
-        }
-
-        .year-pill {
-            background: rgba(30, 30, 30, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 22px;
-            padding: 10px 24px;
-            font-size: clamp(14px, 4vw, 18px);
-            font-weight: 600;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.1);
-            min-width: 120px;
-            text-align: center;
-        }
-
-        .stats-pill {
-            background: rgba(30, 30, 30, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 18px;
-            padding: 8px 16px;
-            font-size: clamp(11px, 3vw, 13px);
-            color: rgba(255,255,255,0.8);
-            border: 1px solid rgba(255,255,255,0.1);
-            white-space: nowrap;
-        }
-
-        /* Timeline */
-        .timeline-container {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 800px;
-            z-index: 100;
-        }
-
-        .timeline-bar {
-            background: rgba(30, 30, 30, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 16px 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .timeline-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(255,255,255,0.2);
-            outline: none;
-            margin: 8px 0;
-        }
-
-        .timeline-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .timeline-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: clamp(8px, 2vw, 11px);
-            color: rgba(255,255,255,0.5);
-            margin-top: 4px;
-        }
-
-        .playback-controls {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .playback-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            color: #fff;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .playback-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .playback-btn.active {
-            background: #007AFF;
-        }
-
-        /* Layer Panel */
-        .layer-panel {
-            position: fixed;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 100;
-        }
-
-        .layer-btn {
-            background: rgba(30, 30, 30, 0.9);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #fff;
-        }
-
-        .layer-btn:hover {
-            background: rgba(60, 60, 60, 0.9);
-            transform: scale(1.05);
-        }
-
-        .layer-btn.active {
-            background: rgba(0, 122, 255, 0.8);
-            border-color: #007AFF;
-        }
-
-        .layer-btn[data-tooltip]:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            left: 60px;
-            background: rgba(0,0,0,0.9);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        /* Info Panel */
-        .info-panel {
-            position: fixed;
-            right: 16px;
-            top: 80px;
-            width: min(320px, calc(100% - 32px));
-            max-height: calc(100vh - 200px);
-            background: rgba(30, 30, 30, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            display: none;
-            z-index: 100;
-        }
-
-        .info-panel.visible {
-            display: block;
-        }
-
-        .info-header {
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .info-header-icon {
-            font-size: 24px;
-        }
-
-        .info-header-title {
-            flex: 1;
-            font-weight: 600;
-            font-size: 16px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .info-close {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 24px;
-            cursor: pointer;
-            opacity: 0.8;
-        }
-
-        .info-close:hover {
-            opacity: 1;
-        }
-
-        .info-subtitle {
-            padding: 10px 16px;
-            background: rgba(0,0,0,0.3);
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
-        }
-
-        .info-content {
-            padding: 16px;
-            max-height: 400px;
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .info-disclaimer {
-            padding: 10px 16px;
-            background: rgba(255, 193, 7, 0.2);
-            font-size: 11px;
-            color: rgba(255,255,255,0.7);
-        }
-
-        /* Territory tooltip */
-        .territory-tooltip {
-            background: rgba(0,0,0,0.9);
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        /* Loading Overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: opacity 0.5s;
-        }
-
-        .loading-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255,255,255,0.2);
-            border-top-color: #007AFF;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            margin-top: 20px;
-            font-size: 16px;
-            color: rgba(255,255,255,0.6);
-        }
-
-        /* Battle Box */
         .battle-box {
             background-color: var(--card-bg);
             border-radius: 0.75rem;
@@ -355,7 +104,6 @@
             border: 1px solid var(--border-light);
             transition: transform 0.2s, box-shadow 0.2s;
             width: 100%;
-            color: var(--text-primary);
         }
 
         .battle-box:hover {
@@ -386,7 +134,7 @@
             color: var(--text-primary);
         }
 
-        /* Mindmap */
+        /* ===== SƠ ĐỒ TƯ DUY SIÊU NGẦU ===== */
         .mindmap-sieu-ngau {
             width: 100%;
             height: 300px;
@@ -494,6 +242,7 @@
             background: #ff6b6b;
         }
 
+        /* Các class cho các node với màu sắc khác nhau */
         .mindmap-sieu-ngau .markmap-node.time-node rect,
         .mindmap-sieu-ngau .markmap-node.time-node circle,
         .mindmap-sieu-ngau .markmap-node.time-node polygon {
@@ -680,7 +429,7 @@
             font-family: 'Playfair Display', serif;
         }
 
-        /* Search Form */
+        /* Thiết kế mới cho form tìm kiếm */
         .search-wrapper {
             position: relative;
             margin-bottom: 1rem;
@@ -693,7 +442,7 @@
             border-radius: 2rem;
             border: 1px solid var(--border-light);
             background-color: var(--input-bg);
-            color: var(--text-primary);
+            color: #333;
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
             line-height: 1.5;
@@ -713,7 +462,7 @@
         }
 
         #search-input::placeholder {
-            color: var(--text-secondary);
+            color: #666;
             font-style: italic;
             font-size: 0.95rem;
             white-space: nowrap;
@@ -768,7 +517,7 @@
         .content-container {
             flex: 1;
             padding: 1rem;
-            background-color: var(--bg-total);
+            background-color: transparent;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -800,49 +549,23 @@
             }
         }
 
-        /* Battle Marker */
-        .battle-marker {
-            background-color: var(--accent-orange);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.3);
-            animation: pulse 1.5s infinite;
+        .country-highlight {
+            animation: highlight 2s ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(244, 162, 97, 0.5));
         }
 
-        .key-location-marker {
-            background-color: var(--button-cyan);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-            box-shadow: 0 0 0 2px rgba(110, 198, 217, 0.3);
-        }
-
-        @keyframes pulse {
+        @keyframes highlight {
             0% {
-                transform: scale(1);
+                filter: drop-shadow(0 0 5px rgba(244, 162, 97, 0.3));
             }
             50% {
-                transform: scale(1.1);
+                filter: drop-shadow(0 0 20px rgba(244, 162, 97, 0.8));
             }
             100% {
-                transform: scale(1);
+                filter: drop-shadow(0 0 5px rgba(244, 162, 97, 0.3));
             }
         }
 
-        /* Audio Controls */
         .audio-controls {
             display: flex;
             flex-direction: column;
@@ -915,7 +638,81 @@
             transition: width 0.1s linear;
         }
 
-        /* Sidebar */
+        .battle-marker {
+            background-color: var(--accent-orange);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.3);
+            animation: pulse 1.5s infinite;
+        }
+
+        .key-location-marker {
+            background-color: var(--button-cyan);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 0 0 2px rgba(110, 198, 217, 0.3);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: 0.1rem;
+            right: -1.5rem;
+            width: 3rem;
+            height: 3rem;
+            background-color: var(--accent-orange);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+        }
+
+        .sidebar-toggle:hover {
+            background-color: #e08e4d;
+            transform: scale(1.1);
+        }
+
+        .sidebar-collapsed {
+            transform: translateX(-100%);
+            position: absolute;
+            left: -100%;
+        }
+
+        .sidebar-collapsed .sidebar-toggle {
+            right: -3rem;
+        }
+
         #app {
             display: flex;
             flex: 1;
@@ -938,10 +735,7 @@
             display: flex;
             flex-direction: column;
             border-right: 1px solid var(--border-light);
-        }
-
-        #sidebar.sidebar-collapsed {
-            transform: translateX(-100%);
+            backdrop-filter: blur(10px);
         }
 
         #map-container {
@@ -952,101 +746,104 @@
             z-index: 10;
         }
 
-        .sidebar-toggle {
-            position: absolute;
-            top: 1rem;
-            right: -1.5rem;
-            width: 3rem;
-            height: 3rem;
-            background-color: var(--accent-orange);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-light);
+        /* Ẩn typing indicator và stop button */
+        .typing-indicator,
+        #stop-button-container {
+            display: none !important;
         }
 
-        .sidebar-toggle:hover {
-            background-color: #e08e4d;
-            transform: scale(1.1);
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
         }
 
-        .header-title h2 {
+        .loading-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner-box {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes spin3D {
+            from { transform: rotate3d(.5,.5,.5, 360deg); }
+            to { transform: rotate3d(0deg); }
+        }
+
+        .leo-border-1 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            padding: 3px;
+            border-radius: 50%;
+            background: linear-gradient(0deg, rgba(244,162,97,0.1) 33%, #F4A261 100%);
+            animation: spin3D 1.8s linear infinite;
+        }
+
+        .leo-core-1 {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border-radius: 50%;
+        }
+
+        .leo-border-2 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            padding: 3px;
+            border-radius: 50%;
+            background: linear-gradient(0deg, rgba(110,198,217,0.1) 33%, #6EC6D9 100%);
+            animation: spin3D 2.2s linear infinite reverse;
+        }
+
+        .leo-core-2 {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border-radius: 50%;
+        }
+
+        .loading-text {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: 600;
             color: var(--accent-orange);
+            text-align: center;
+            animation: blink 1.5s ease-in-out infinite;
             font-family: 'Playfair Display', serif;
         }
 
-        .header-title i {
-            color: var(--accent-orange);
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
 
-        .language-switch {
-            display: flex;
-            align-items: center;
-            position: relative;
+        .loader-info {
             margin-top: 15px;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--input-bg);
-            transition: .4s;
-            border-radius: 34px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 8px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-primary);
-            border: 1px solid var(--border-light);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 3px;
-            background-color: var(--accent-orange);
-            transition: .4s;
-            border-radius: 50%;
-            z-index: 2;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(30px);
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 300px;
+            line-height: 1.5;
         }
 
         .map-title-decoration {
@@ -1072,55 +869,6 @@
             color: var(--accent-orange);
         }
 
-        /* Hide typing indicator */
-        .typing-indicator,
-        #stop-button-container {
-            display: none !important;
-        }
-
-        /* Markmap styles */
-        .markmap-node circle,
-        .markmap-node rect,
-        .markmap-node polygon {
-            fill: #ffebee !important;
-            stroke: #d32f2f !important;
-            stroke-width: 2px !important;
-            rx: 8px !important;
-            ry: 8px !important;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-            transition: all 0.2s ease;
-        }
-
-        .markmap-node:hover circle,
-        .markmap-node:hover rect,
-        .markmap-node:hover polygon {
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-            stroke-width: 3px !important;
-        }
-
-        .markmap-node text {
-            fill: #b71c1c !important;
-            font-family: 'Playfair Display', serif !important;
-            font-size: 14px !important;
-            font-weight: 500 !important;
-        }
-
-        .markmap-node.root-node text {
-            font-size: 18px !important;
-            font-weight: 700 !important;
-            fill: #d32f2f !important;
-        }
-
-        .markmap-link path {
-            stroke: #d32f2f !important;
-            stroke-width: 2px !important;
-        }
-
-        .markmap-arrow {
-            fill: #d32f2f !important;
-        }
-
-        /* Timeline container */
         .timeline-container {
             margin-top: 1rem;
             padding: 1rem;
@@ -1183,78 +931,355 @@
         }
 
         .timeline-text {
-            color: var(--text-primary);
+            color: #333;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .timeline-container {
-                width: 95%;
-                bottom: 20px;
-            }
-            
-            .timeline-bar {
-                padding: 12px 16px;
-            }
-            
-            .playback-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
-            
-            .info-panel {
-                top: 70px;
-                right: 10px;
-                left: 10px;
-                width: auto;
-                max-height: calc(100vh - 150px);
-            }
-            
-            .layer-panel {
-                left: 8px;
-            }
-            
-            .layer-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 18px;
-            }
-            
-            .top-bar {
-                top: 12px;
-                gap: 8px;
-            }
-            
-            .year-pill {
-                padding: 8px 16px;
-            }
-            
-            .stats-pill {
-                padding: 6px 12px;
-            }
-            
-            #sidebar {
-                width: 100%;
-                max-width: 100%;
-            }
+        .language-switch {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 35px; 
+            margin-top: 15px; 
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-bg);
+            transition: .4s;
+            border-radius: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            border: 1px solid var(--border-light);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--accent-orange);
+            transition: .4s;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-title h2 {
+            color: var(--accent-orange);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .header-title i {
+            color: var(--accent-orange);
+        }
+
+        /* Ẩn các nút không cần thiết trong chế độ thu nhỏ */
+        .mindmap-controls-hidden {
+            display: none !important;
+        }
+
+        /* CSS cho markmap */
+        .markmap-node circle,
+        .markmap-node rect,
+        .markmap-node polygon {
+            fill: #ffebee !important;
+            stroke: #d32f2f !important;
+            stroke-width: 2px !important;
+            rx: 8px !important;
+            ry: 8px !important;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: all 0.2s ease;
+        }
+
+        .markmap-node:hover circle,
+        .markmap-node:hover rect,
+        .markmap-node:hover polygon {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            stroke-width: 3px !important;
+        }
+
+        .markmap-node text {
+            fill: #b71c1c !important;
+            font-family: 'Playfair Display', serif !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+        }
+
+        .markmap-node.root-node text {
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            fill: #d32f2f !important;
+        }
+
+        .markmap-link path {
+            stroke: #d32f2f !important;
+            stroke-width: 2px !important;
+        }
+
+        .markmap-arrow {
+            fill: #d32f2f !important;
+        }
+
+        /* Layer toggles cho globe 3D */
+        .layer-panel {
+            position: fixed;
+            left: 420px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+        }
+        
+        .layer-btn {
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #fff;
+        }
+        
+        .layer-btn:hover {
+            background: rgba(60, 60, 60, 0.9);
+            transform: scale(1.05);
+        }
+        
+        .layer-btn.active {
+            background: rgba(0, 122, 255, 0.8);
+            border-color: #007AFF;
+        }
+        
+        .layer-btn[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 60px;
+            background: rgba(0,0,0,0.9);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* Timeline cho globe 3D */
+        .timeline-globe {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            z-index: 100;
+        }
+        
+        .timeline-bar-globe {
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 16px 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .timeline-slider-globe {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            margin: 8px 0;
+        }
+        
+        .timeline-slider-globe::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .timeline-labels-globe {
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(8px, 2vw, 11px);
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+        }
+        
+        .playback-controls-globe {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .playback-btn-globe {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .playback-btn-globe:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .playback-btn-globe.active {
+            background: #007AFF;
+        }
+
+        /* Top bar cho globe 3D */
+        .top-bar-globe {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 10px;
+            width: max-content;
+            max-width: 90%;
+        }
+        
+        .year-pill-globe {
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 22px;
+            padding: 10px 24px;
+            font-size: clamp(14px, 4vw, 18px);
+            font-weight: 600;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .stats-pill-globe {
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 18px;
+            padding: 8px 16px;
+            font-size: clamp(11px, 3vw, 13px);
+            color: rgba(255,255,255,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+
+        /* Territory tooltip */
+        .territory-tooltip {
+            background: rgba(0,0,0,0.9);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            pointer-events: none;
+            white-space: nowrap;
+            color: white;
         }
     </style>
-
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
-<body>
+
+<body class="h-screen flex flex-col transition-all bg-total">
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
         <div class="loading-text">Đang tải dữ liệu lịch sử...</div>
     </div>
+    
+    <div id="loading-screen" class="loading-screen">
+        <div class="loader-container">
+            <div class="spinner-box">
+                <div class="leo-border-1">
+                    <div class="leo-core-1"></div>
+                </div>
+                <div class="leo-border-2">
+                    <div class="leo-core-2"></div>
+                </div>
+            </div>
+            <div class="loading-text" id="loadingText">AI đang tạo nội dung...</div>
+            <div class="loader-info">
+                Đang xử lý yêu cầu của bạn. Vui lòng chờ trong giây lát...
+            </div>
+        </div>
+    </div>
 
-    <!-- App Container -->
+    <!-- Globe Container 3D -->
+    <div id="globeContainer"></div>
+    
+    <!-- Top Bar cho Globe 3D -->
+    <div class="top-bar-globe">
+        <div class="year-pill-globe" id="yearDisplay">1000 AD</div>
+        <div class="stats-pill-globe" id="regionCount">0 quốc gia</div>
+    </div>
+    
+    <!-- Layer Toggles cho Globe 3D -->
+    <div class="layer-panel">
+        <button class="layer-btn active" data-layer="borders" data-tooltip="Biên giới">🗺️</button>
+    </div>
+
     <div id="app">
-        <!-- Sidebar -->
-        <div id="sidebar">
+        <div id="sidebar" class="flex flex-col h-full transition-all duration-300 relative bg-card">
             <div class="sidebar-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-chevron-left"></i>
             </div>
@@ -1264,7 +1289,7 @@
                     <div class="header-title">
                         <h2 class="text-xl font-bold font-display flex items-center">
                             <i class="fas fa-crown mr-3 text-accent"></i>
-                            <span class="text-accent" id="sidebarTitle">Bản Đồ Lịch Sử</span>
+                            <span class="text-accent">Bản Đồ Lịch Sử 3D</span>
                         </h2>
                     </div>
                     <div class="language-switch">
@@ -1295,53 +1320,28 @@
             </div>
         </div>
 
-        <!-- Map Container -->
-        <div id="map-container">
+        <div id="map-container" class="flex-1 flex flex-col h-full overflow-hidden relative">
             <div class="map-title-decoration">
-                <i class="fas fa-globe-asia"></i> <span id="mapTitle">BẢN ĐỒ LỊCH SỬ</span>
+                <i class="fas fa-globe-asia"></i> BẢN ĐỒ LỊCH SỬ 3D
             </div>
-            <div id="globeContainer"></div>
         </div>
     </div>
-
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="year-pill" id="yearDisplay">1000 AD</div>
-        <div class="stats-pill" id="regionCount">0 quốc gia</div>
-    </div>
-
-    <!-- Layer Panel -->
-    <div class="layer-panel">
-        <button class="layer-btn active" data-layer="borders" data-tooltip="Biên giới">🗺️</button>
-    </div>
-
-    <!-- Info Panel -->
-    <div class="info-panel" id="infoPanel">
-        <div class="info-header">
-            <span class="info-header-icon">🔍</span>
-            <span class="info-header-title" id="infoPanelTitle">Lịch Sử Địa Phương</span>
-            <button class="info-close" onclick="closeInfoPanel()">×</button>
-        </div>
-        <div class="info-subtitle" id="infoPanelSubtitle">Đang tải...</div>
-        <div class="info-content" id="infoPanelContent"></div>
-        <div class="info-disclaimer">⚠️ Bối cảnh lịch sử được tạo bởi AI. Hãy kiểm chứng những sự kiện quan trọng.</div>
-    </div>
-
-    <!-- Timeline -->
-    <div class="timeline-container">
-        <div class="timeline-bar">
-            <input type="range" class="timeline-slider" id="timelineSlider" min="0" max="100" value="50">
-            <div class="timeline-labels">
+    
+    <!-- Timeline cho Globe 3D -->
+    <div class="timeline-globe">
+        <div class="timeline-bar-globe">
+            <input type="range" class="timeline-slider-globe" id="timelineSlider" min="0" max="100" value="50">
+            <div class="timeline-labels-globe">
                 <span>10.000 TCN</span>
                 <span>5.000 TCN</span>
                 <span>1 CN</span>
                 <span>1.000 CN</span>
                 <span>2010</span>
             </div>
-            <div class="playback-controls">
-                <button class="playback-btn" id="prevBtn">⏮</button>
-                <button class="playback-btn" id="playBtn">▶️</button>
-                <button class="playback-btn" id="nextBtn">⏭</button>
+            <div class="playback-controls-globe">
+                <button class="playback-btn-globe" id="prevBtn">⏮</button>
+                <button class="playback-btn-globe" id="playBtn">▶️</button>
+                <button class="playback-btn-globe" id="nextBtn">⏭</button>
             </div>
         </div>
     </div>
@@ -1349,13 +1349,10 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/globe.gl@2.45.0/dist/globe.gl.min.js"></script>
     <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/d3@7.8.5/dist/d3.min.js"></script>
     <script src="https://unpkg.com/markmap-lib@0.15.3/dist/browser/index.js"></script>
     <script src="https://unpkg.com/markmap-view@0.15.3/dist/browser/index.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <script type="importmap">
         {
             "imports": {
@@ -1363,7 +1360,6 @@
             }
         }
     </script>
-
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -1381,18 +1377,36 @@
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
         // ==================== BIẾN TOÀN CỤC ====================
-        // Globe variables
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const resultMessages = document.getElementById('result-messages');
+        const loadingScreen = document.getElementById('loading-screen');
+        const sidebar = document.getElementById('sidebar');
+        const mapContainer = document.getElementById('map-container');
+        const languageToggle = document.getElementById('language-toggle');
+
+        // Biến cho Globe 3D
         let globe = null;
         let currentYearIndex = 15; // 1000 CN
         let dataCache = {};
         let isPlaying = false;
         let playInterval = null;
         let localHistoryCache = new Map();
-        let layers = { borders: true };
-        const GEMINI_API_KEY = 'AIzaSyDlW1T5NRkx5cKg_kkIYvy9dL73cIvCG0k';
-        const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
+        let transformer = null;
+        
+        // Hiển thị layer - chỉ biên giới
+        let layers = {
+            borders: true
+        };
+        
+        // Bảng màu cho quốc gia
+        const colorPalette = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+            '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
+        ];
 
-        // Available years with GeoJSON files
+        // Các năm có sẵn với files GeoJSON
         const availableYears = [
             { year: -10000, file: 'world_bc10000.geojson', label: '10.000 TCN' },
             { year: -5000, file: 'world_bc5000.geojson', label: '5.000 TCN' },
@@ -1427,23 +1441,7 @@
             { year: 2010, file: 'world_2010.geojson', label: '2.010 CN' }
         ];
 
-        // Color palette for countries
-        const colorPalette = [
-            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-            '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
-        ];
-
-        // App variables
-        const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        const resultMessages = document.getElementById('result-messages');
-        const loadingScreen = document.getElementById('loadingOverlay');
-        const sidebar = document.getElementById('sidebar');
-        const mapContainer = document.getElementById('map-container');
-        const languageToggle = document.getElementById('language-toggle');
-
-        let map;
+        // Các biến cũ từ Leaflet nhưng giữ lại cho tương thích
         let abortController = null;
         let isSending = false;
         let isStopped = false;
@@ -1458,15 +1456,14 @@
         let speechProgressInterval;
         let currentSpeechText = '';
         let keyLocations = [];
-        let transformer = null;
 
         // ==================== DỊCH THUẬT ====================
         const translations = {
             vi: {
-                title: "Bản Đồ Lịch Sử",
+                title: "Bản Đồ Lịch Sử 3D",
                 search_placeholder: "Nhập sự kiện lịch sử, nhân vật, địa điểm",
                 country_info_close: "Nhấp vào bản đồ để đóng thông tin",
-                map_label: "Bản đồ lịch sử",
+                map_label: "Bản đồ lịch sử 3D",
                 battle_name: "Tên Nhân Vật",
                 battle_time: "Thời Gian",
                 battle_location: "Địa Điểm",
@@ -1522,10 +1519,10 @@
                 save_image: "Lưu ảnh"
             },
             en: {
-                title: "Historical Map",
+                title: "3D Historical Map",
                 search_placeholder: "Enter historical event, figure or landmark...",
                 country_info_close: "Click the map to close the information",
-                map_label: "Historical Map",
+                map_label: "3D Historical Map",
                 battle_name: "Character Name",
                 battle_time: "Time",
                 battle_location: "Location",
@@ -1703,11 +1700,9 @@
             document.documentElement.lang = lang;
             searchInput.placeholder = translations[lang].search_placeholder;
             document.querySelector('.header-title span').textContent = translations[lang].title;
-            document.getElementById('sidebarTitle').textContent = translations[lang].title;
-            document.getElementById('mapTitle').textContent = translations[lang].map_label;
             languageToggle.checked = lang === 'en';
-            const loadingText = document.querySelector('.loading-text');
-            if (loadingText) loadingText.textContent = translations[lang].loading_text_1;
+            const loadingText = document.getElementById('loadingText');
+            loadingText.textContent = translations[lang].loading_text_1;
         }
 
         function toggleLanguage() {
@@ -1716,8 +1711,8 @@
         }
 
         function showLoadingScreen() {
-            loadingScreen.classList.remove('hidden');
-            const loadingText = document.querySelector('.loading-text');
+            loadingScreen.classList.add('active');
+            const loadingText = document.getElementById('loadingText');
             const textVariations = [
                 translations[currentLanguage].loading_text_1,
                 translations[currentLanguage].loading_text_2,
@@ -1737,7 +1732,7 @@
         }
 
         function hideLoadingScreen() {
-            loadingScreen.classList.add('hidden');
+            loadingScreen.classList.remove('active');
             if (loadingScreen.textInterval) {
                 clearInterval(loadingScreen.textInterval);
             }
@@ -1749,16 +1744,72 @@
             if (sidebar.classList.contains('sidebar-collapsed')) {
                 toggleIcon.classList.remove('fa-chevron-left');
                 toggleIcon.classList.add('fa-chevron-right');
-                mapContainer.style.marginLeft = '0';
+                document.querySelector('.layer-panel').style.left = '16px';
             } else {
                 toggleIcon.classList.remove('fa-chevron-right');
                 toggleIcon.classList.add('fa-chevron-left');
-                mapContainer.style.marginLeft = '0';
+                document.querySelector('.layer-panel').style.left = '420px';
             }
         }
 
-        // ==================== KHỞI TẠO GLOBE ====================
+        function isBattleQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            return battleKeywords.some(keyword => lowerQuery.includes(keyword.toLowerCase()));
+        }
+
+        function isFigureQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            const figureKeywords = [
+                "nhân vật", "vua", "hoàng đế", "tướng", "anh hùng", "nhà thơ", "nhà văn",
+                "nguyễn huệ", "trần hưng đạo", "nguyễn khuyến", "quang trung",
+                "lý thường kiệt", "ngô quyền", "chủ tịch", "bí thư", "character", "king", "emperor", "general", "hero", "poet", "writer", "Nguyễn Huệ", "Trần Hưng Đạo", "Nguyễn Khuyến", "Quang Trung", "Lý Thường Kiệt", "Ngô Quyền", "president", "secretary"
+            ];
+            return figureKeywords.some(keyword => lowerQuery.includes(keyword));
+        }
+
+        function isLandmarkQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            const landmarkKeywords = [
+                "kinh thành", "đền", "chùa", "di tích", "thành", "cung điện", "địa danh", "địa điểm", "lăng", "mộ",
+                "huế", "thăng long", "cổ loa", "mỹ sơn", "văn miếu", "capital city", "temple", "pagoda", "heritage site", "fortress", "palace", "geographical name", "location", "tomb", "grave", "Hue", "Thang Long", "Co Loa", "My Son", "Van Mieu"
+            ];
+            return landmarkKeywords.some(keyword => lowerQuery.includes(keyword)) ||
+                Object.keys(vietnamHistoricalLocations).some(loc =>
+                    lowerQuery.includes(loc.toLowerCase()) ||
+                    (vietnamHistoricalLocations[loc].name_en &&
+                        lowerQuery.includes(vietnamHistoricalLocations[loc].name_en.toLowerCase()))
+                );
+        }
+
+        function isCountryQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            const countryKeywords = [
+                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state",
+                "Việt Nam", "Trung Quốc", "Mỹ", "Pháp", "Anh", "Nhật Bản", "Hàn Quốc",
+                "Vietnam", "China", "USA", "France", "UK", "Japan", "Korea"
+            ];
+            return countryKeywords.some(keyword => lowerQuery.includes(keyword)) ||
+                Object.keys(countryCoordinates).some(country => 
+                    lowerQuery.includes(country.toLowerCase())
+                );
+        }
+
+        // ==================== HÀM KHỞI TẠO ỨNG DỤNG ====================
+        async function initApp() {
+            await initGlobe();
+            setupEventListeners();
+            updateLanguage('vi');
+            languageToggle.addEventListener('change', toggleLanguage);
+            checkUrlParameters();
+
+            // Khởi tạo Markmap Transformer
+            const { Transformer } = window.markmap;
+            transformer = new Transformer();
+        }
+
+        // ==================== KHỞI TẠO GLOBE 3D ====================
         async function initGlobe() {
+            // Lắng nghe sự kiện thay đổi kích thước để cập nhật renderer
             window.addEventListener('resize', () => {
                 if (globe) {
                     globe.width(window.innerWidth);
@@ -1788,44 +1839,79 @@
                 .labelAltitude(0.02)
                 (document.getElementById('globeContainer'));
             
-            // Set initial view
+            // Đặt góc nhìn ban đầu
             globe.pointOfView({ lat: 30, lng: 0, altitude: 2.5 });
             
-            // Load initial year
+            // Tải năm ban đầu
             await loadYear(currentYearIndex);
             
-            // Setup controls
+            // Thiết lập điều khiển cho globe
             setupGlobeControls();
             
-            // Hide loading overlay
-            hideLoadingScreen();
+            // Ẩn màn hình loading
+            document.getElementById('loadingOverlay').classList.add('hidden');
         }
-
+        
         async function loadYear(index) {
             if (index < 0 || index >= availableYears.length) return;
             
             currentYearIndex = index;
             const yearData = availableYears[index];
             
-            // Update UI
+            // Cập nhật UI
             document.getElementById('yearDisplay').textContent = yearData.label;
             document.getElementById('timelineSlider').value = (index / (availableYears.length - 1)) * 100;
             
-            // Load GeoJSON from GitHub
+            // Tải GeoJSON nếu chưa cache
             if (!dataCache[yearData.file]) {
                 try {
+                    // Sử dụng dữ liệu mẫu từ GitHub - thay URL thật của bạn
                     const response = await fetch(`https://raw.githubusercontent.com/yourusername/your-repo/main/data/geojson/${yearData.file}`);
                     dataCache[yearData.file] = await response.json();
                 } catch (err) {
                     console.error('Lỗi tải:', err);
-                    return;
+                    // Tạo dữ liệu mẫu nếu không tải được
+                    dataCache[yearData.file] = generateSampleGeoJSON(yearData.year);
                 }
             }
             
             const data = dataCache[yearData.file];
             renderBorders(data, yearData.year);
         }
-
+        
+        function generateSampleGeoJSON(year) {
+            // Tạo dữ liệu mẫu cho các quốc gia
+            return {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Việt Nam", SUBJECTO: "Việt Nam" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[102, 8], [109, 8], [109, 23], [102, 23], [102, 8]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Trung Quốc", SUBJECTO: "Trung Quốc" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[73, 18], [135, 18], [135, 53], [73, 53], [73, 18]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Nhật Bản", SUBJECTO: "Nhật Bản" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[129, 31], [146, 31], [146, 46], [129, 46], [129, 31]]]
+                        }
+                    }
+                ]
+            };
+        }
+        
         function renderBorders(geojson, year) {
             if (!layers.borders) {
                 globe.polygonsData([]);
@@ -1833,7 +1919,7 @@
                 return;
             }
             
-            // Assign colors to countries
+            // Gán màu cho quốc gia
             const entities = [...new Set(geojson.features.map(f => f.properties.SUBJECTO || f.properties.NAME))];
             
             const polygons = geojson.features.map(f => ({
@@ -1844,10 +1930,10 @@
             globe.polygonsData(polygons);
             document.getElementById('regionCount').textContent = `${geojson.features.length} quốc gia`;
             
-            // Update labels for large countries
+            // Cập nhật nhãn cho các quốc gia lớn
             updateLabels(geojson);
         }
-
+        
         function updateLabels(geojson) {
             const labels = [];
             const seen = new Set();
@@ -1856,7 +1942,7 @@
                 const name = f.properties.SUBJECTO || f.properties.NAME;
                 if (!name || seen.has(name)) return;
                 
-                // Calculate centroid (approximate)
+                // Tính toán trọng tâm (gần đúng)
                 let coords = f.geometry.coordinates;
                 if (f.geometry.type === 'MultiPolygon') {
                     coords = coords[0];
@@ -1869,7 +1955,7 @@
                         const lat = lats.reduce((a, b) => a + b) / lats.length;
                         const lng = lngs.reduce((a, b) => a + b) / lngs.length;
                         
-                        // Only label large countries
+                        // Chỉ gán nhãn cho các quốc gia lớn
                         const area = (Math.max(...lats) - Math.min(...lats)) * (Math.max(...lngs) - Math.min(...lngs));
                         if (area > 100) {
                             labels.push({ name, lat, lng });
@@ -1881,25 +1967,27 @@
             
             globe.labelsData(labels);
         }
-
+        
         function handleTerritoryClick(polygon, event, { lat, lng }) {
             const name = polygon.properties?.SUBJECTO || polygon.properties?.NAME || 'Không xác định';
             queryLocalHistory(lat, lng, name);
         }
-
+        
         async function queryLocalHistory(lat, lng, placeName) {
             const year = availableYears[currentYearIndex].year;
             const yearBucket = Math.round(year / 50) * 50;
             const cacheKey = `${lat.toFixed(1)},${lng.toFixed(1)},${yearBucket}`;
             
-            // Show panel
+            // Hiển thị panel
             const panel = document.getElementById('infoPanel');
-            panel.classList.add('visible');
-            document.getElementById('infoPanelTitle').textContent = placeName;
-            document.getElementById('infoPanelSubtitle').textContent = `${availableYears[currentYearIndex].label} • Đang tìm kiếm...`;
-            document.getElementById('infoPanelContent').innerHTML = '<div style="text-align:center;padding:20px;"><div class="loading-spinner" style="width:30px;height:30px;margin:0 auto;"></div></div>';
+            if (panel) {
+                panel.classList.add('visible');
+                document.getElementById('infoPanelTitle').textContent = placeName;
+                document.getElementById('infoPanelSubtitle').textContent = `${availableYears[currentYearIndex].label} • Đang tìm kiếm...`;
+                document.getElementById('infoPanelContent').innerHTML = '<div style="text-align:center;padding:20px;"><div class="loading-spinner" style="width:30px;height:30px;margin:0 auto;"></div></div>';
+            }
             
-            // Check cache
+            // Kiểm tra cache
             if (localHistoryCache.has(cacheKey)) {
                 displayLocalHistory(localHistoryCache.get(cacheKey));
                 return;
@@ -1911,10 +1999,12 @@
                 localHistoryCache.set(cacheKey, data);
                 displayLocalHistory(data);
             } catch (err) {
-                document.getElementById('infoPanelContent').innerHTML = `<div style="color:#ff6b6b;">Lỗi tải lịch sử: ${err.message}</div>`;
+                if (panel) {
+                    document.getElementById('infoPanelContent').innerHTML = `<div style="color:#ff6b6b;">Lỗi tải lịch sử: ${err.message}</div>`;
+                }
             }
         }
-
+        
         async function queryGemini(lat, lng, placeName, year) {
             const yearLabel = year < 0 ? `${Math.abs(year)} TCN` : `${year} CN`;
             
@@ -1930,7 +2020,7 @@ Bao gồm (nếu có liên quan):
 
 Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
 
-            const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -1944,8 +2034,11 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
             const data = await response.json();
             return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Không có thông tin';
         }
-
+        
         function displayLocalHistory(data) {
+            const panel = document.getElementById('infoPanel');
+            if (!panel) return;
+            
             document.getElementById('infoPanelSubtitle').textContent = `${availableYears[currentYearIndex].label}`;
             
             let html = data.result
@@ -1956,19 +2049,22 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
             
             document.getElementById('infoPanelContent').innerHTML = html;
         }
-
+        
         function closeInfoPanel() {
-            document.getElementById('infoPanel').classList.remove('visible');
+            const panel = document.getElementById('infoPanel');
+            if (panel) {
+                panel.classList.remove('visible');
+            }
         }
-
+        
         function setupGlobeControls() {
-            // Timeline slider
+            // Slider timeline
             document.getElementById('timelineSlider').addEventListener('input', (e) => {
                 const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
                 loadYear(index);
             });
             
-            // Playback buttons
+            // Nút phát lại
             document.getElementById('prevBtn').addEventListener('click', () => {
                 loadYear(Math.max(0, currentYearIndex - 1));
             });
@@ -1979,7 +2075,7 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
             
             document.getElementById('playBtn').addEventListener('click', togglePlay);
             
-            // Layer toggle
+            // Chuyển đổi layer - chỉ xử lý biên giới
             document.querySelectorAll('.layer-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const layer = btn.dataset.layer;
@@ -1992,7 +2088,7 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
                 });
             });
         }
-
+        
         function togglePlay() {
             isPlaying = !isPlaying;
             const btn = document.getElementById('playBtn');
@@ -2013,90 +2109,25 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
             }
         }
 
-        // ==================== KHỞI TẠO LEAFLET MAP ====================
-        function initLeafletMap() {
-            map = L.map('globeContainer').setView([16.0471, 108.2062], 3);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © CartoDB',
-                subdomains: 'abcd',
-                maxZoom: 19
-            }).addTo(map);
-
-            fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
-                .then(response => {
-                    if (!response.ok) throw new Error('Không thể tải dữ liệu GeoJSON');
-                    return response.json();
-                })
-                .then(data => {
-                    L.geoJSON(data, {
-                        style: {
-                            fillColor: 'transparent',
-                            fillOpacity: 0,
-                            color: 'transparent',
-                            weight: 0
-                        },
-                        onEachFeature: (feature, layer) => {
-                            const countryName = feature.properties.name;
-                            countryLayers[countryName] = layer;
-
-                            layer.on('click', (e) => {
-                                L.DomEvent.stopPropagation(e);
-                                toggleCountry(countryName);
-                            });
-                        }
-                    }).addTo(map);
-                })
-                .catch(error => {
-                    console.error('Lỗi tải GeoJSON:', error);
-                    addMessageToUI('assistant', translations[currentLanguage].map_error);
-                });
+        function checkUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search');
+            if (searchQuery) {
+                const decodedQuery = decodeURIComponent(searchQuery);
+                searchInput.value = decodedQuery;
+                setTimeout(() => {
+                    handleSubmit(null);
+                }, 500);
+            }
         }
 
         function toggleCountry(countryName) {
-            if (selectedCountryLayer && selectedCountryName === countryName) {
-                closeHistoryInfo();
-                return;
-            } else {
-                if (selectedCountryLayer) {
-                    resetCountryStyle(selectedCountryLayer);
-                }
-                highlightCountry(countryName);
+            // Chuyển đến quốc gia trên globe 3D
+            const coords = countryCoordinates[countryName];
+            if (coords) {
+                globe.pointOfView({ lat: coords.lat, lng: coords.lng, altitude: 2.0 });
             }
-        }
-
-        function resetCountryStyle(layer) {
-            if (layer) {
-                layer.setStyle({
-                    color: 'transparent',
-                    fillOpacity: 0
-                });
-                if (layer.getElement) {
-                    layer.getElement().classList.remove('country-highlight');
-                }
-            }
-        }
-
-        function highlightCountry(countryName) {
-            clearPreviousData();
             
-            const countryLayer = countryLayers[countryName];
-            if (countryLayer) {
-                selectedCountryLayer = countryLayer;
-                selectedCountryName = countryName;
-
-                countryLayer.setStyle({
-                    color: '#F4A261',
-                    weight: 3,
-                    opacity: 0.9,
-                    fillOpacity: 0.4,
-                    fillColor: '#F4A261'
-                });
-
-                if (countryLayer.getElement) {
-                    countryLayer.getElement().classList.add('country-highlight');
-                }
-            }
-
             const translatedName = translateCountryName(countryName);
             const displayName = currentLanguage === 'en' ? translatedName : countryName;
             
@@ -2108,7 +2139,7 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
                         <i class="fas fa-flag mr-2 text-accent"></i>
                         ${displayName}
                     </span>
-                    <span class="close-btn" onclick="this.parentElement.parentElement.remove(); closeHistoryInfo();">
+                    <span class="close-btn" onclick="this.parentElement.parentElement.remove();">
                         <i class="fas fa-times"></i>
                     </span>
                 </h2>
@@ -2123,27 +2154,11 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
 
             resultMessages.innerHTML = '';
             resultMessages.appendChild(historyInfoBox);
-
-            if (countryCoordinates[countryName]) {
-                const coords = countryCoordinates[countryName];
-                map.setView([coords.lat, coords.lng], coords.zoom);
-            }
             
             scrollToTop();
         }
 
         function closeHistoryInfo() {
-            if (selectedCountryLayer) {
-                selectedCountryLayer.setStyle({
-                    color: 'transparent',
-                    fillOpacity: 0
-                });
-                if (selectedCountryLayer.getElement) {
-                    selectedCountryLayer.getElement().classList.remove('country-highlight');
-                }
-                selectedCountryLayer = null;
-                selectedCountryName = null;
-            }
             resultMessages.innerHTML = '';
         }
 
@@ -2178,28 +2193,26 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
             return null;
         }
 
+        function setupEventListeners() {
+            searchForm.addEventListener('submit', handleSubmit);
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (searchInput.value.trim() !== '') {
+                        searchForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+        }
+
         function clearPreviousData() {
             currentQueries = [];
             resultMessages.innerHTML = '';
             
-            markers.forEach(marker => {
-                if (marker && marker.remove) {
-                    marker.remove();
-                }
-            });
-            markers = [];
+            // Xóa markers trên globe (có thể thêm sau)
             
-            keyLocations.forEach(loc => {
-                if (loc && loc.remove) {
-                    loc.remove();
-                }
-            });
             keyLocations = [];
             
-            if (countryLayer) {
-                map.removeLayer(countryLayer);
-                countryLayer = null;
-            }
             stopSpeech();
         }
 
@@ -2373,15 +2386,12 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         resultMessages.appendChild(resultContainer);
 
                         if (landmarkData.lat && landmarkData.lng) {
-                            addMarker(landmarkData.lat, landmarkData.lng, landmarkData.name || userQuery);
-                            const zoomLevel = landmarkData.lat < 10 || landmarkData.lat > 30 ? 6 : 10;
-                            map.setView([landmarkData.lat, landmarkData.lng], zoomLevel);
+                            // Di chuyển globe đến vị trí
+                            globe.pointOfView({ lat: landmarkData.lat, lng: landmarkData.lng, altitude: 1.5 });
                         } else if (landmarkData.location) {
                             const location = await getLocationCoordinates(landmarkData.location);
                             if (location && location.lat && location.lng) {
-                                addMarker(location.lat, location.lng, landmarkData.name || userQuery);
-                                const zoomLevel = location.lat < 10 || location.lat > 30 ? 6 : 10;
-                                map.setView([location.lat, location.lng], zoomLevel);
+                                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.5 });
                             }
                         }
 
@@ -2456,15 +2466,11 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         resultMessages.appendChild(resultContainer);
 
                         if (figureData.lat && figureData.lng) {
-                            addMarker(figureData.lat, figureData.lng, figureData.name || userQuery);
-                            const zoomLevel = figureData.lat < 10 || figureData.lat > 30 ? 6 : 10;
-                            map.setView([figureData.lat, figureData.lng], zoomLevel);
+                            globe.pointOfView({ lat: figureData.lat, lng: figureData.lng, altitude: 1.5 });
                         } else if (figureData.location) {
                             const location = await getLocationCoordinates(figureData.location);
                             if (location && location.lat && location.lng) {
-                                addMarker(location.lat, location.lng, figureData.name || userQuery);
-                                const zoomLevel = location.lat < 10 || location.lat > 30 ? 6 : 10;
-                                map.setView([location.lat, location.lng], zoomLevel);
+                                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.5 });
                             }
                         }
 
@@ -2552,35 +2558,11 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         resultMessages.appendChild(resultContainer);
 
                         if (battleData.lat && battleData.lng) {
-                            addMarker(battleData.lat, battleData.lng, battleData.name || userQuery);
-                            const zoomLevel = battleData.lat < 10 || battleData.lat > 30 ? 6 : 10;
-                            map.setView([battleData.lat, battleData.lng], zoomLevel);
+                            globe.pointOfView({ lat: battleData.lat, lng: battleData.lng, altitude: 1.5 });
                         } else if (battleData.location) {
                             const location = await getLocationCoordinates(battleData.location);
                             if (location && location.lat && location.lng) {
-                                addMarker(location.lat, location.lng, battleData.name || userQuery);
-                                const zoomLevel = location.lat < 10 || location.lat > 30 ? 6 : 10;
-                                map.setView([location.lat, location.lng], zoomLevel);
-                            }
-                        }
-
-                        if (battleData.key_locations && Array.isArray(battleData.key_locations)) {
-                            for (const location of battleData.key_locations) {
-                                const locCoords = await getLocationCoordinates(location);
-                                if (locCoords && locCoords.lat && locCoords.lng) {
-                                    const keyMarker = L.marker([locCoords.lat, locCoords.lng], {
-                                        icon: L.divIcon({
-                                            className: 'custom-marker',
-                                            html: `<div class="key-location-marker">
-                                                      <i class="fas fa-flag"></i>
-                                                  </div>`,
-                                            iconSize: [24, 24],
-                                            iconAnchor: [12, 24]
-                                        })
-                                    }).addTo(map)
-                                        .bindPopup(`<div class="font-medium text-accent">${location}</div>`);
-                                    keyLocations.push(keyMarker);
-                                }
+                                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.5 });
                             }
                         }
 
@@ -2655,48 +2637,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 abortController = null;
                 scrollToTop();
             }
-        }
-
-        function isBattleQuery(query) {
-            const lowerQuery = query.toLowerCase();
-            return battleKeywords.some(keyword => lowerQuery.includes(keyword.toLowerCase()));
-        }
-
-        function isFigureQuery(query) {
-            const lowerQuery = query.toLowerCase();
-            const figureKeywords = [
-                "nhân vật", "vua", "hoàng đế", "tướng", "anh hùng", "nhà thơ", "nhà văn",
-                "nguyễn huệ", "trần hưng đạo", "nguyễn khuyến", "quang trung",
-                "lý thường kiệt", "ngô quyền", "chủ tịch", "bí thư", "character", "king", "emperor", "general", "hero", "poet", "writer", "Nguyễn Huệ", "Trần Hưng Đạo", "Nguyễn Khuyến", "Quang Trung", "Lý Thường Kiệt", "Ngô Quyền", "president", "secretary"
-            ];
-            return figureKeywords.some(keyword => lowerQuery.includes(keyword));
-        }
-
-        function isLandmarkQuery(query) {
-            const lowerQuery = query.toLowerCase();
-            const landmarkKeywords = [
-                "kinh thành", "đền", "chùa", "di tích", "thành", "cung điện", "địa danh", "địa điểm", "lăng", "mộ",
-                "huế", "thăng long", "cổ loa", "mỹ sơn", "văn miếu", "capital city", "temple", "pagoda", "heritage site", "fortress", "palace", "geographical name", "location", "tomb", "grave", "Hue", "Thang Long", "Co Loa", "My Son", "Van Mieu"
-            ];
-            return landmarkKeywords.some(keyword => lowerQuery.includes(keyword)) ||
-                Object.keys(vietnamHistoricalLocations).some(loc =>
-                    lowerQuery.includes(loc.toLowerCase()) ||
-                    (vietnamHistoricalLocations[loc].name_en &&
-                        lowerQuery.includes(vietnamHistoricalLocations[loc].name_en.toLowerCase()))
-                );
-        }
-
-        function isCountryQuery(query) {
-            const lowerQuery = query.toLowerCase();
-            const countryKeywords = [
-                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state",
-                "Việt Nam", "Trung Quốc", "Mỹ", "Pháp", "Anh", "Nhật Bản", "Hàn Quốc",
-                "Vietnam", "China", "USA", "France", "UK", "Japan", "Korea"
-            ];
-            return countryKeywords.some(keyword => lowerQuery.includes(keyword)) ||
-                Object.keys(countryCoordinates).some(country => 
-                    lowerQuery.includes(country.toLowerCase())
-                );
         }
 
         function transliterateVietnamese(text) {
@@ -3015,27 +2955,330 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             return container;
         }
 
-        function addMarker(lat, lng, title) {
-            markers.forEach(marker => {
-                if (marker && marker.remove) {
-                    marker.remove();
+        // ==================== SƠ ĐỒ TƯ DUY SIÊU NGẦU ====================
+        function createMindmapContainerSieuNgau(title, mindmapTitle) {
+            const mindmapDiv = document.createElement('div');
+            mindmapDiv.className = 'mindmap-sieu-ngau';
+            
+            mindmapDiv.innerHTML = `
+                <div class="mindmap-title">
+                    <span>${mindmapTitle}: ${title}</span>
+                    <div class="mindmap-controls mindmap-controls-hidden">
+                        <button class="control-btn zoom-in" title="${translations[currentLanguage].zoom_in}">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="control-btn zoom-out" title="${translations[currentLanguage].zoom_out}">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="control-btn save-image" title="${translations[currentLanguage].save_image}">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mindmap-content">
+                    <div class="loading-mindmap">${translations[currentLanguage].ai_assistant}</div>
+                </div>
+            `;
+
+            mindmapDiv.addEventListener('click', function (e) {
+                if (e.target === this || (e.target.closest('.mindmap-title') && !e.target.closest('.control-btn'))) {
+                    this.classList.toggle('expanded');
+                    
+                    const controls = this.querySelector('.mindmap-controls');
+                    if (controls) {
+                        if (this.classList.contains('expanded')) {
+                            controls.classList.remove('mindmap-controls-hidden');
+                        } else {
+                            controls.classList.add('mindmap-controls-hidden');
+                        }
+                    }
+                    
+                    // Fit ngay lập tức khi mở rộng
+                    setTimeout(() => {
+                        if (this.mm) {
+                            this.mm.fit();
+                        }
+                    }, 50);
                 }
             });
-            markers = [];
-            
-            const marker = L.marker([lat, lng], {
-                icon: L.divIcon({
-                    className: 'custom-marker',
-                    html: `<div class="battle-marker">
-                              <i class="fas fa-map-marker-alt"></i>
-                          </div>`,
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 30]
-                })
-            }).addTo(map)
-                .bindPopup(`<div class="font-medium text-accent">${title}</div>`)
-                .openPopup();
-            markers.push(marker);
+
+            return mindmapDiv;
+        }
+
+        // ==================== TẠO NỘI DUNG MARKDOWN CHO MARKMAP ====================
+        function generateBattleMarkdown(battleData) {
+            const safeText = (text) => {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            };
+
+            let markdown = `# ⚔️ ${safeText(battleData.name) || 'TRẬN CHIẾN'}\n`;
+
+            if (battleData.time) {
+                markdown += `\n## ⏰ ${translations[currentLanguage].battle_time}\n`;
+                markdown += `- ${safeText(battleData.time)}\n`;
+            }
+
+            if (battleData.location) {
+                markdown += `\n## 📍 ${translations[currentLanguage].battle_location}\n`;
+                markdown += `- ${safeText(battleData.location)}\n`;
+            }
+
+            if (battleData.troops) {
+                markdown += `\n## ⚔️ ${translations[currentLanguage].battle_troops}\n`;
+                markdown += `- ${safeText(battleData.troops)}\n`;
+            }
+
+            if (battleData.tactics) {
+                markdown += `\n## 🎯 ${translations[currentLanguage].battle_tactics}\n`;
+                markdown += `- ${safeText(battleData.tactics)}\n`;
+            }
+
+            if (battleData.casualties) {
+                markdown += `\n## 💔 ${translations[currentLanguage].battle_casualties}\n`;
+                markdown += `- ${safeText(battleData.casualties)}\n`;
+            }
+
+            if (battleData.heroes && battleData.heroes.length > 0) {
+                markdown += `\n## 🦸 ${translations[currentLanguage].battle_heroes}\n`;
+                battleData.heroes.slice(0, 5).forEach(hero => {
+                    markdown += `- ✨ ${safeText(hero)}\n`;
+                });
+            }
+
+            if (battleData.key_locations && battleData.key_locations.length > 0) {
+                markdown += `\n## 🏰 ${translations[currentLanguage].key_locations}\n`;
+                battleData.key_locations.slice(0, 5).forEach(loc => {
+                    markdown += `- 📍 ${safeText(loc)}\n`;
+                });
+            }
+
+            if (battleData.factions && battleData.factions.length > 0) {
+                markdown += `\n## ⚔️ ${translations[currentLanguage].battle_factions}\n`;
+                battleData.factions.forEach(faction => {
+                    markdown += `- ${safeText(faction)}\n`;
+                    if (battleData.commanders && battleData.commanders[faction]) {
+                        markdown += `  - 👑 ${safeText(battleData.commanders[faction])}\n`;
+                    }
+                });
+            }
+
+            if (battleData.outcome) {
+                markdown += `\n## 🏆 ${translations[currentLanguage].battle_outcome}\n`;
+                markdown += `- ${safeText(battleData.outcome)}\n`;
+            }
+
+            if (battleData.significance) {
+                markdown += `\n## 🌟 ${translations[currentLanguage].battle_significance}\n`;
+                const shortSignificance = battleData.significance.length > 150 ? 
+                    battleData.significance.substring(0, 150) + "..." : 
+                    battleData.significance;
+                markdown += `- ${safeText(shortSignificance)}\n`;
+            }
+
+            return markdown;
+        }
+
+        function generateFigureMarkdown(figureData) {
+            const safeText = (text) => {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            };
+
+            let markdown = `# 👑 ${safeText(figureData.name) || 'NHÂN VẬT'}\n`;
+
+            if (figureData.time) {
+                markdown += `\n## ⏰ ${translations[currentLanguage].battle_time}\n`;
+                markdown += `- ${safeText(figureData.time)}\n`;
+            }
+
+            if (figureData.location) {
+                markdown += `\n## 📍 ${translations[currentLanguage].birth_place}\n`;
+                markdown += `- ${safeText(figureData.location)}\n`;
+            }
+
+            if (figureData.achievements && figureData.achievements.length > 0) {
+                markdown += `\n## 🏆 ${translations[currentLanguage].battle_achievements}\n`;
+                figureData.achievements.slice(0, 5).forEach(achievement => {
+                    markdown += `- ✨ ${safeText(achievement)}\n`;
+                });
+            }
+
+            if (figureData.significance) {
+                markdown += `\n## 🌟 ${translations[currentLanguage].battle_significance}\n`;
+                const shortSignificance = figureData.significance.length > 150 ? 
+                    figureData.significance.substring(0, 150) + "..." : 
+                    figureData.significance;
+                markdown += `- ${safeText(shortSignificance)}\n`;
+            }
+
+            return markdown;
+        }
+
+        function generateLandmarkMarkdown(landmarkData) {
+            const safeText = (text) => {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            };
+
+            let markdown = `# 🏰 ${safeText(landmarkData.name) || 'ĐỊA DANH'}\n`;
+
+            if (landmarkData.location) {
+                markdown += `\n## 📍 ${translations[currentLanguage].battle_location}\n`;
+                markdown += `- ${safeText(landmarkData.location)}\n`;
+            }
+
+            if (landmarkData.build_time) {
+                markdown += `\n## ⏳ ${translations[currentLanguage].landmark_build_time}\n`;
+                markdown += `- ${safeText(landmarkData.build_time)}\n`;
+            }
+
+            if (landmarkData.purpose) {
+                markdown += `\n## 🎯 ${translations[currentLanguage].landmark_purpose}\n`;
+                const shortPurpose = landmarkData.purpose.length > 150 ? 
+                    landmarkData.purpose.substring(0, 150) + "..." : 
+                    landmarkData.purpose;
+                markdown += `- ${safeText(shortPurpose)}\n`;
+            }
+
+            if (landmarkData.architecture) {
+                markdown += `\n## 🏛️ ${translations[currentLanguage].landmark_architecture}\n`;
+                const shortArchitecture = landmarkData.architecture.length > 150 ? 
+                    landmarkData.architecture.substring(0, 150) + "..." : 
+                    landmarkData.architecture;
+                markdown += `- ${safeText(shortArchitecture)}\n`;
+            }
+
+            if (landmarkData.dynasty) {
+                markdown += `\n## 👑 ${translations[currentLanguage].landmark_dynasty}\n`;
+                markdown += `- ${safeText(landmarkData.dynasty)}\n`;
+            }
+
+            if (landmarkData.builders && landmarkData.builders.length > 0) {
+                markdown += `\n## 👷 ${translations[currentLanguage].landmark_builders}\n`;
+                landmarkData.builders.slice(0, 3).forEach(builder => {
+                    markdown += `- ✨ ${safeText(builder)}\n`;
+                });
+            }
+
+            if (landmarkData.contents && landmarkData.contents.length > 0) {
+                markdown += `\n## 📦 ${translations[currentLanguage].landmark_contents}\n`;
+                landmarkData.contents.slice(0, 3).forEach(item => {
+                    markdown += `- 📜 ${safeText(item)}\n`;
+                });
+            }
+
+            return markdown;
+        }
+
+        async function renderMarkmap(container, markdown) {
+            try {
+                const contentDiv = container.querySelector('.mindmap-content');
+                if (!contentDiv) return;
+
+                // Tạo container cho markmap
+                const mindmapContainer = document.createElement('div');
+                mindmapContainer.className = 'mindmap-container';
+                mindmapContainer.id = 'mindmap-' + Math.random().toString(36).substr(2, 9);
+                contentDiv.innerHTML = '';
+                contentDiv.appendChild(mindmapContainer);
+
+                // Tạo svg element
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '100%');
+                svg.setAttribute('height', '100%');
+                mindmapContainer.appendChild(svg);
+
+                // Transform markdown thành root node
+                const { root } = transformer.transform(markdown);
+
+                // Tạo markmap instance
+                const { Markmap } = window.markmap;
+                const mm = Markmap.create(svg, {
+                    duration: 500,
+                    nodeMinHeight: 16,
+                    spacingVertical: 5,
+                    spacingHorizontal: 80,
+                    autoFit: true,
+                    fitRatio: 0.95,
+                }, root);
+
+                // Lưu instance vào container để sử dụng cho các nút zoom
+                container.mm = mm;
+
+                // Gán các nút điều khiển
+                const zoomInBtn = container.querySelector('.zoom-in');
+                const zoomOutBtn = container.querySelector('.zoom-out');
+                const saveImageBtn = container.querySelector('.save-image');
+
+                if (zoomInBtn) {
+                    zoomInBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (container.mm) {
+                            container.mm.rescale(1.2);
+                        }
+                    });
+                }
+
+                if (zoomOutBtn) {
+                    zoomOutBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (container.mm) {
+                            container.mm.rescale(0.8);
+                        }
+                    });
+                }
+
+                if (saveImageBtn) {
+                    saveImageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const svg = container.querySelector('svg');
+                        if (svg) {
+                            const svgData = new XMLSerializer().serializeToString(svg);
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            const img = new Image();
+                            img.onload = () => {
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                ctx.drawImage(img, 0, 0);
+                                const link = document.createElement('a');
+                                const title = container.querySelector('.mindmap-title span')?.textContent || 'mindmap';
+                                link.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_mindmap.png`;
+                                link.href = canvas.toDataURL('image/png');
+                                link.click();
+                            };
+                            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                        }
+                    });
+                }
+
+                // Fit sau khi render
+                setTimeout(() => {
+                    mm.fit();
+                    
+                    // Thêm class cho root node
+                    const rootNode = svg.querySelector('.markmap-node');
+                    if (rootNode) {
+                        rootNode.classList.add('root-node');
+                    }
+                }, 100);
+
+            } catch (error) {
+                console.error("Lỗi render markmap:", error);
+                container.querySelector('.mindmap-content').innerHTML = `
+                    <div class="mindmap-error">${translations[currentLanguage].processing_error}</div>
+                `;
+            }
         }
 
         function formatBattleData(data) {
@@ -3318,387 +3561,10 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             }
         }
 
-        // ==================== SƠ ĐỒ TƯ DUY SIÊU NGẦU ====================
-        function createMindmapContainerSieuNgau(title, mindmapTitle) {
-            const mindmapDiv = document.createElement('div');
-            mindmapDiv.className = 'mindmap-sieu-ngau';
-            
-            mindmapDiv.innerHTML = `
-                <div class="mindmap-title">
-                    <span>${mindmapTitle}: ${title}</span>
-                    <div class="mindmap-controls mindmap-controls-hidden">
-                        <button class="control-btn zoom-in" title="${translations[currentLanguage].zoom_in}">
-                            <i class="fas fa-search-plus"></i>
-                        </button>
-                        <button class="control-btn zoom-out" title="${translations[currentLanguage].zoom_out}">
-                            <i class="fas fa-search-minus"></i>
-                        </button>
-                        <button class="control-btn save-image" title="${translations[currentLanguage].save_image}">
-                            <i class="fas fa-camera"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="mindmap-content">
-                    <div class="loading-mindmap">${translations[currentLanguage].ai_assistant}</div>
-                </div>
-            `;
-
-            mindmapDiv.addEventListener('click', function (e) {
-                if (e.target === this || (e.target.closest('.mindmap-title') && !e.target.closest('.control-btn'))) {
-                    this.classList.toggle('expanded');
-                    
-                    const controls = this.querySelector('.mindmap-controls');
-                    if (controls) {
-                        if (this.classList.contains('expanded')) {
-                            controls.classList.remove('mindmap-controls-hidden');
-                        } else {
-                            controls.classList.add('mindmap-controls-hidden');
-                        }
-                    }
-                    
-                    setTimeout(() => {
-                        if (this.mm) {
-                            this.mm.fit();
-                        }
-                    }, 50);
-                }
-            });
-
-            return mindmapDiv;
-        }
-
-        function generateBattleMarkdown(battleData) {
-            const safeText = (text) => {
-                if (!text) return "";
-                return text.toString()
-                    .replace(/\n/g, " ")
-                    .replace(/\s+/g, " ")
-                    .trim();
-            };
-
-            let markdown = `# ⚔️ ${safeText(battleData.name) || 'TRẬN CHIẾN'}\n`;
-
-            if (battleData.time) {
-                markdown += `\n## ⏰ ${translations[currentLanguage].battle_time}\n`;
-                markdown += `- ${safeText(battleData.time)}\n`;
-            }
-
-            if (battleData.location) {
-                markdown += `\n## 📍 ${translations[currentLanguage].battle_location}\n`;
-                markdown += `- ${safeText(battleData.location)}\n`;
-            }
-
-            if (battleData.troops) {
-                markdown += `\n## ⚔️ ${translations[currentLanguage].battle_troops}\n`;
-                markdown += `- ${safeText(battleData.troops)}\n`;
-            }
-
-            if (battleData.tactics) {
-                markdown += `\n## 🎯 ${translations[currentLanguage].battle_tactics}\n`;
-                markdown += `- ${safeText(battleData.tactics)}\n`;
-            }
-
-            if (battleData.casualties) {
-                markdown += `\n## 💔 ${translations[currentLanguage].battle_casualties}\n`;
-                markdown += `- ${safeText(battleData.casualties)}\n`;
-            }
-
-            if (battleData.heroes && battleData.heroes.length > 0) {
-                markdown += `\n## 🦸 ${translations[currentLanguage].battle_heroes}\n`;
-                battleData.heroes.slice(0, 5).forEach(hero => {
-                    markdown += `- ✨ ${safeText(hero)}\n`;
-                });
-            }
-
-            if (battleData.key_locations && battleData.key_locations.length > 0) {
-                markdown += `\n## 🏰 ${translations[currentLanguage].key_locations}\n`;
-                battleData.key_locations.slice(0, 5).forEach(loc => {
-                    markdown += `- 📍 ${safeText(loc)}\n`;
-                });
-            }
-
-            if (battleData.factions && battleData.factions.length > 0) {
-                markdown += `\n## ⚔️ ${translations[currentLanguage].battle_factions}\n`;
-                battleData.factions.forEach(faction => {
-                    markdown += `- ${safeText(faction)}\n`;
-                    if (battleData.commanders && battleData.commanders[faction]) {
-                        markdown += `  - 👑 ${safeText(battleData.commanders[faction])}\n`;
-                    }
-                });
-            }
-
-            if (battleData.outcome) {
-                markdown += `\n## 🏆 ${translations[currentLanguage].battle_outcome}\n`;
-                markdown += `- ${safeText(battleData.outcome)}\n`;
-            }
-
-            if (battleData.significance) {
-                markdown += `\n## 🌟 ${translations[currentLanguage].battle_significance}\n`;
-                const shortSignificance = battleData.significance.length > 150 ? 
-                    battleData.significance.substring(0, 150) + "..." : 
-                    battleData.significance;
-                markdown += `- ${safeText(shortSignificance)}\n`;
-            }
-
-            return markdown;
-        }
-
-        function generateFigureMarkdown(figureData) {
-            const safeText = (text) => {
-                if (!text) return "";
-                return text.toString()
-                    .replace(/\n/g, " ")
-                    .replace(/\s+/g, " ")
-                    .trim();
-            };
-
-            let markdown = `# 👑 ${safeText(figureData.name) || 'NHÂN VẬT'}\n`;
-
-            if (figureData.time) {
-                markdown += `\n## ⏰ ${translations[currentLanguage].battle_time}\n`;
-                markdown += `- ${safeText(figureData.time)}\n`;
-            }
-
-            if (figureData.location) {
-                markdown += `\n## 📍 ${translations[currentLanguage].birth_place}\n`;
-                markdown += `- ${safeText(figureData.location)}\n`;
-            }
-
-            if (figureData.achievements && figureData.achievements.length > 0) {
-                markdown += `\n## 🏆 ${translations[currentLanguage].battle_achievements}\n`;
-                figureData.achievements.slice(0, 5).forEach(achievement => {
-                    markdown += `- ✨ ${safeText(achievement)}\n`;
-                });
-            }
-
-            if (figureData.significance) {
-                markdown += `\n## 🌟 ${translations[currentLanguage].battle_significance}\n`;
-                const shortSignificance = figureData.significance.length > 150 ? 
-                    figureData.significance.substring(0, 150) + "..." : 
-                    figureData.significance;
-                markdown += `- ${safeText(shortSignificance)}\n`;
-            }
-
-            return markdown;
-        }
-
-        function generateLandmarkMarkdown(landmarkData) {
-            const safeText = (text) => {
-                if (!text) return "";
-                return text.toString()
-                    .replace(/\n/g, " ")
-                    .replace(/\s+/g, " ")
-                    .trim();
-            };
-
-            let markdown = `# 🏰 ${safeText(landmarkData.name) || 'ĐỊA DANH'}\n`;
-
-            if (landmarkData.location) {
-                markdown += `\n## 📍 ${translations[currentLanguage].battle_location}\n`;
-                markdown += `- ${safeText(landmarkData.location)}\n`;
-            }
-
-            if (landmarkData.build_time) {
-                markdown += `\n## ⏳ ${translations[currentLanguage].landmark_build_time}\n`;
-                markdown += `- ${safeText(landmarkData.build_time)}\n`;
-            }
-
-            if (landmarkData.purpose) {
-                markdown += `\n## 🎯 ${translations[currentLanguage].landmark_purpose}\n`;
-                const shortPurpose = landmarkData.purpose.length > 150 ? 
-                    landmarkData.purpose.substring(0, 150) + "..." : 
-                    landmarkData.purpose;
-                markdown += `- ${safeText(shortPurpose)}\n`;
-            }
-
-            if (landmarkData.architecture) {
-                markdown += `\n## 🏛️ ${translations[currentLanguage].landmark_architecture}\n`;
-                const shortArchitecture = landmarkData.architecture.length > 150 ? 
-                    landmarkData.architecture.substring(0, 150) + "..." : 
-                    landmarkData.architecture;
-                markdown += `- ${safeText(shortArchitecture)}\n`;
-            }
-
-            if (landmarkData.dynasty) {
-                markdown += `\n## 👑 ${translations[currentLanguage].landmark_dynasty}\n`;
-                markdown += `- ${safeText(landmarkData.dynasty)}\n`;
-            }
-
-            if (landmarkData.builders && landmarkData.builders.length > 0) {
-                markdown += `\n## 👷 ${translations[currentLanguage].landmark_builders}\n`;
-                landmarkData.builders.slice(0, 3).forEach(builder => {
-                    markdown += `- ✨ ${safeText(builder)}\n`;
-                });
-            }
-
-            if (landmarkData.contents && landmarkData.contents.length > 0) {
-                markdown += `\n## 📦 ${translations[currentLanguage].landmark_contents}\n`;
-                landmarkData.contents.slice(0, 3).forEach(item => {
-                    markdown += `- 📜 ${safeText(item)}\n`;
-                });
-            }
-
-            return markdown;
-        }
-
-        async function renderMarkmap(container, markdown) {
-            try {
-                const contentDiv = container.querySelector('.mindmap-content');
-                if (!contentDiv) return;
-
-                // Tạo container cho markmap
-                const mindmapContainer = document.createElement('div');
-                mindmapContainer.className = 'mindmap-container';
-                mindmapContainer.id = 'mindmap-' + Math.random().toString(36).substr(2, 9);
-                contentDiv.innerHTML = '';
-                contentDiv.appendChild(mindmapContainer);
-
-                // Tạo svg element
-                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                svg.setAttribute('width', '100%');
-                svg.setAttribute('height', '100%');
-                mindmapContainer.appendChild(svg);
-
-                // Khởi tạo transformer
-                if (!transformer) {
-                    const { Transformer } = window.markmap;
-                    transformer = new Transformer();
-                }
-
-                // Transform markdown thành root node
-                const { root } = transformer.transform(markdown);
-
-                // Tạo markmap instance
-                const { Markmap } = window.markmap;
-                const mm = Markmap.create(svg, {
-                    duration: 500,
-                    nodeMinHeight: 16,
-                    spacingVertical: 5,
-                    spacingHorizontal: 80,
-                    autoFit: true,
-                    fitRatio: 0.95,
-                }, root);
-
-                // Lưu instance vào container để sử dụng cho các nút zoom
-                container.mm = mm;
-
-                // Gán các nút điều khiển
-                const zoomInBtn = container.querySelector('.zoom-in');
-                const zoomOutBtn = container.querySelector('.zoom-out');
-                const saveImageBtn = container.querySelector('.save-image');
-
-                if (zoomInBtn) {
-                    zoomInBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (container.mm) {
-                            container.mm.rescale(1.2);
-                        }
-                    });
-                }
-
-                if (zoomOutBtn) {
-                    zoomOutBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        if (container.mm) {
-                            container.mm.rescale(0.8);
-                        }
-                    });
-                }
-
-                if (saveImageBtn) {
-                    saveImageBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const svg = container.querySelector('svg');
-                        if (svg) {
-                            const svgData = new XMLSerializer().serializeToString(svg);
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            const img = new Image();
-                            img.onload = () => {
-                                canvas.width = img.width;
-                                canvas.height = img.height;
-                                ctx.drawImage(img, 0, 0);
-                                const link = document.createElement('a');
-                                const title = container.querySelector('.mindmap-title span')?.textContent || 'mindmap';
-                                link.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_mindmap.png`;
-                                link.href = canvas.toDataURL('image/png');
-                                link.click();
-                            };
-                            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
-                        }
-                    });
-                }
-
-                // Fit sau khi render
-                setTimeout(() => {
-                    mm.fit();
-                    
-                    // Thêm class cho root node
-                    const rootNode = svg.querySelector('.markmap-node');
-                    if (rootNode) {
-                        rootNode.classList.add('root-node');
-                    }
-                }, 100);
-
-            } catch (error) {
-                console.error("Lỗi render markmap:", error);
-                container.querySelector('.mindmap-content').innerHTML = `
-                    <div class="mindmap-error">${translations[currentLanguage].processing_error}</div>
-                `;
-            }
-        }
-
-        // ==================== KHỞI TẠO ỨNG DỤNG ====================
-        function initApp() {
-            // Khởi tạo Globe
-            initGlobe();
-            
-            // Khởi tạo Leaflet map (ẩn)
-            initLeafletMap();
-            
-            // Thiết lập sự kiện
-            setupEventListeners();
-            
-            // Cập nhật ngôn ngữ
-            updateLanguage('vi');
-            languageToggle.addEventListener('change', toggleLanguage);
-            
-            // Kiểm tra URL parameters
-            checkUrlParameters();
-        }
-
-        function setupEventListeners() {
-            searchForm.addEventListener('submit', handleSubmit);
-            searchInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    if (searchInput.value.trim() !== '') {
-                        searchForm.dispatchEvent(new Event('submit'));
-                    }
-                }
-            });
-        }
-
-        function checkUrlParameters() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchQuery = urlParams.get('search');
-            if (searchQuery) {
-                const decodedQuery = decodeURIComponent(searchQuery);
-                searchInput.value = decodedQuery;
-                setTimeout(() => {
-                    handleSubmit(null);
-                }, 500);
-            }
-        }
-
-        // Gán các hàm vào window để sử dụng trong HTML
-        window.toggleSidebar = toggleSidebar;
-        window.closeInfoPanel = closeInfoPanel;
+        document.addEventListener('DOMContentLoaded', initApp);
         window.copyToClipboard = copyToClipboard;
         window.closeHistoryInfo = closeHistoryInfo;
-
-        // Khởi chạy ứng dụng khi DOM đã sẵn sàng
-        document.addEventListener('DOMContentLoaded', initApp);
+        window.toggleSidebar = toggleSidebar;
     </script>
 </body>
 </html>
