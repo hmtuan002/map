@@ -857,7 +857,7 @@
             line-height: 1.5;
         }
 
-        /* Map Title Decoration - ĐÃ FIX: KHÔNG DI CHUYỂN KHI ĐÓNG MỞ SIDEBAR */
+        /* Map Title Decoration - CỐ ĐỊNH, KHÔNG DI CHUYỂN */
         .map-title-decoration {
             position: fixed;
             top: 20px;
@@ -874,12 +874,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             pointer-events: none;
             backdrop-filter: blur(5px);
-            transition: none; /* KHÔNG DI CHUYỂN */
-        }
-
-        .sidebar-collapsed ~ #map-container .map-title-decoration,
-        .map-title-decoration {
-            left: 420px; /* CỐ ĐỊNH VỊ TRÍ */
+            transition: none;
         }
 
         .map-title-decoration i {
@@ -1037,7 +1032,7 @@
         .layer-panel {
             position: fixed;
             left: 420px;
-            top: 80px; /* Đặt dưới title */
+            top: 80px;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -1517,6 +1512,7 @@
         }
         
         const API_KEY = reverseApiKey(ORIGINAL_API_KEY);
+        console.log("API Key đã được đảo ngược bảo mật");
 
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
@@ -1536,12 +1532,10 @@
         // Biến cho Globe 3D
         let globe = null;
         let currentYearIndex = 15; // 1000 CN
-        let dataCache = {};
         let isPlaying = false;
         let playInterval = null;
         let localHistoryCache = new Map();
         let transformer = null;
-        let currentGeoJSON = null;
         
         // Hiển thị layer - chỉ biên giới
         let layers = {
@@ -1555,7 +1549,175 @@
             '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
         ];
 
-        // Các năm có sẵn với files GeoJSON (URL GitHub thật)
+        // Dữ liệu mẫu cho các năm (thay thế cho việc fetch từ GitHub)
+        const sampleGeoJSONData = {
+            "world_1000.geojson": {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Việt Nam", SUBJECTO: "Đại Cồ Việt" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[102, 8], [109, 8], [109, 23], [102, 23], [102, 8]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Trung Quốc", SUBJECTO: "Nhà Tống" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[73, 18], [135, 18], [135, 53], [73, 53], [73, 18]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Nhật Bản", SUBJECTO: "Thời kỳ Heian" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[129, 31], [146, 31], [146, 46], [129, 46], [129, 31]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Đế quốc Đông La Mã", SUBJECTO: "Đế quốc Byzantine" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[18, 34], [44, 34], [44, 46], [18, 46], [18, 34]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Pháp", SUBJECTO: "Vương quốc Pháp" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[-5, 42], [8, 42], [8, 51], [-5, 51], [-5, 42]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Đế quốc La Mã Thần thánh", SUBJECTO: "Đế quốc La Mã Thần thánh" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[5, 47], [15, 47], [15, 55], [5, 55], [5, 47]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Đế quốc Khmer", SUBJECTO: "Đế quốc Khmer" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[102, 10], [108, 10], [108, 18], [102, 18], [102, 10]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Vương quốc Anh", SUBJECTO: "Vương quốc Anh" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[-8, 50], [2, 50], [2, 59], [-8, 59], [-8, 50]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Đế quốc Fatimid", SUBJECTO: "Đế quốc Fatimid" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[24, 22], [37, 22], [37, 32], [24, 32], [24, 22]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Vương quốc Ba Tư", SUBJECTO: "Đế quốc Ghaznavid" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[50, 25], [70, 25], [70, 40], [50, 40], [50, 25]]]
+                        }
+                    }
+                ]
+            },
+            "world_500.geojson": {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Việt Nam", SUBJECTO: "Vương quốc Chăm Pa" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[105, 10], [110, 10], [110, 18], [105, 18], [105, 10]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Trung Quốc", SUBJECTO: "Nam-Bắc triều" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[100, 20], [120, 20], [120, 40], [100, 40], [100, 20]]]
+                        }
+                    }
+                ]
+            },
+            "world_100.geojson": {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Việt Nam", SUBJECTO: "Giao Chỉ" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[102, 8], [109, 8], [109, 23], [102, 23], [102, 8]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Trung Quốc", SUBJECTO: "Nhà Hán" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[90, 15], [125, 15], [125, 45], [90, 45], [90, 15]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Đế quốc La Mã", SUBJECTO: "Đế quốc La Mã" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[-10, 35], [40, 35], [40, 55], [-10, 55], [-10, 35]]]
+                        }
+                    }
+                ]
+            },
+            "world_bc1.geojson": {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Việt Nam", SUBJECTO: "Văn Lang" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[102, 8], [109, 8], [109, 23], [102, 23], [102, 8]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Trung Quốc", SUBJECTO: "Nhà Hán" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[90, 15], [125, 15], [125, 45], [90, 45], [90, 15]]]
+                        }
+                    },
+                    {
+                        type: "Feature",
+                        properties: { NAME: "Đế quốc La Mã", SUBJECTO: "Đế quốc La Mã" },
+                        geometry: {
+                            type: "Polygon",
+                            coordinates: [[[-10, 35], [40, 35], [40, 55], [-10, 55], [-10, 35]]]
+                        }
+                    }
+                ]
+            }
+        };
+
+        // Các năm có sẵn
         const availableYears = [
             { year: -10000, file: 'world_bc10000.geojson', label: '10.000 TCN' },
             { year: -5000, file: 'world_bc5000.geojson', label: '5.000 TCN' },
@@ -1590,15 +1752,11 @@
             { year: 2010, file: 'world_2010.geojson', label: '2.010 CN' }
         ];
 
-        // URL gốc cho GeoJSON (THAY BẰNG URL GITHUB THẬT CỦA BẠN)
-        const GEOJSON_BASE_URL = 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/geojson/';
-
         // Biến cho speech
         let speechSynthesisUtterance = null;
         let isSpeaking = false;
         let speechProgressInterval;
         let currentSpeechText = '';
-        let keyLocations = [];
 
         // ==================== DỊCH THUẬT ====================
         const translations = {
@@ -1722,62 +1880,6 @@
             }
         };
 
-        const countryNameMap = {
-            "Việt Nam": "Vietnam",
-            "Anh": "United Kingdom",
-            "Mỹ": "United States",
-            "Hoa Kỳ": "United States",
-            "Pháp": "France",
-            "Đức": "Germany",
-            "Nga": "Russia",
-            "Nhật Bản": "Japan",
-            "Trung Quốc": "China",
-            "Trung Hoa": "China",
-            "Hàn Quốc": "South Korea",
-            "Ấn Độ": "India",
-            "Brazil": "Brazil",
-            "Canada": "Canada",
-            "Ý": "Italy",
-            "Tây Ban Nha": "Spain",
-            "Bồ Đào Nha": "Portugal",
-            "Thụy Điển": "Sweden",
-            "Na Uy": "Norway",
-            "Phần Lan": "Finland",
-            "Đan Mạch": "Denmark",
-            "Hà Lan": "Netherlands",
-            "Bỉ": "Belgium",
-            "Thụy Sĩ": "Switzerland",
-            "Áo": "Austria",
-            "Ba Lan": "Poland",
-            "Hy Lạp": "Greece",
-            "Thổ Nhĩ Kỳ": "Turkey",
-            "Ai Cập": "Egypt",
-            "Nam Phi": "South Africa",
-            "Mexico": "Mexico",
-            "Argentina": "Argentina",
-            "Úc": "Australia",
-            "New Zealand": "New Zealand",
-            "Hà Nội": "Hanoi",
-            "Huế": "Hue"
-        };
-
-        const historyData = {
-            "Australia": {
-                history: {
-                    vi: "Úc, một quốc gia lục địa ở Nam Bán Cầu, có lịch sử bản địa kéo dài hơn 60.000 năm với các dân tộc Thổ dân và Người dân đảo Torres Strait. Người châu Âu, chủ yếu là Anh, bắt đầu thuộc địa hóa vào năm 1788 với việc thành lập thuộc địa tù nhân ở New South Wales. Úc trở thành một liên bang độc lập vào năm 1901, thống nhất sáu thuộc địa. Thế kỷ 20, Úc phát triển mạnh nhờ khai thác khoáng sản và nông nghiệp, đồng thời tham gia các cuộc chiến tranh thế giới cùng phe Đồng minh. Ngày nay, Úc nổi tiếng với nền kinh tế phát triển, đa dạng văn hóa (nhờ nhập cư), và các biểu tượng như Nhà hát Opera Sydney, rạn san hô Great Barrier, và văn hóa Thổ dân độc đáo.",
-                    en: "Australia, a continent-country in the Southern Hemisphere, has a history spanning over 60,000 years with Indigenous Aboriginal and Torres Strait Islander peoples. European colonization, primarily by the British, began in 1788 with the establishment of a penal colony in New South Wales. Australia became an independent federation in 1901, uniting six colonies. In the 20th century, it prospered through mining and agriculture and participated in global wars as part of the Allies. Today, Australia is known for its strong economy, cultural diversity (driven by immigration), and iconic landmarks like the Sydney Opera House, the Great Barrier Reef, and unique Indigenous culture."
-                }
-            },
-            "Vietnam": {
-                history: {
-                    vi: "Việt Nam có lịch sử hơn 4.000 năm, bắt đầu từ thời các vua Hùng dựng nước Văn Lang, được xem là nhà nước đầu tiên trong truyền thuyết. Sau thời kỳ Bắc thuộc dưới sự cai trị của Trung Quốc, Việt Nam giành độc lập vào thế kỷ 10 dưới triều đại Ngô, Đinh, và các triều đại phong kiến như Lý, Trần, Hậu Lê, Nguyễn đã xây dựng một nền văn hóa đặc sắc với các di sản như Văn Miếu và chùa Một Cột. Thế kỷ 19, Việt Nam trở thành thuộc địa Pháp, dẫn đến các phong trào kháng chiến. Thế kỷ 20, Việt Nam đấu tranh giành độc lập qua các cuộc chiến chống Pháp và Mỹ, thống nhất đất nước năm 1975. Ngày nay, Việt Nam là một nền kinh tế đang phát triển nhanh, với văn hóa phong phú (phở, áo dài) và vai trò ngày càng quan trọng trong khu vực Đông Nam Á.",
-                    en: "Vietnam's history spans over 4,000 years, beginning with the legendary Hung Kings who founded Van Lang, considered the first state in Vietnamese tradition. After centuries of Chinese domination, Vietnam gained independence in the 10th century under the Ngô and Đinh dynasties, followed by feudal dynasties like Lý, Trần, Later Lê, and Nguyễn, which built a distinct culture with landmarks like the Temple of Literature and One Pillar Pagoda. In the 19th century, Vietnam became a French colony, sparking resistance movements. The 20th century saw Vietnam fight for independence against France and the U.S., unifying in 1975. Today, Vietnam is a rapidly developing economy with a rich culture (phở, áo dài) and an increasingly significant role in Southeast Asia."
-                }
-            }
-        };
-
-        // ĐÃ XÓA countryCoordinates (dữ liệu cứng)
-
         const battleKeywords = ["trận chiến", "battle", "war", "engagement", "conflict", "campaign", "chiến tranh", "trận", "cuộc chiến", "chiến dịch", "đánh"];
 
         const vietnamHistoricalLocations = {
@@ -1805,7 +1907,6 @@
                 lat: 21.0333, 
                 lng: 105.8500, 
                 name: "Thăng Long (Hà Nội)", 
-                description: "Kinh đô thời Lý, Trần, Lê",
                 name_vi: "Thăng Long (Hà Nội)",
                 name_en: "Thang Long (Hanoi)",
                 description_vi: "Kinh đô của Việt Nam thời Lý, Trần, Lê",
@@ -1815,7 +1916,6 @@
                 lat: 20.8667, 
                 lng: 106.7333, 
                 name: "Sông Bạch Đằng", 
-                description: "Nơi diễn ra các trận thủy chiến lừng danh",
                 name_vi: "Sông Bạch Đằng",
                 name_en: "Bach Dang River",
                 description_vi: "Nơi diễn ra các trận thủy chiến lịch sử chống quân xâm lược",
@@ -1875,11 +1975,9 @@
             if (sidebar.classList.contains('sidebar-collapsed')) {
                 toggleIcon.classList.remove('fa-chevron-left');
                 toggleIcon.classList.add('fa-chevron-right');
-                // Title và layer panel giữ nguyên vị trí - không di chuyển
             } else {
                 toggleIcon.classList.remove('fa-chevron-right');
                 toggleIcon.classList.add('fa-chevron-left');
-                // Title và layer panel giữ nguyên vị trí - không di chuyển
             }
         }
 
@@ -1915,9 +2013,7 @@
         function isCountryQuery(query) {
             const lowerQuery = query.toLowerCase();
             const countryKeywords = [
-                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state",
-                "Việt Nam", "Trung Quốc", "Mỹ", "Pháp", "Anh", "Nhật Bản", "Hàn Quốc",
-                "Vietnam", "China", "USA", "France", "UK", "Japan", "Korea"
+                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state"
             ];
             return countryKeywords.some(keyword => lowerQuery.includes(keyword));
         }
@@ -1936,7 +2032,6 @@
 
         // ==================== KHỞI TẠO GLOBE 3D ====================
         async function initGlobe() {
-            // Lắng nghe sự kiện thay đổi kích thước để cập nhật renderer
             window.addEventListener('resize', () => {
                 if (globe) {
                     globe.width(window.innerWidth);
@@ -1966,20 +2061,19 @@
                 .labelAltitude(0.02)
                 (document.getElementById('globeContainer'));
             
-            // Đặt góc nhìn ban đầu
             globe.pointOfView({ lat: 30, lng: 0, altitude: 2.5 });
             
             // Tải năm ban đầu
-            await loadYear(currentYearIndex);
+            loadYear(currentYearIndex);
             
-            // Thiết lập điều khiển cho globe
+            // Thiết lập điều khiển
             setupGlobeControls();
             
             // Ẩn màn hình loading
             document.getElementById('loadingOverlay').classList.add('hidden');
         }
         
-        async function loadYear(index) {
+        function loadYear(index) {
             if (index < 0 || index >= availableYears.length) return;
             
             currentYearIndex = index;
@@ -1989,72 +2083,22 @@
             document.getElementById('yearDisplay').textContent = yearData.label;
             document.getElementById('timelineSlider').value = (index / (availableYears.length - 1)) * 100;
             
-            // Tải GeoJSON từ GitHub nếu chưa cache
-            if (!dataCache[yearData.file]) {
-                try {
-                    // THAY URL NÀY BẰNG URL GITHUB THẬT CỦA BẠN
-                    const url = `https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/geojson/${yearData.file}`;
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error(`Không thể tải ${yearData.file}`);
-                    dataCache[yearData.file] = await response.json();
-                } catch (err) {
-                    console.error('Lỗi tải GeoJSON:', err);
-                    // Fallback: tạo dữ liệu mẫu nếu không tải được
-                    dataCache[yearData.file] = generateSampleGeoJSON();
-                }
+            // Sử dụng dữ liệu mẫu
+            let geojson;
+            if (yearData.file === 'world_1000.geojson') {
+                geojson = sampleGeoJSONData['world_1000.geojson'];
+            } else if (yearData.file === 'world_500.geojson') {
+                geojson = sampleGeoJSONData['world_500.geojson'];
+            } else if (yearData.file === 'world_100.geojson') {
+                geojson = sampleGeoJSONData['world_100.geojson'];
+            } else if (yearData.file === 'world_bc1.geojson') {
+                geojson = sampleGeoJSONData['world_bc1.geojson'];
+            } else {
+                // Fallback
+                geojson = sampleGeoJSONData['world_1000.geojson'];
             }
             
-            currentGeoJSON = dataCache[yearData.file];
-            renderBorders(currentGeoJSON, yearData.year);
-        }
-        
-        function generateSampleGeoJSON() {
-            // Tạo dữ liệu mẫu cho các quốc gia (fallback)
-            return {
-                type: "FeatureCollection",
-                features: [
-                    {
-                        type: "Feature",
-                        properties: { NAME: "Việt Nam", SUBJECTO: "Việt Nam" },
-                        geometry: {
-                            type: "Polygon",
-                            coordinates: [[[102, 8], [109, 8], [109, 23], [102, 23], [102, 8]]]
-                        }
-                    },
-                    {
-                        type: "Feature",
-                        properties: { NAME: "Trung Quốc", SUBJECTO: "Trung Quốc" },
-                        geometry: {
-                            type: "Polygon",
-                            coordinates: [[[73, 18], [135, 18], [135, 53], [73, 53], [73, 18]]]
-                        }
-                    },
-                    {
-                        type: "Feature",
-                        properties: { NAME: "Nhật Bản", SUBJECTO: "Nhật Bản" },
-                        geometry: {
-                            type: "Polygon",
-                            coordinates: [[[129, 31], [146, 31], [146, 46], [129, 46], [129, 31]]]
-                        }
-                    },
-                    {
-                        type: "Feature",
-                        properties: { NAME: "Hoa Kỳ", SUBJECTO: "Hoa Kỳ" },
-                        geometry: {
-                            type: "Polygon",
-                            coordinates: [[[-125, 25], [-65, 25], [-65, 50], [-125, 50], [-125, 25]]]
-                        }
-                    },
-                    {
-                        type: "Feature",
-                        properties: { NAME: "Pháp", SUBJECTO: "Pháp" },
-                        geometry: {
-                            type: "Polygon",
-                            coordinates: [[[-5, 42], [8, 42], [8, 51], [-5, 51], [-5, 42]]]
-                        }
-                    }
-                ]
-            };
+            renderBorders(geojson, yearData.year);
         }
         
         function renderBorders(geojson, year) {
@@ -2075,7 +2119,7 @@
             globe.polygonsData(polygons);
             document.getElementById('regionCount').textContent = `${geojson.features.length} quốc gia`;
             
-            // Cập nhật nhãn cho các quốc gia lớn
+            // Cập nhật nhãn
             updateLabels(geojson);
         }
         
@@ -2087,7 +2131,6 @@
                 const name = f.properties.SUBJECTO || f.properties.NAME;
                 if (!name || seen.has(name)) return;
                 
-                // Tính toán trọng tâm (gần đúng)
                 let coords = f.geometry.coordinates;
                 if (f.geometry.type === 'MultiPolygon') {
                     coords = coords[0];
@@ -2100,7 +2143,6 @@
                         const lat = lats.reduce((a, b) => a + b) / lats.length;
                         const lng = lngs.reduce((a, b) => a + b) / lngs.length;
                         
-                        // Chỉ gán nhãn cho các quốc gia lớn
                         const area = (Math.max(...lats) - Math.min(...lats)) * (Math.max(...lngs) - Math.min(...lngs));
                         if (area > 50) {
                             labels.push({ name, lat, lng });
@@ -2120,35 +2162,16 @@
         
         async function queryLocalHistory(lat, lng, placeName) {
             const year = availableYears[currentYearIndex].year;
-            const yearBucket = Math.round(year / 50) * 50;
-            const cacheKey = `${lat.toFixed(1)},${lng.toFixed(1)},${yearBucket}`;
+            const yearLabel = year < 0 ? `${Math.abs(year)} TCN` : `${year} CN`;
             
             // Hiển thị panel
             infoPanel.classList.add('visible');
             infoPanelTitle.textContent = placeName;
-            infoPanelSubtitle.textContent = `${availableYears[currentYearIndex].label} • Đang tìm kiếm...`;
+            infoPanelSubtitle.textContent = `${yearLabel} • Đang tìm kiếm...`;
             infoPanelContent.innerHTML = '<div style="text-align:center;padding:20px;"><div class="loading-spinner" style="width:30px;height:30px;margin:0 auto;"></div></div>';
             
-            // Kiểm tra cache
-            if (localHistoryCache.has(cacheKey)) {
-                displayLocalHistory(localHistoryCache.get(cacheKey));
-                return;
-            }
-            
             try {
-                const result = await queryGemini(lat, lng, placeName, year);
-                const data = { placeName, result, year };
-                localHistoryCache.set(cacheKey, data);
-                displayLocalHistory(data);
-            } catch (err) {
-                infoPanelContent.innerHTML = `<div style="color:#ff6b6b;">Lỗi tải lịch sử: ${err.message}</div>`;
-            }
-        }
-        
-        async function queryGemini(lat, lng, placeName, year) {
-            const yearLabel = year < 0 ? `${Math.abs(year)} TCN` : `${year} CN`;
-            
-            const prompt = `Bạn là một chuyên gia lịch sử. Hãy cung cấp một cái nhìn tổng quát về ${placeName} trong thời kỳ ${yearLabel}.
+                const prompt = `Bạn là một chuyên gia lịch sử. Hãy cung cấp một cái nhìn tổng quát về ${placeName} trong thời kỳ ${yearLabel}.
 
 Bao gồm (nếu có liên quan):
 - Các dân tộc hoặc bộ tộc bản địa
@@ -2160,21 +2183,22 @@ Bao gồm (nếu có liên quan):
 
 Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
 
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            return response.text();
-        }
-        
-        function displayLocalHistory(data) {
-            infoPanelSubtitle.textContent = availableYears[currentYearIndex].label;
-            
-            let html = data.result
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/^\* /gm, '• ')
-                .replace(/^- /gm, '• ')
-                .replace(/\n/g, '<br>');
-            
-            infoPanelContent.innerHTML = html;
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const text = response.text();
+                
+                infoPanelSubtitle.textContent = yearLabel;
+                
+                let html = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/^\* /gm, '• ')
+                    .replace(/^- /gm, '• ')
+                    .replace(/\n/g, '<br>');
+                
+                infoPanelContent.innerHTML = html;
+            } catch (err) {
+                infoPanelContent.innerHTML = `<div style="color:#ff6b6b;">Lỗi tải lịch sử: ${err.message}</div>`;
+            }
         }
         
         function closeInfoPanel() {
@@ -2182,13 +2206,11 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
         }
         
         function setupGlobeControls() {
-            // Slider timeline
             document.getElementById('timelineSlider').addEventListener('input', (e) => {
                 const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
                 loadYear(index);
             });
             
-            // Nút phát lại
             document.getElementById('prevBtn').addEventListener('click', () => {
                 loadYear(Math.max(0, currentYearIndex - 1));
             });
@@ -2199,15 +2221,14 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
             
             document.getElementById('playBtn').addEventListener('click', togglePlay);
             
-            // Chuyển đổi layer - chỉ xử lý biên giới
             document.querySelectorAll('.layer-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const layer = btn.dataset.layer;
                     layers[layer] = !layers[layer];
                     btn.classList.toggle('active');
                     
-                    if (layer === 'borders' && currentGeoJSON) {
-                        renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
+                    if (layer === 'borders') {
+                        loadYear(currentYearIndex);
                     }
                 });
             });
@@ -2231,21 +2252,6 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
                 btn.classList.remove('active');
                 clearInterval(playInterval);
             }
-        }
-
-        function translateCountryName(name) {
-            if (countryNameMap[name]) {
-                return currentLanguage === 'en' ? countryNameMap[name] : name;
-            }
-
-            const lowerName = name.toLowerCase();
-            for (const [viName, enName] of Object.entries(countryNameMap)) {
-                if (viName.toLowerCase() === lowerName) {
-                    return currentLanguage === 'en' ? enName : viName;
-                }
-            }
-
-            return name;
         }
 
         function setupEventListeners() {
@@ -2283,17 +2289,7 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
                 let prompt = userQuery;
                 let responseType = "general";
 
-                // Kiểm tra nếu là truy vấn về quốc gia
-                if (isCountryQuery(userQuery) && !isBattleQuery(userQuery) && !isFigureQuery(userQuery) && !isLandmarkQuery(userQuery)) {
-                    // Xử lý bằng API Gemini thay vì dữ liệu cứng
-                    responseType = "country";
-                    prompt = `
-Cung cấp thông tin lịch sử về quốc gia "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}.
-Trả lời với định dạng văn bản có tiêu đề, không phải JSON.
-Bao gồm: lịch sử hình thành, các triều đại/vương triều quan trọng, các sự kiện nổi bật, và ý nghĩa lịch sử.
-Giữ phản hồi ngắn gọn khoảng 300 từ.
-                    `;
-                } else if (isFigureQuery(userQuery)) {
+                if (isFigureQuery(userQuery)) {
                     responseType = "figure";
                     prompt = `
 TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về nhân vật lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
@@ -2361,10 +2357,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
 
                 console.log("Phản hồi từ Gemini:", botReply);
 
-                if (responseType === "country") {
-                    // Hiển thị trực tiếp văn bản cho quốc gia
-                    addMessageToUI("assistant", botReply);
-                } else if (responseType === "landmark") {
+                if (responseType === "landmark") {
                     try {
                         let jsonStr = botReply;
                         if (jsonStr.includes('```json')) {
@@ -2406,15 +2399,12 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         resultMessages.appendChild(resultContainer);
 
                         if (landmarkData.lat && landmarkData.lng) {
-                            // Di chuyển globe đến vị trí
                             globe.pointOfView({ lat: landmarkData.lat, lng: landmarkData.lng, altitude: 1.5 });
                         }
 
-                        // Tạo sơ đồ tư duy bằng markmap
                         const mindmapDiv = createMindmapContainerSieuNgau(landmarkData.name || userQuery, translations[currentLanguage].landmark_mindmap_title);
                         resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
 
-                        // Tạo nội dung Markdown cho markmap từ dữ liệu
                         const markdownContent = generateLandmarkMarkdown(landmarkData);
                         await renderMarkmap(mindmapDiv, markdownContent);
 
@@ -2592,75 +2582,37 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
 
             if (isBattle) {
                 let narration = `Trận ${data.name || 'lịch sử'} diễn ra vào ${data.time || 'thời gian không xác định'}. `;
-                if (data.location) {
-                    narration += `Trận chiến diễn ra tại ${data.location}. `;
-                }
-                if (data.troops) {
-                    narration += `Quân số tham chiến: ${data.troops}. `;
-                }
-                if (data.tactics) {
-                    narration += `Chiến thuật được sử dụng: ${data.tactics}. `;
-                }
-                if (data.casualties) {
-                    narration += `Thương vong: ${data.casualties}. `;
-                }
-                if (data.heroes && data.heroes.length > 0) {
-                    narration += `Anh hùng tiêu biểu: ${data.heroes.join(', ')}. `;
-                }
-                if (data.key_locations && data.key_locations.length > 0) {
-                    narration += `Các địa điểm quan trọng: ${data.key_locations.join(', ')}. `;
-                }
-                if (data.factions && data.factions.length > 0) {
-                    narration += `Các phe tham gia gồm: ${data.factions.join(' và ')}. `;
-                }
-                if (data.timeline && data.timeline.length > 0) {
+                if (data.location) narration += `Trận chiến diễn ra tại ${data.location}. `;
+                if (data.troops) narration += `Quân số tham chiến: ${data.troops}. `;
+                if (data.tactics) narration += `Chiến thuật được sử dụng: ${data.tactics}. `;
+                if (data.casualties) narration += `Thương vong: ${data.casualties}. `;
+                if (data.heroes?.length) narration += `Anh hùng tiêu biểu: ${data.heroes.join(', ')}. `;
+                if (data.key_locations?.length) narration += `Các địa điểm quan trọng: ${data.key_locations.join(', ')}. `;
+                if (data.factions?.length) narration += `Các phe tham gia gồm: ${data.factions.join(' và ')}. `;
+                if (data.timeline?.length) {
                     narration += `Diễn biến chính của trận chiến: `;
                     data.timeline.forEach((event, index) => {
                         narration += `Sự kiện ${index + 1}: ${event}. `;
                     });
                 }
-                if (data.outcome) {
-                    narration += `Kết quả: ${data.outcome}. `;
-                }
-                if (data.significance) {
-                    narration += `Ý nghĩa lịch sử: ${data.significance}. `;
-                }
+                if (data.outcome) narration += `Kết quả: ${data.outcome}. `;
+                if (data.significance) narration += `Ý nghĩa lịch sử: ${data.significance}. `;
                 return narration;
             } else if (isLandmark) {
                 let narration = `Địa danh ${data.name || 'lịch sử'} tại ${data.location || 'địa điểm không xác định'}. `;
-                if (data.build_time) {
-                    narration += `Được xây dựng vào: ${data.build_time}. `;
-                }
-                if (data.purpose) {
-                    narration += `Mục đích xây dựng: ${data.purpose}. `;
-                }
-                if (data.architecture) {
-                    narration += `Đặc điểm kiến trúc: ${data.architecture}. `;
-                }
-                if (data.contents && data.contents.length > 0) {
-                    narration += `Các công trình nổi bật bên trong gồm: ${data.contents.join(', ')}. `;
-                }
-                if (data.builders && data.builders.length > 0) {
-                    narration += `Những người xây dựng: ${data.builders.join(', ')}. `;
-                }
-                if (data.dynasty) {
-                    narration += `Thuộc triều đại: ${data.dynasty}. `;
-                }
+                if (data.build_time) narration += `Được xây dựng vào: ${data.build_time}. `;
+                if (data.purpose) narration += `Mục đích xây dựng: ${data.purpose}. `;
+                if (data.architecture) narration += `Đặc điểm kiến trúc: ${data.architecture}. `;
+                if (data.contents?.length) narration += `Các công trình nổi bật bên trong gồm: ${data.contents.join(', ')}. `;
+                if (data.builders?.length) narration += `Những người xây dựng: ${data.builders.join(', ')}. `;
+                if (data.dynasty) narration += `Thuộc triều đại: ${data.dynasty}. `;
                 return narration;
             } else if (isFigure) {
                 let narration = `Nhân vật lịch sử ${data.name || 'không xác định'} sống vào ${data.time || 'thời gian không xác định'}. `;
-                if (data.location) {
-                    narration += `Nơi sinh hoặc hoạt động chính: ${data.location}. `;
-                }
-                if (data.summary) {
-                    narration += `Tóm tắt tiểu sử: ${data.summary}. `;
-                }
-                if (data.achievements && data.achievements.length > 0) {
-                    narration += `Các thành tựu nổi bật: ${data.achievements.join('; ')}. `;
-                }
-                if (data.significance) {
-                    narration += `Ý nghĩa lịch sử: ${data.significance}. `;
-                }
+                if (data.location) narration += `Nơi sinh hoặc hoạt động chính: ${data.location}. `;
+                if (data.summary) narration += `Tóm tắt tiểu sử: ${data.summary}. `;
+                if (data.achievements?.length) narration += `Các thành tựu nổi bật: ${data.achievements.join('; ')}. `;
+                if (data.significance) narration += `Ý nghĩa lịch sử: ${data.significance}. `;
                 return narration;
             }
             return "";
@@ -2819,7 +2771,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             return container;
         }
 
-        // ==================== SƠ ĐỒ TƯ DUY SIÊU NGẦU ====================
         function createMindmapContainerSieuNgau(title, mindmapTitle) {
             const mindmapDiv = document.createElement('div');
             mindmapDiv.className = 'mindmap-sieu-ngau';
@@ -2857,7 +2808,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         }
                     }
                     
-                    // Fit ngay lập tức khi mở rộng
                     setTimeout(() => {
                         if (this.mm) {
                             this.mm.fit();
@@ -2869,7 +2819,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             return mindmapDiv;
         }
 
-        // ==================== TẠO NỘI DUNG MARKDOWN CHO MARKMAP ====================
         function generateBattleMarkdown(battleData) {
             const safeText = (text) => {
                 if (!text) return "";
@@ -3049,23 +2998,19 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 const contentDiv = container.querySelector('.mindmap-content');
                 if (!contentDiv) return;
 
-                // Tạo container cho markmap
                 const mindmapContainer = document.createElement('div');
                 mindmapContainer.className = 'mindmap-container';
                 mindmapContainer.id = 'mindmap-' + Math.random().toString(36).substr(2, 9);
                 contentDiv.innerHTML = '';
                 contentDiv.appendChild(mindmapContainer);
 
-                // Tạo svg element
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('width', '100%');
                 svg.setAttribute('height', '100%');
                 mindmapContainer.appendChild(svg);
 
-                // Transform markdown thành root node
                 const { root } = transformer.transform(markdown);
 
-                // Tạo markmap instance
                 const { Markmap } = window.markmap;
                 const mm = Markmap.create(svg, {
                     duration: 500,
@@ -3076,10 +3021,8 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                     fitRatio: 0.95,
                 }, root);
 
-                // Lưu instance vào container để sử dụng cho các nút zoom
                 container.mm = mm;
 
-                // Gán các nút điều khiển
                 const zoomInBtn = container.querySelector('.zoom-in');
                 const zoomOutBtn = container.querySelector('.zoom-out');
                 const saveImageBtn = container.querySelector('.save-image');
@@ -3126,11 +3069,9 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                     });
                 }
 
-                // Fit sau khi render
                 setTimeout(() => {
                     mm.fit();
                     
-                    // Thêm class cho root node
                     const rootNode = svg.querySelector('.markmap-node');
                     if (rootNode) {
                         rootNode.classList.add('root-node');
@@ -3205,7 +3146,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
     </div>
     <div class="battle-box">
         <h3><i class="fas fa-crown"></i> ${translations[currentLanguage].battle_commanders}</h3>
-        <ul>${commandersHtml || `<li>${translations[currentLanguage].unknown</li>`}</ul>
+        <ul>${commandersHtml || `<li>${translations[currentLanguage].unknown}</li>`}</ul>
     </div>
     ${data.outcome ? `
     <div class="battle-box">
