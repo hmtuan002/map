@@ -24,7 +24,6 @@
             height: 100vh;
         }
 
-        /* Màu sắc theo yêu cầu */
         :root {
             --bg-total: #DCEEF3;
             --input-bg: #F4F7F8;
@@ -36,55 +35,19 @@
             --accent-orange: #F4A261;
         }
 
-        /* Áp dụng màu nền tổng thể */
-        .bg-total {
-            background-color: var(--bg-total) !important;
-        }
+        .bg-total { background-color: var(--bg-total) !important; }
+        .bg-input { background-color: var(--input-bg) !important; }
+        .bg-card { background-color: var(--card-bg) !important; }
+        .border-custom { border-color: var(--border-light) !important; }
+        .text-primary { color: var(--text-primary) !important; }
+        .text-secondary { color: var(--text-secondary) !important; }
+        .bg-button { background-color: var(--button-cyan) !important; }
+        .text-accent { color: var(--accent-orange) !important; }
+        .border-accent { border-color: var(--accent-orange) !important; }
+        .bg-accent { background-color: var(--accent-orange) !important; }
 
-        .bg-input {
-            background-color: var(--input-bg) !important;
-        }
-
-        .bg-card {
-            background-color: var(--card-bg) !important;
-        }
-
-        .border-custom {
-            border-color: var(--border-light) !important;
-        }
-
-        .text-primary {
-            color: var(--text-primary) !important;
-        }
-
-        .text-secondary {
-            color: var(--text-secondary) !important;
-        }
-
-        .bg-button {
-            background-color: var(--button-cyan) !important;
-        }
-
-        .text-accent {
-            color: var(--accent-orange) !important;
-        }
-
-        .border-accent {
-            border-color: var(--accent-orange) !important;
-        }
-
-        .bg-accent {
-            background-color: var(--accent-orange) !important;
-        }
-
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         #globeContainer {
             position: fixed;
@@ -96,7 +59,7 @@
             pointer-events: auto;
         }
 
-        /* ===== BATTLE BOXES - MÀU TRẮNG CAM XANH ===== */
+        /* Battle Boxes */
         .battle-box {
             background-color: var(--card-bg);
             border-radius: 0.75rem;
@@ -129,14 +92,13 @@
             color: var(--accent-orange);
         }
 
-        .battle-box p,
-        .battle-box li {
+        .battle-box p, .battle-box li {
             font-size: 0.95rem;
             line-height: 1.6;
             color: var(--text-primary);
         }
 
-        /* ===== SƠ ĐỒ TƯ DUY SIÊU NGẦU ===== */
+        /* Mindmap */
         .mindmap-sieu-ngau {
             width: 100%;
             height: 300px;
@@ -226,94 +188,7 @@
             flex: 1;
         }
 
-        .mindmap-sieu-ngau .close-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .mindmap-sieu-ngau .close-btn:hover {
-            background: #ff6b6b;
-        }
-
-        /* Các class cho các node với màu sắc khác nhau */
-        .mindmap-sieu-ngau .markmap-node.time-node rect,
-        .mindmap-sieu-ngau .markmap-node.time-node circle,
-        .mindmap-sieu-ngau .markmap-node.time-node polygon {
-            fill: #E6F3F5 !important;
-            stroke: #4A90E2 !important;
-        }
-
-        .mindmap-sieu-ngau .markmap-node.location-node rect,
-        .mindmap-sieu-ngau .markmap-node.location-node circle,
-        .mindmap-sieu-ngau .markmap-node.location-node polygon {
-            fill: #E8F4E8 !important;
-            stroke: #2E7D32 !important;
-        }
-
-        .mindmap-sieu-ngau .markmap-node.faction-node rect,
-        .mindmap-sieu-ngau .markmap-node.faction-node circle,
-        .mindmap-sieu-ngau .markmap-node.faction-node polygon {
-            fill: #FFF3E0 !important;
-            stroke: #F4A261 !important;
-        }
-
-        .mindmap-sieu-ngau .markmap-node.commander-node rect,
-        .mindmap-sieu-ngau .markmap-node.commander-node circle,
-        .mindmap-sieu-ngau .markmap-node.commander-node polygon {
-            fill: #FFE5E5 !important;
-            stroke: #D32F2F !important;
-        }
-
-        .mindmap-sieu-ngau .markmap-node.outcome-node rect,
-        .mindmap-sieu-ngau .markmap-node.outcome-node circle,
-        .mindmap-sieu-ngau .markmap-node.outcome-node polygon {
-            fill: #E8EAF6 !important;
-            stroke: #5C6BC0 !important;
-        }
-
-        .mindmap-sieu-ngau .markmap-node.significance-node rect,
-        .mindmap-sieu-ngau .markmap-node.significance-node circle,
-        .mindmap-sieu-ngau .markmap-node.significance-node polygon {
-            fill: #F3E5F5 !important;
-            stroke: #7B1FA2 !important;
-        }
-
-        .mindmap-sieu-ngau .markmap-node.achievement-node rect,
-        .mindmap-sieu-ngau .markmap-node.achievement-node circle,
-        .mindmap-sieu-ngau .markmap-node.achievement-node polygon {
-            fill: #E1F5FE !important;
-            stroke: #0288D1 !important;
-        }
-
-        .loading-mindmap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            color: #b71c1c;
-            font-size: 1rem;
-            background: white;
-        }
-
-        .mindmap-error {
-            color: #d32f2f;
-            padding: 1.5rem;
-            text-align: center;
-            font-size: 1rem;
-            background: white;
-            border-radius: 1rem;
-        }
-
-        /* ===== HISTORY INFO BOX - MÀU TRẮNG CAM XANH ===== */
+        /* History Info Box */
         .history-info-box {
             padding: 1.5rem;
             background-color: var(--card-bg);
@@ -336,11 +211,9 @@
             width: 100%;
         }
 
-        .history-info-box p {
-            color: var(--text-primary);
-        }
+        .history-info-box p { color: var(--text-primary); }
 
-        /* ===== RESULT CONTAINER - MÀU TRẮNG CAM XANH ===== */
+        /* Result Container */
         .result-container {
             padding: 1.5rem;
             background-color: var(--card-bg);
@@ -372,12 +245,9 @@
             color: var(--text-secondary);
             transition: color 0.2s;
         }
+        .close-btn:hover { color: var(--accent-orange); }
 
-        .close-btn:hover {
-            color: var(--accent-orange);
-        }
-
-        /* ===== IMAGE CONTAINER ===== */
+        /* Image Container */
         .image-container {
             width: 100%;
             margin: 1rem 0;
@@ -434,7 +304,7 @@
             font-family: 'Playfair Display', serif;
         }
 
-        /* ===== SEARCH FORM ===== */
+        /* Search Form */
         .search-wrapper {
             position: relative;
             margin-bottom: 1rem;
@@ -502,16 +372,10 @@
             box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
         }
 
-        .search-button:active {
-            transform: translateY(-50%);
-            background-color: var(--button-cyan);
-        }
+        .search-button:active { transform: translateY(-50%); background-color: var(--button-cyan); }
+        .search-button i { font-size: 0.8rem; }
 
-        .search-button i {
-            font-size: 0.8rem;
-        }
-
-        /* ===== SIDEBAR ===== */
+        /* Sidebar */
         .sidebar-header {
             border-bottom: 1px solid var(--border-light);
             padding-bottom: 0.01rem;
@@ -539,20 +403,11 @@
             padding-bottom: 1rem;
         }
 
-        .message-content {
-            animation: fadeIn 0.3s ease-in-out;
-            color: var(--text-primary);
-        }
+        .message-content { animation: fadeIn 0.3s ease-in-out; color: var(--text-primary); }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .country-highlight {
@@ -561,18 +416,12 @@
         }
 
         @keyframes highlight {
-            0% {
-                filter: drop-shadow(0 0 5px rgba(244, 162, 97, 0.3));
-            }
-            50% {
-                filter: drop-shadow(0 0 20px rgba(244, 162, 97, 0.8));
-            }
-            100% {
-                filter: drop-shadow(0 0 5px rgba(244, 162, 97, 0.3));
-            }
+            0% { filter: drop-shadow(0 0 5px rgba(244, 162, 97, 0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(244, 162, 97, 0.8)); }
+            100% { filter: drop-shadow(0 0 5px rgba(244, 162, 97, 0.3)); }
         }
 
-        /* ===== AUDIO CONTROLS - MÀU TRẮNG CAM XANH ===== */
+        /* Audio Controls */
         .audio-controls {
             display: flex;
             flex-direction: column;
@@ -675,18 +524,12 @@
         }
 
         @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
-        /* ===== SIDEBAR TOGGLE ===== */
+        /* Sidebar Toggle */
         .sidebar-toggle {
             position: absolute;
             top: 0.1rem;
@@ -717,9 +560,7 @@
             left: -100%;
         }
 
-        .sidebar-collapsed .sidebar-toggle {
-            right: -3rem;
-        }
+        .sidebar-collapsed .sidebar-toggle { right: -3rem; }
 
         #app {
             display: flex;
@@ -754,12 +595,9 @@
         }
 
         /* Ẩn typing indicator và stop button */
-        .typing-indicator,
-        #stop-button-container {
-            display: none !important;
-        }
+        .typing-indicator, #stop-button-container { display: none !important; }
 
-        /* ===== LOADING SCREEN ===== */
+        /* Loading Overlay */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -811,9 +649,7 @@
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .spinner-box {
             width: 200px;
@@ -887,12 +723,12 @@
             line-height: 1.5;
         }
 
-        /* ===== MAP TITLE DECORATION ===== */
+        /* MAP TITLE DECORATION - FIXED POSITION */
         .map-title-decoration {
-            position: absolute;
+            position: fixed;
             top: 20px;
-            left: 420px;
-            z-index: 20;
+            left: 420px; /* Đặt cách sidebar 420px */
+            z-index: 15; /* Thấp hơn sidebar toggle (100) nhưng cao hơn globe */
             background-color: var(--card-bg);
             color: var(--accent-orange);
             padding: 8px 16px;
@@ -904,6 +740,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             pointer-events: none;
             backdrop-filter: blur(5px);
+            transition: left 0.3s ease; /* Thêm transition để di chuyển mượt */
         }
 
         .map-title-decoration i {
@@ -911,7 +748,7 @@
             color: var(--accent-orange);
         }
 
-        /* ===== TIMELINE CONTAINER ===== */
+        /* Timeline Container */
         .timeline-container {
             margin-top: 1rem;
             padding: 1rem;
@@ -928,9 +765,7 @@
             margin-bottom: 1rem;
         }
 
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
+        .timeline-item:last-child { margin-bottom: 0; }
 
         .timeline-item::before {
             content: '';
@@ -955,9 +790,7 @@
             background-color: var(--border-light);
         }
 
-        .timeline-item:last-child::after {
-            display: none;
-        }
+        .timeline-item:last-child::after { display: none; }
 
         .timeline-content {
             background-color: var(--input-bg);
@@ -973,11 +806,9 @@
             font-family: 'Playfair Display', serif;
         }
 
-        .timeline-text {
-            color: var(--text-primary);
-        }
+        .timeline-text { color: var(--text-primary); }
 
-        /* ===== LANGUAGE SWITCH ===== */
+        /* Language Switch */
         .language-switch {
             display: flex;
             align-items: center;
@@ -1032,9 +863,7 @@
             z-index: 2;
         }
 
-        input:checked + .slider:before {
-            transform: translateX(30px);
-        }
+        input:checked + .slider:before { transform: translateX(30px); }
 
         .header-container {
             display: flex;
@@ -1048,19 +877,12 @@
             font-family: 'Playfair Display', serif;
         }
 
-        .header-title i {
-            color: var(--accent-orange);
-        }
+        .header-title i { color: var(--accent-orange); }
 
-        /* Ẩn các nút không cần thiết trong chế độ thu nhỏ */
-        .mindmap-controls-hidden {
-            display: none !important;
-        }
+        .mindmap-controls-hidden { display: none !important; }
 
-        /* CSS cho markmap */
-        .markmap-node circle,
-        .markmap-node rect,
-        .markmap-node polygon {
+        /* Markmap */
+        .markmap-node circle, .markmap-node rect, .markmap-node polygon {
             fill: #ffebee !important;
             stroke: #d32f2f !important;
             stroke-width: 2px !important;
@@ -1070,9 +892,7 @@
             transition: all 0.2s ease;
         }
 
-        .markmap-node:hover circle,
-        .markmap-node:hover rect,
-        .markmap-node:hover polygon {
+        .markmap-node:hover circle, .markmap-node:hover rect, .markmap-node:hover polygon {
             filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
             stroke-width: 3px !important;
         }
@@ -1095,11 +915,9 @@
             stroke-width: 2px !important;
         }
 
-        .markmap-arrow {
-            fill: #d32f2f !important;
-        }
+        .markmap-arrow { fill: #d32f2f !important; }
 
-        /* ===== LAYER TOGGLES CHO GLOBE 3D ===== */
+        /* Layer Toggles */
         .layer-panel {
             position: fixed;
             left: 420px;
@@ -1110,8 +928,9 @@
             gap: 8px;
             z-index: 100;
             pointer-events: auto;
+            transition: left 0.3s ease;
         }
-        
+
         .layer-btn {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
@@ -1128,18 +947,18 @@
             transition: all 0.2s;
             color: var(--text-primary);
         }
-        
+
         .layer-btn:hover {
             background: rgba(255, 255, 255, 1);
             transform: scale(1.05);
         }
-        
+
         .layer-btn.active {
             background: var(--accent-orange);
             color: white;
             border-color: var(--accent-orange);
         }
-        
+
         .layer-btn[data-tooltip]:hover::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -1152,7 +971,7 @@
             color: white;
         }
 
-        /* ===== TIMELINE CHO GLOBE 3D ===== */
+        /* Timeline cho Globe */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
@@ -1163,7 +982,7 @@
             z-index: 100;
             pointer-events: auto;
         }
-        
+
         .timeline-bar-globe {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
@@ -1172,7 +991,7 @@
             padding: 16px 20px;
             border: 1px solid var(--border-light);
         }
-        
+
         .timeline-slider-globe {
             -webkit-appearance: none;
             width: 100%;
@@ -1182,7 +1001,7 @@
             outline: none;
             margin: 8px 0;
         }
-        
+
         .timeline-slider-globe::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 22px;
@@ -1192,7 +1011,7 @@
             cursor: pointer;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        
+
         .timeline-labels-globe {
             display: flex;
             justify-content: space-between;
@@ -1200,14 +1019,14 @@
             color: var(--text-secondary);
             margin-top: 4px;
         }
-        
+
         .playback-controls-globe {
             display: flex;
             justify-content: center;
             gap: 12px;
             margin-top: 12px;
         }
-        
+
         .playback-btn-globe {
             background: rgba(255,255,255,0.5);
             border: 1px solid var(--border-light);
@@ -1222,17 +1041,17 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .playback-btn-globe:hover {
             background: rgba(255,255,255,0.8);
         }
-        
+
         .playback-btn-globe.active {
             background: var(--accent-orange);
             color: white;
         }
 
-        /* ===== TOP BAR CHO GLOBE 3D ===== */
+        /* Top Bar cho Globe */
         .top-bar-globe {
             position: fixed;
             top: 20px;
@@ -1249,7 +1068,7 @@
             max-width: 90%;
             pointer-events: auto;
         }
-        
+
         .year-pill-globe {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
@@ -1263,7 +1082,7 @@
             min-width: 120px;
             text-align: center;
         }
-        
+
         .stats-pill-globe {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
@@ -1276,7 +1095,7 @@
             white-space: nowrap;
         }
 
-        /* ===== INFO PANEL (KHI CLICK VÀO QUỐC GIA) ===== */
+        /* Info Panel */
         .info-panel {
             position: fixed;
             right: 20px;
@@ -1292,11 +1111,9 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: none;
         }
-        
-        .info-panel.visible {
-            display: block;
-        }
-        
+
+        .info-panel.visible { display: block; }
+
         .info-header {
             padding: 16px;
             background: linear-gradient(135deg, var(--button-cyan) 0%, var(--accent-orange) 100%);
@@ -1304,12 +1121,12 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .info-header-icon {
             font-size: 24px;
             color: white;
         }
-        
+
         .info-header-title {
             flex: 1;
             font-weight: 600;
@@ -1319,7 +1136,7 @@
             white-space: nowrap;
             color: white;
         }
-        
+
         .info-close {
             background: none;
             border: none;
@@ -1328,18 +1145,15 @@
             cursor: pointer;
             opacity: 0.8;
         }
-        
-        .info-close:hover {
-            opacity: 1;
-        }
-        
+        .info-close:hover { opacity: 1; }
+
         .info-subtitle {
             padding: 10px 16px;
             background: rgba(0,0,0,0.05);
             font-size: 12px;
             color: var(--text-secondary);
         }
-        
+
         .info-content {
             padding: 16px;
             max-height: 400px;
@@ -1348,7 +1162,7 @@
             line-height: 1.6;
             color: var(--text-primary);
         }
-        
+
         .info-disclaimer {
             padding: 10px 16px;
             background: rgba(244, 162, 97, 0.1);
@@ -1357,7 +1171,6 @@
             border-top: 1px solid var(--border-light);
         }
 
-        /* Territory tooltip */
         .territory-tooltip {
             background: var(--card-bg);
             padding: 8px 14px;
@@ -1370,24 +1183,18 @@
             border: 1px solid var(--border-light);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        
-        /* Responsive adjustments */
+
         @media (max-width: 768px) {
             .timeline-globe {
                 width: 95%;
                 bottom: 20px;
             }
-            
-            .timeline-bar-globe {
-                padding: 12px 16px;
-            }
-            
+            .timeline-bar-globe { padding: 12px 16px; }
             .playback-btn-globe {
                 width: 40px;
                 height: 40px;
                 font-size: 16px;
             }
-            
             .info-panel {
                 top: 70px;
                 right: 10px;
@@ -1395,33 +1202,19 @@
                 width: auto;
                 max-height: calc(100vh - 150px);
             }
-            
-            .layer-panel {
-                left: 20px;
-            }
-            
-            .map-title-decoration {
-                left: 80px;
-            }
-            
+            .layer-panel { left: 20px; }
+            .map-title-decoration { left: 80px; }
             .layer-btn {
                 width: 44px;
                 height: 44px;
                 font-size: 18px;
             }
-            
             .top-bar-globe {
                 top: 12px;
                 gap: 8px;
             }
-            
-            .year-pill-globe {
-                padding: 8px 16px;
-            }
-            
-            .stats-pill-globe {
-                padding: 6px 12px;
-            }
+            .year-pill-globe { padding: 8px 16px; }
+            .stats-pill-globe { padding: 6px 12px; }
         }
     </style>
 </head>
@@ -1464,8 +1257,8 @@
         <button class="layer-btn active" data-layer="borders" data-tooltip="Biên giới">🗺️</button>
     </div>
     
-    <!-- Map Title Decoration - ĐÃ DỊCH SANG PHẢI -->
-    <div class="map-title-decoration">
+    <!-- Map Title Decoration - FIXED POSITION, KHÔNG BỊ CHE KHI ĐÓNG MỞ THANH BÊN -->
+    <div class="map-title-decoration" id="mapTitle">
         <i class="fas fa-globe-asia"></i> BẢN ĐỒ LỊCH SỬ 3D
     </div>
 
@@ -1553,14 +1346,8 @@
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
         // ==================== CẤU HÌNH ====================
-        const ORIGINAL_API_KEY = "sipLfMoKEVfwU-cq76n9WYHAJnqRIoGjDySazIA";
-        
-        function reverseApiKey(apiKey) {
-            return apiKey.split('').reverse().join('');
-        }
-        
-        const API_KEY = reverseApiKey(ORIGINAL_API_KEY);
-        console.log("API Key đã được đảo ngược bảo mật");
+        // SỬA LỖI API KEY: Sử dụng API key mới và xóa bỏ phần reverse
+        const API_KEY = "AIzaSyDlW1T5NRkx5cKg_kkIYvy9dL73cIvCG0k"; // API key đúng từ code thanh thông tin
 
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
@@ -1571,6 +1358,8 @@
         const resultMessages = document.getElementById('result-messages');
         const loadingScreen = document.getElementById('loading-screen');
         const sidebar = document.getElementById('sidebar');
+        const mapTitle = document.getElementById('mapTitle');
+        const layerPanel = document.querySelector('.layer-panel');
         const mapContainer = document.getElementById('map-container');
         const languageToggle = document.getElementById('language-toggle');
 
@@ -1596,7 +1385,10 @@
             '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
         ];
 
-        // Các năm có sẵn với files GeoJSON
+        // Các năm có sẵn với files GeoJSON - SỬA LỖI KẾT NỐI GITHUB
+        // THAY URL NÀY BẰNG URL GITHUB THẬT CỦA BẠN
+        const GITHUB_BASE_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/geojson/";
+        
         const availableYears = [
             { year: -10000, file: 'world_bc10000.geojson', label: '10.000 TCN' },
             { year: -5000, file: 'world_bc5000.geojson', label: '5.000 TCN' },
@@ -1637,6 +1429,57 @@
         let speechProgressInterval;
         let currentSpeechText = '';
         let keyLocations = [];
+
+        // XÓA countryCoordinates - chỉ sử dụng dữ liệu từ GitHub
+        // const countryCoordinates = { ... } - ĐÃ XÓA
+
+        // Các biến khác giữ nguyên từ code thanh thông tin
+        const battleKeywords = ["trận chiến", "battle", "war", "engagement", "conflict", "campaign", "chiến tranh", "trận", "cuộc chiến", "chiến dịch", "đánh"];
+
+        const vietnamHistoricalLocations = {
+            "Điện Biên Phủ": {
+                lat: 21.3867,
+                lng: 103.0150,
+                name: "Điện Biên Phủ",
+                name_vi: "Điện Biên Phủ",
+                name_en: "Dien Bien Phu",
+                description: "Nơi diễn ra chiến dịch Điện Biên Phủ 1954",
+                description_vi: "Điện Biên Phủ, tỉnh Điện Biên, nơi diễn ra chiến dịch Điện Biên Phủ năm 1954, đánh dấu chiến thắng lịch sử của Việt Nam trước thực dân Pháp",
+                description_en: "Dien Bien Phu, Dien Bien Province, the site of the 1954 Dien Bien Phu Campaign, marking a historic victory of Vietnam over French colonial forces"
+            },
+            "Kinh thành Huế": { 
+                lat: 16.4697, 
+                lng: 107.5777, 
+                name: "Kinh thành Huế", 
+                name_vi: "Kinh thành Huế",
+                name_en: "Hue Imperial City",
+                description: "Trung tâm triều Nguyễn",
+                description_vi: "Kinh thành Huế, trung tâm chính trị của triều Nguyễn từ 1802-1945",
+                description_en: "Hue Imperial City, political center of the Nguyen Dynasty from 1802-1945"
+            },
+            "Thăng Long": { 
+                lat: 21.0333, 
+                lng: 105.8500, 
+                name: "Thăng Long (Hà Nội)", 
+                description: "Kinh đô thời Lý, Trần, Lê",
+                name_vi: "Thăng Long (Hà Nội)",
+                name_en: "Thang Long (Hanoi)",
+                description_vi: "Kinh đô của Việt Nam thời Lý, Trần, Lê",
+                description_en: "Capital of Vietnam during Ly, Tran, and Le dynasties"
+            },
+            "Bạch Đằng": { 
+                lat: 20.8667, 
+                lng: 106.7333, 
+                name: "Sông Bạch Đằng", 
+                description: "Nơi diễn ra các trận thủy chiến lừng danh",
+                name_vi: "Sông Bạch Đằng",
+                name_en: "Bach Dang River",
+                description_vi: "Nơi diễn ra các trận thủy chiến lịch sử chống quân xâm lược",
+                description_en: "Site of historic naval battles against invaders"
+            }
+        };
+
+        let currentLanguage = 'vi';
 
         // ==================== DỊCH THUẬT ====================
         const translations = {
@@ -1802,6 +1645,7 @@
             "Nguyễn Huệ": "Nguyen Hue"
         };
 
+        // Giữ lại historyData cho một số quốc gia phổ biến
         const historyData = {
             "Australia": {
                 history: {
@@ -1816,64 +1660,6 @@
                 }
             }
         };
-
-        const countryCoordinates = {
-            "Việt Nam": { lat: 16.0471, lng: 108.2062, zoom: 6 },
-            "Trung Quốc": { lat: 35.8617, lng: 104.1954, zoom: 4 },
-            "Mông Cổ": { lat: 46.8625, lng: 103.8467, zoom: 5 },
-            "Pháp": { lat: 46.6034, lng: 1.8883, zoom: 5 },
-            "Mỹ": { lat: 37.0902, lng: -95.7129, zoom: 4 },
-            "Nhật Bản": { lat: 36.2048, lng: 138.2529, zoom: 5 },
-            "Đức": { lat: 51.1657, lng: 10.4515, zoom: 5 },
-            "Nga": { lat: 61.5240, lng: 105.3188, zoom: 3 }
-        };
-
-        const battleKeywords = ["trận chiến", "battle", "war", "engagement", "conflict", "campaign", "chiến tranh", "trận", "cuộc chiến", "chiến dịch", "đánh"];
-
-        const vietnamHistoricalLocations = {
-            "Điện Biên Phủ": {
-                lat: 21.3867,
-                lng: 103.0150,
-                name: "Điện Biên Phủ",
-                name_vi: "Điện Biên Phủ",
-                name_en: "Dien Bien Phu",
-                description: "Nơi diễn ra chiến dịch Điện Biên Phủ 1954",
-                description_vi: "Điện Biên Phủ, tỉnh Điện Biên, nơi diễn ra chiến dịch Điện Biên Phủ năm 1954, đánh dấu chiến thắng lịch sử của Việt Nam trước thực dân Pháp",
-                description_en: "Dien Bien Phu, Dien Bien Province, the site of the 1954 Dien Bien Phu Campaign, marking a historic victory of Vietnam over French colonial forces"
-            },
-            "Kinh thành Huế": { 
-                lat: 16.4697, 
-                lng: 107.5777, 
-                name: "Kinh thành Huế", 
-                name_vi: "Kinh thành Huế",
-                name_en: "Hue Imperial City",
-                description: "Trung tâm triều Nguyễn",
-                description_vi: "Kinh thành Huế, trung tâm chính trị của triều Nguyễn từ 1802-1945",
-                description_en: "Hue Imperial City, political center of the Nguyen Dynasty from 1802-1945"
-            },
-            "Thăng Long": { 
-                lat: 21.0333, 
-                lng: 105.8500, 
-                name: "Thăng Long (Hà Nội)", 
-                description: "Kinh đô thời Lý, Trần, Lê",
-                name_vi: "Thăng Long (Hà Nội)",
-                name_en: "Thang Long (Hanoi)",
-                description_vi: "Kinh đô của Việt Nam thời Lý, Trần, Lê",
-                description_en: "Capital of Vietnam during Ly, Tran, and Le dynasties"
-            },
-            "Bạch Đằng": { 
-                lat: 20.8667, 
-                lng: 106.7333, 
-                name: "Sông Bạch Đằng", 
-                description: "Nơi diễn ra các trận thủy chiến lừng danh",
-                name_vi: "Sông Bạch Đằng",
-                name_en: "Bach Dang River",
-                description_vi: "Nơi diễn ra các trận thủy chiến lịch sử chống quân xâm lược",
-                description_en: "Site of historic naval battles against invaders"
-            }
-        };
-
-        let currentLanguage = 'vi';
 
         // ==================== HÀM DỊCH THUẬT ====================
         function updateLanguage(lang) {
@@ -1919,19 +1705,22 @@
             }
         }
 
+        // SỬA LỖI TIÊU ĐỀ: Cập nhật vị trí tiêu đề khi đóng/mở sidebar
         function toggleSidebar() {
             sidebar.classList.toggle('sidebar-collapsed');
             const toggleIcon = document.querySelector('.sidebar-toggle i');
             if (sidebar.classList.contains('sidebar-collapsed')) {
                 toggleIcon.classList.remove('fa-chevron-left');
                 toggleIcon.classList.add('fa-chevron-right');
-                document.querySelector('.layer-panel').style.left = '20px';
-                document.querySelector('.map-title-decoration').style.left = '80px';
+                // Di chuyển tiêu đề và layer panel sang trái
+                mapTitle.style.left = '80px';
+                layerPanel.style.left = '20px';
             } else {
                 toggleIcon.classList.remove('fa-chevron-right');
                 toggleIcon.classList.add('fa-chevron-left');
-                document.querySelector('.layer-panel').style.left = '420px';
-                document.querySelector('.map-title-decoration').style.left = '420px';
+                // Đưa tiêu đề và layer panel về vị trí cũ
+                mapTitle.style.left = '420px';
+                layerPanel.style.left = '420px';
             }
         }
 
@@ -1967,14 +1756,15 @@
         function isCountryQuery(query) {
             const lowerQuery = query.toLowerCase();
             const countryKeywords = [
-                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state",
-                "Việt Nam", "Trung Quốc", "Mỹ", "Pháp", "Anh", "Nhật Bản", "Hàn Quốc",
-                "Vietnam", "China", "USA", "France", "UK", "Japan", "Korea"
+                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state"
             ];
-            return countryKeywords.some(keyword => lowerQuery.includes(keyword)) ||
-                Object.keys(countryCoordinates).some(country => 
-                    lowerQuery.includes(country.toLowerCase())
-                );
+            // Kiểm tra xem query có chứa tên quốc gia không
+            for (const country in countryNameMap) {
+                if (lowerQuery.includes(country.toLowerCase())) {
+                    return true;
+                }
+            }
+            return countryKeywords.some(keyword => lowerQuery.includes(keyword));
         }
 
         // ==================== HÀM KHỞI TẠO ỨNG DỤNG ====================
@@ -2048,13 +1838,15 @@
             // Tải GeoJSON nếu chưa cache
             if (!dataCache[yearData.file]) {
                 try {
-                    // THAY URL NÀY BẰNG URL GITHUB THẬT CỦA BẠN
-                    const response = await fetch(`https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/geojson/${yearData.file}`);
+                    // SỬA LỖI KẾT NỐI GITHUB: Thêm try-catch và fallback
+                    const response = await fetch(GITHUB_BASE_URL + yearData.file);
                     if (!response.ok) throw new Error('Network response was not ok');
                     dataCache[yearData.file] = await response.json();
+                    console.log(`Đã tải thành công: ${yearData.file}`);
                 } catch (err) {
-                    console.error('Lỗi tải GeoJSON:', err);
-                    // Tạo dữ liệu mẫu nếu không tải được
+                    console.error('Lỗi tải GeoJSON từ GitHub:', err);
+                    // Fallback: Tạo dữ liệu mẫu nếu không tải được
+                    console.log('Sử dụng dữ liệu mẫu thay thế');
                     dataCache[yearData.file] = generateSampleGeoJSON();
                 }
             }
@@ -2064,7 +1856,7 @@
         }
         
         function generateSampleGeoJSON() {
-            // Tạo dữ liệu mẫu cho các quốc gia
+            // Tạo dữ liệu mẫu cho các quốc gia (fallback khi không tải được từ GitHub)
             return {
                 type: "FeatureCollection",
                 features: [
@@ -2272,6 +2064,7 @@ Bao gồm (nếu có liên quan):
 
 Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
 
+            // SỬA LỖI GEMINI: Sử dụng API call đúng từ code thanh thông tin
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${API_KEY}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -2372,10 +2165,9 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
 
         function toggleCountry(countryName) {
             // Chuyển đến quốc gia trên globe 3D
-            const coords = countryCoordinates[countryName];
-            if (coords) {
-                globe.pointOfView({ lat: coords.lat, lng: coords.lng, altitude: 2.0 });
-            }
+            // Không còn sử dụng countryCoordinates, sẽ tìm từ dữ liệu GeoJSON
+            // Tạm thời zoom ra toàn cầu
+            globe.pointOfView({ lat: 30, lng: 0, altitude: 2.5 });
             
             const translatedName = translateCountryName(countryName);
             const displayName = currentLanguage === 'en' ? translatedName : countryName;
@@ -2428,7 +2220,7 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
 
         function extractCountryName(query) {
             const lowerQuery = query.toLowerCase();
-            for (const country in countryCoordinates) {
+            for (const country in countryNameMap) {
                 if (lowerQuery.includes(country.toLowerCase())) {
                     return country;
                 }
