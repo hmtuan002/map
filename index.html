@@ -29,6 +29,7 @@
             height: 100vh;
         }
 
+        /* Màu sắc theo yêu cầu */
         :root {
             --bg-total: #DCEEF3;
             --input-bg: #F4F7F8;
@@ -40,6 +41,7 @@
             --accent-orange: #F4A261;
         }
 
+        /* Áp dụng màu nền tổng thể */
         .bg-total {
             background-color: var(--bg-total) !important;
         }
@@ -134,16 +136,7 @@
             color: var(--text-primary);
         }
 
-        .battle-box li {
-            margin-left: 1.5rem;
-            padding-left: 0.5rem;
-            list-style-type: disc;
-        }
-
-        .battle-box li::marker {
-            color: var(--accent-orange);
-        }
-
+        /* ===== SƠ ĐỒ TƯ DUY SIÊU NGẦU (TỪ CODE GỐC) ===== */
         .mindmap-sieu-ngau {
             width: 100%;
             height: 300px;
@@ -199,7 +192,7 @@
         .mindmap-sieu-ngau .control-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
+            color: var(--accent-orange);
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -214,6 +207,7 @@
         .mindmap-sieu-ngau .control-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: scale(1.1);
+            color: white;
         }
 
         .mindmap-sieu-ngau .mindmap-content {
@@ -244,54 +238,60 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
         }
 
         .mindmap-sieu-ngau .close-btn:hover {
             background: #ff6b6b;
         }
 
-        .markmap-node circle,
-        .markmap-node rect,
-        .markmap-node polygon {
-            fill: #ffebee !important;
-            stroke: #d32f2f !important;
-            stroke-width: 2px !important;
-            rx: 8px !important;
-            ry: 8px !important;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-            transition: all 0.2s ease;
+        /* Các class cho các node với màu sắc khác nhau */
+        .mindmap-sieu-ngau .markmap-node.time-node rect,
+        .mindmap-sieu-ngau .markmap-node.time-node circle,
+        .mindmap-sieu-ngau .markmap-node.time-node polygon {
+            fill: #E6F3F5 !important;
+            stroke: #4A90E2 !important;
         }
 
-        .markmap-node:hover circle,
-        .markmap-node:hover rect,
-        .markmap-node:hover polygon {
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-            stroke-width: 3px !important;
+        .mindmap-sieu-ngau .markmap-node.location-node rect,
+        .mindmap-sieu-ngau .markmap-node.location-node circle,
+        .mindmap-sieu-ngau .markmap-node.location-node polygon {
+            fill: #E8F4E8 !important;
+            stroke: #2E7D32 !important;
         }
 
-        .markmap-node text {
-            fill: #b71c1c !important;
-            font-family: 'Playfair Display', serif !important;
-            font-size: 14px !important;
-            font-weight: 500 !important;
+        .mindmap-sieu-ngau .markmap-node.faction-node rect,
+        .mindmap-sieu-ngau .markmap-node.faction-node circle,
+        .mindmap-sieu-ngau .markmap-node.faction-node polygon {
+            fill: #FFF3E0 !important;
+            stroke: #F4A261 !important;
         }
 
-        .markmap-node.root-node text {
-            font-size: 18px !important;
-            font-weight: 700 !important;
-            fill: #d32f2f !important;
+        .mindmap-sieu-ngau .markmap-node.commander-node rect,
+        .mindmap-sieu-ngau .markmap-node.commander-node circle,
+        .mindmap-sieu-ngau .markmap-node.commander-node polygon {
+            fill: #FFE5E5 !important;
+            stroke: #D32F2F !important;
         }
 
-        .markmap-link path {
-            stroke: #d32f2f !important;
-            stroke-width: 2px !important;
+        .mindmap-sieu-ngau .markmap-node.outcome-node rect,
+        .mindmap-sieu-ngau .markmap-node.outcome-node circle,
+        .mindmap-sieu-ngau .markmap-node.outcome-node polygon {
+            fill: #E8EAF6 !important;
+            stroke: #5C6BC0 !important;
         }
 
-        .markmap-arrow {
-            fill: #d32f2f !important;
+        .mindmap-sieu-ngau .markmap-node.significance-node rect,
+        .mindmap-sieu-ngau .markmap-node.significance-node circle,
+        .mindmap-sieu-ngau .markmap-node.significance-node polygon {
+            fill: #F3E5F5 !important;
+            stroke: #7B1FA2 !important;
+        }
+
+        .mindmap-sieu-ngau .markmap-node.achievement-node rect,
+        .mindmap-sieu-ngau .markmap-node.achievement-node circle,
+        .mindmap-sieu-ngau .markmap-node.achievement-node polygon {
+            fill: #E1F5FE !important;
+            stroke: #0288D1 !important;
         }
 
         .loading-mindmap {
@@ -339,20 +339,6 @@
             color: var(--text-primary);
         }
 
-        .history-info-box .close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            cursor: pointer;
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            transition: color 0.2s;
-        }
-
-        .history-info-box .close-btn:hover {
-            color: var(--accent-orange);
-        }
-
         .result-container {
             padding: 1.5rem;
             background-color: var(--card-bg);
@@ -379,18 +365,51 @@
             font-family: 'Playfair Display', serif;
         }
 
+        /* FIX 2 & 3: Dấu chấm đen thụt vào và dấu X ở góc trên bên phải */
+        .battle-box ul {
+            padding-left: 1.5rem;
+            list-style-position: outside;
+        }
+
+        .battle-box li {
+            margin-left: 0.5rem;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 1.75rem;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-orange);
+        }
+
+        /* FIX 5: Điều chỉnh vị trí nút đóng và nút chuyển ngôn ngữ */
+        .history-info-box .close-btn,
         .result-container .close-btn {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            cursor: pointer;
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            transition: color 0.2s;
         }
 
-        .result-container .close-btn:hover {
-            color: var(--accent-orange);
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-right: 2rem;
+        }
+
+        .language-switch {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            margin-right: 0;
         }
 
         .image-container {
@@ -401,30 +420,6 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border-light);
             position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .image-container .close-btn {
-            position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            cursor: pointer;
-            font-size: 1.25rem;
-            color: white;
-            background: rgba(0, 0, 0, 0.5);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            z-index: 10;
-        }
-
-        .image-container .close-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-            color: var(--accent-orange);
         }
 
         .image-container.expanded {
@@ -436,8 +431,8 @@
             z-index: 1000;
             margin: 0;
             border-radius: 0;
-            padding: 2rem;
-            background-color: rgba(0, 0, 0, 0.9);
+            padding: 1rem;
+            background-color: var(--card-bg);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -452,16 +447,14 @@
             border-radius: 0;
             transition: all 0.3s ease;
             display: block;
-            cursor: zoom-in;
         }
 
         .image-container.expanded .image-content {
             width: auto;
             height: auto;
-            max-width: 95%;
-            max-height: 90%;
+            max-width: 90%;
+            max-height: 80%;
             object-fit: contain;
-            cursor: zoom-out;
         }
 
         .image-title {
@@ -476,6 +469,7 @@
             font-family: 'Playfair Display', serif;
         }
 
+        /* Thiết kế mới cho form tìm kiếm */
         .search-wrapper {
             position: relative;
             margin-bottom: 1rem;
@@ -519,6 +513,7 @@
         .search-button {
             position: absolute;
             top: 50%;
+            bottom: auto;
             right: 0.5rem;
             transform: translateY(-50%);
             background-color: var(--button-cyan);
@@ -723,34 +718,6 @@
             box-shadow: 0 0 0 2px rgba(110, 198, 217, 0.3);
         }
 
-        .figure-marker {
-            background-color: #9C27B0;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.3);
-        }
-
-        .landmark-marker {
-            background-color: #2196F3;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
-        }
-
         @keyframes pulse {
             0% {
                 transform: scale(1);
@@ -833,6 +800,7 @@
             border-radius: 0;
         }
 
+        /* Ẩn typing indicator và stop button */
         .typing-indicator,
         #stop-button-container {
             display: none !important;
@@ -1038,12 +1006,6 @@
             color: var(--text-primary);
         }
 
-        .language-switch {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-        }
-
         .switch {
             position: relative;
             display: inline-block;
@@ -1094,13 +1056,6 @@
             transform: translateX(30px);
         }
 
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
         .header-title h2 {
             color: var(--accent-orange);
             font-family: 'Playfair Display', serif;
@@ -1110,86 +1065,51 @@
             color: var(--accent-orange);
         }
 
+        /* Ẩn các nút không cần thiết trong chế độ thu nhỏ */
         .mindmap-controls-hidden {
             display: none !important;
         }
 
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
+        /* CSS cho markmap từ code gốc */
+        .markmap-node circle,
+        .markmap-node rect,
+        .markmap-node polygon {
+            fill: #ffebee !important;
+            stroke: #d32f2f !important;
+            stroke-width: 2px !important;
+            rx: 8px !important;
+            ry: 8px !important;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: all 0.2s ease;
         }
 
-        .info-row i {
-            color: var(--accent-orange);
-            margin-top: 0.25rem;
-            min-width: 1.25rem;
+        .markmap-node:hover circle,
+        .markmap-node:hover rect,
+        .markmap-node:hover polygon {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            stroke-width: 3px !important;
         }
 
-        .info-content {
-            flex: 1;
+        .markmap-node text {
+            fill: #b71c1c !important;
+            font-family: 'Playfair Display', serif !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
         }
 
-        .info-content p {
-            margin: 0;
-            line-height: 1.5;
+        .markmap-node.root-node text {
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            fill: #d32f2f !important;
         }
 
-        .info-content ul {
-            margin: 0;
-            padding-left: 1.25rem;
+        .markmap-link path {
+            stroke: #d32f2f !important;
+            stroke-width: 2px !important;
         }
 
-        .info-content li {
-            margin-left: 0;
-            padding-left: 0.25rem;
-            list-style-type: disc;
-        }
-
-        .info-content li::marker {
-            color: var(--accent-orange);
-        }
-
-        .message-content {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-
-        .message-content ul,
-        .message-content ol {
-            padding-left: 1.5rem;
-            margin: 0.5rem 0;
-        }
-
-        .message-content li {
-            margin-left: 0;
-            padding-left: 0.25rem;
-            list-style-type: disc;
-        }
-
-        .message-content li::marker {
-            color: var(--accent-orange);
-        }
-
-        .country-info-content {
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 0.5rem;
-        }
-
-        .country-info-content::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .country-info-content::-webkit-scrollbar-track {
-            background: var(--border-light);
-            border-radius: 2px;
-        }
-
-        .country-info-content::-webkit-scrollbar-thumb {
-            background: var(--accent-orange);
-            border-radius: 2px;
+        .markmap-arrow {
+            fill: #d32f2f !important;
         }
     </style>
 </head>
@@ -1251,6 +1171,7 @@
 
             <div class="content-container">
                 <div id="result-messages" class="flex flex-col gap-4 w-full"></div>
+                <!-- Đã ẩn typing-indicator và stop-button-container bằng CSS -->
             </div>
         </div>
 
@@ -1273,6 +1194,7 @@
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
+        // ==================== CẤU HÌNH ====================
         const ORIGINAL_API_KEY = "opW247Di-0FIVt7ik_Pnij73b34xmWFEDySazIA";
         
         function reverseApiKey(apiKey) {
@@ -1285,6 +1207,7 @@
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
+        // ==================== BIẾN TOÀN CỤC ====================
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
         const resultMessages = document.getElementById('result-messages');
@@ -1308,11 +1231,12 @@
         let speechProgressInterval;
         let currentSpeechText = '';
         let keyLocations = [];
-        let figureMarkers = [];
-        let landmarkMarkers = [];
+        let currentMindmapInstance = null; // Lưu instance markmap hiện tại để zoom
 
+        // ==================== BIẾN MARKMAP (TỪ CODE GỐC) ====================
         let transformer = null;
 
+        // ==================== DỊCH THUẬT ====================
         const translations = {
             vi: {
                 title: "Bản Đồ Lịch Sử",
@@ -1549,6 +1473,7 @@
 
         let currentLanguage = 'vi';
 
+        // ==================== HÀM DỊCH THUẬT ====================
         function updateLanguage(lang) {
             currentLanguage = lang;
             document.documentElement.lang = lang;
@@ -1648,6 +1573,7 @@
                 );
         }
 
+        // ==================== HÀM KHỞI TẠO ỨNG DỤNG ====================
         function initApp() {
             initMap();
             setupEventListeners();
@@ -1655,6 +1581,7 @@
             languageToggle.addEventListener('change', toggleLanguage);
             checkUrlParameters();
 
+            // Khởi tạo Markmap Transformer
             const { Transformer } = window.markmap;
             transformer = new Transformer();
         }
@@ -1769,7 +1696,7 @@
                         <i class="fas fa-times"></i>
                     </span>
                 </h2>
-                <div class="country-info-content mt-4">
+                <div class="mt-4">
                     <p class="mb-4">${historyData[translatedName]?.history[currentLanguage] || translations[currentLanguage].no_summary}</p>
                     <div class="flex items-center text-sm text-secondary">
                         <i class="fas fa-info-circle mr-2"></i>
@@ -1865,20 +1792,6 @@
             });
             keyLocations = [];
             
-            figureMarkers.forEach(marker => {
-                if (marker && marker.remove) {
-                    marker.remove();
-                }
-            });
-            figureMarkers = [];
-            
-            landmarkMarkers.forEach(marker => {
-                if (marker && marker.remove) {
-                    marker.remove();
-                }
-            });
-            landmarkMarkers = [];
-            
             if (countryLayer) {
                 map.removeLayer(countryLayer);
                 countryLayer = null;
@@ -1886,6 +1799,7 @@
             stopSpeech();
         }
 
+        // ==================== XỬ LÝ TÌM KIẾM CHÍNH ====================
         async function handleSubmit(e) {
             if (e) e.preventDefault();
 
@@ -2055,22 +1969,24 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         resultMessages.appendChild(resultContainer);
 
                         if (landmarkData.lat && landmarkData.lng) {
-                            addLandmarkMarker(landmarkData.lat, landmarkData.lng, landmarkData.name || userQuery);
+                            addMarker(landmarkData.lat, landmarkData.lng, landmarkData.name || userQuery);
                             const zoomLevel = landmarkData.lat < 10 || landmarkData.lat > 30 ? 6 : 10;
                             map.setView([landmarkData.lat, landmarkData.lng], zoomLevel);
                         } else if (landmarkData.location) {
                             const location = await getLocationCoordinates(landmarkData.location);
                             if (location && location.lat && location.lng) {
-                                addLandmarkMarker(location.lat, location.lng, landmarkData.name || userQuery);
+                                addMarker(location.lat, location.lng, landmarkData.name || userQuery);
                                 const zoomLevel = location.lat < 10 || location.lat > 30 ? 6 : 10;
                                 map.setView([location.lat, location.lng], zoomLevel);
                             }
                         }
 
                         if (!isStopped) {
+                            // Tạo sơ đồ tư duy bằng markmap
                             const mindmapDiv = createMindmapContainerSieuNgau(landmarkData.name || userQuery, translations[currentLanguage].landmark_mindmap_title);
                             resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
 
+                            // Tạo nội dung Markdown cho markmap từ dữ liệu
                             const markdownContent = generateLandmarkMarkdown(landmarkData);
                             await renderMarkmap(mindmapDiv, markdownContent);
 
@@ -2136,13 +2052,13 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         resultMessages.appendChild(resultContainer);
 
                         if (figureData.lat && figureData.lng) {
-                            addFigureMarker(figureData.lat, figureData.lng, figureData.name || userQuery);
+                            addMarker(figureData.lat, figureData.lng, figureData.name || userQuery);
                             const zoomLevel = figureData.lat < 10 || figureData.lat > 30 ? 6 : 10;
                             map.setView([figureData.lat, figureData.lng], zoomLevel);
                         } else if (figureData.location) {
                             const location = await getLocationCoordinates(figureData.location);
                             if (location && location.lat && location.lng) {
-                                addFigureMarker(location.lat, location.lng, figureData.name || userQuery);
+                                addMarker(location.lat, location.lng, figureData.name || userQuery);
                                 const zoomLevel = location.lat < 10 || location.lat > 30 ? 6 : 10;
                                 map.setView([location.lat, location.lng], zoomLevel);
                             }
@@ -2624,10 +2540,10 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             container.innerHTML = `
                 <div class="result-title">
                     <span>${title}</span>
+                    <span class="close-btn" onclick="this.parentElement.parentElement.remove();">
+                        <i class="fas fa-times"></i>
+                    </span>
                 </div>
-                <span class="close-btn" onclick="this.closest('.result-container').remove();">
-                    <i class="fas fa-times"></i>
-                </span>
                 <div class="result-content mt-4"></div>
             `;
             return container;
@@ -2637,12 +2553,12 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             const container = document.createElement('div');
             container.className = 'image-container';
             container.innerHTML = `
-                <div class="image-title">
+                <div class="image-title relative">
                     ${translations[currentLanguage].picture}: ${title}
+                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </span>
                 </div>
-                <span class="close-btn" onclick="this.closest('.image-container').remove()">
-                    <i class="fas fa-times"></i>
-                </span>
                 <img src="${imageUrl}" alt="${title}" class="image-content" />
             `;
             
@@ -2653,6 +2569,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             return container;
         }
 
+        // ==================== SƠ ĐỒ TƯ DUY SIÊU NGẦU (TỪ CODE GỐC) ====================
         function createMindmapContainerSieuNgau(title, mindmapTitle) {
             const mindmapDiv = document.createElement('div');
             mindmapDiv.className = 'mindmap-sieu-ngau';
@@ -2672,9 +2589,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         </button>
                     </div>
                 </div>
-                <span class="close-btn" onclick="this.closest('.mindmap-sieu-ngau').classList.remove('expanded');">
-                    <i class="fas fa-times"></i>
-                </span>
                 <div class="mindmap-content">
                     <div class="loading-mindmap">${translations[currentLanguage].ai_assistant}</div>
                 </div>
@@ -2693,6 +2607,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         }
                     }
                     
+                    // Fit ngay lập tức khi mở rộng
                     setTimeout(() => {
                         if (this.mm) {
                             this.mm.fit();
@@ -2704,6 +2619,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             return mindmapDiv;
         }
 
+        // ==================== TẠO NỘI DUNG MARKDOWN CHO MARKMAP ====================
         function generateBattleMarkdown(battleData) {
             const safeText = (text) => {
                 if (!text) return "";
@@ -2883,19 +2799,23 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 const contentDiv = container.querySelector('.mindmap-content');
                 if (!contentDiv) return;
 
+                // Tạo container cho markmap
                 const mindmapContainer = document.createElement('div');
                 mindmapContainer.className = 'mindmap-container';
                 mindmapContainer.id = 'mindmap-' + Math.random().toString(36).substr(2, 9);
                 contentDiv.innerHTML = '';
                 contentDiv.appendChild(mindmapContainer);
 
+                // Tạo svg element
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('width', '100%');
                 svg.setAttribute('height', '100%');
                 mindmapContainer.appendChild(svg);
 
+                // Transform markdown thành root node
                 const { root } = transformer.transform(markdown);
 
+                // Tạo markmap instance
                 const { Markmap } = window.markmap;
                 const mm = Markmap.create(svg, {
                     duration: 500,
@@ -2906,8 +2826,11 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                     fitRatio: 0.95,
                 }, root);
 
+                // Lưu instance vào container để sử dụng cho các nút zoom
                 container.mm = mm;
+                currentMindmapInstance = mm;
 
+                // Gán các nút điều khiển
                 const zoomInBtn = container.querySelector('.zoom-in');
                 const zoomOutBtn = container.querySelector('.zoom-out');
                 const saveImageBtn = container.querySelector('.save-image');
@@ -2930,33 +2853,93 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                     });
                 }
 
+                // FIX 4 & 7: Cho phép zoom và lưu ảnh ở chế độ toàn màn hình
                 if (saveImageBtn) {
-                    saveImageBtn.addEventListener('click', (e) => {
+                    saveImageBtn.addEventListener('click', async (e) => {
                         e.stopPropagation();
+                        
+                        // Kiểm tra xem sơ đồ tư duy có đang ở chế độ mở rộng không
+                        const isExpanded = container.classList.contains('expanded');
+                        
+                        // Nếu chưa mở rộng, tạm thời mở rộng để chụp ảnh full
+                        if (!isExpanded) {
+                            container.classList.add('expanded');
+                            const controls = container.querySelector('.mindmap-controls');
+                            if (controls) {
+                                controls.classList.remove('mindmap-controls-hidden');
+                            }
+                            // Chờ cho việc mở rộng hoàn tất và fit
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                            if (container.mm) {
+                                container.mm.fit();
+                            }
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                        }
+
                         const svg = container.querySelector('svg');
                         if (svg) {
-                            const svgData = new XMLSerializer().serializeToString(svg);
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            const img = new Image();
-                            img.onload = () => {
-                                canvas.width = img.width;
-                                canvas.height = img.height;
-                                ctx.drawImage(img, 0, 0);
-                                const link = document.createElement('a');
-                                const title = container.querySelector('.mindmap-title span')?.textContent || 'mindmap';
-                                link.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_mindmap.png`;
-                                link.href = canvas.toDataURL('image/png');
-                                link.click();
-                            };
-                            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                            try {
+                                // Lấy kích thước thực tế của SVG
+                                const bbox = svg.getBBox();
+                                const svgData = new XMLSerializer().serializeToString(svg);
+                                
+                                // Tạo canvas với kích thước phù hợp
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                const img = new Image();
+                                
+                                img.onload = () => {
+                                    // Đặt kích thước canvas theo kích thước ảnh
+                                    canvas.width = img.width;
+                                    canvas.height = img.height;
+                                    ctx.drawImage(img, 0, 0);
+                                    
+                                    const link = document.createElement('a');
+                                    const title = container.querySelector('.mindmap-title span')?.textContent || 'mindmap';
+                                    link.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_mindmap.png`;
+                                    link.href = canvas.toDataURL('image/png');
+                                    link.click();
+                                    
+                                    // Nếu không phải chế độ mở rộng ban đầu, đóng lại
+                                    if (!isExpanded) {
+                                        container.classList.remove('expanded');
+                                        const controls = container.querySelector('.mindmap-controls');
+                                        if (controls) {
+                                            controls.classList.add('mindmap-controls-hidden');
+                                        }
+                                        if (container.mm) {
+                                            container.mm.fit();
+                                        }
+                                    }
+                                };
+                                
+                                // Thêm style để đảm bảo ảnh rõ nét
+                                const style = '<style>* { margin: 0; padding: 0; } svg { background: white; }</style>';
+                                const svgWithStyle = svgData.replace('<svg', `<svg xmlns="http://www.w3.org/2000/svg"`);
+                                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(style + svgWithStyle)));
+                            } catch (error) {
+                                console.error("Lỗi khi lưu ảnh:", error);
+                                // Nếu có lỗi, đảm bảo đóng chế độ mở rộng nếu cần
+                                if (!isExpanded) {
+                                    container.classList.remove('expanded');
+                                    const controls = container.querySelector('.mindmap-controls');
+                                    if (controls) {
+                                        controls.classList.add('mindmap-controls-hidden');
+                                    }
+                                    if (container.mm) {
+                                        container.mm.fit();
+                                    }
+                                }
+                            }
                         }
                     });
                 }
 
+                // Fit sau khi render
                 setTimeout(() => {
                     mm.fit();
                     
+                    // Thêm class cho root node
                     const rootNode = svg.querySelector('.markmap-node');
                     if (rootNode) {
                         rootNode.classList.add('root-node');
@@ -2992,52 +2975,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 .bindPopup(`<div class="font-medium text-accent">${title}</div>`)
                 .openPopup();
             markers.push(marker);
-        }
-
-        function addFigureMarker(lat, lng, title) {
-            figureMarkers.forEach(marker => {
-                if (marker && marker.remove) {
-                    marker.remove();
-                }
-            });
-            figureMarkers = [];
-            
-            const marker = L.marker([lat, lng], {
-                icon: L.divIcon({
-                    className: 'custom-marker',
-                    html: `<div class="figure-marker">
-                              <i class="fas fa-user"></i>
-                          </div>`,
-                    iconSize: [28, 28],
-                    iconAnchor: [14, 28]
-                })
-            }).addTo(map)
-                .bindPopup(`<div class="font-medium text-accent">${title}</div>`)
-                .openPopup();
-            figureMarkers.push(marker);
-        }
-
-        function addLandmarkMarker(lat, lng, title) {
-            landmarkMarkers.forEach(marker => {
-                if (marker && marker.remove) {
-                    marker.remove();
-                }
-            });
-            landmarkMarkers = [];
-            
-            const marker = L.marker([lat, lng], {
-                icon: L.divIcon({
-                    className: 'custom-marker',
-                    html: `<div class="landmark-marker">
-                              <i class="fas fa-landmark"></i>
-                          </div>`,
-                    iconSize: [28, 28],
-                    iconAnchor: [14, 28]
-                })
-            }).addTo(map)
-                .bindPopup(`<div class="font-medium text-accent">${title}</div>`)
-                .openPopup();
-            landmarkMarkers.push(marker);
         }
 
         function formatBattleData(data) {
@@ -3100,7 +3037,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
     </div>
     <div class="battle-box">
         <h3><i class="fas fa-crown"></i> ${translations[currentLanguage].battle_commanders}</h3>
-        <ul>${commandersHtml || `<li>${translations[currentLanguage].unknown}</li>`}</ul>
+        <ul>${commandersHtml || `<li>${translations[currentLanguage].unknown</li>`}</ul>
     </div>
     ${data.outcome ? `
     <div class="battle-box">
@@ -3218,7 +3155,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 <div class="inline-block max-w-[85%] rounded-xl p-4 ${bubbleClass} relative">
                     <div class="message-content">${translatedContent}</div>
                     ${role === 'assistant' ? `
-                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
+                    <span class="close-btn" onclick="this.parentElement.parentElement.remove()">
                         <i class="fas fa-times"></i>
                     </span>
                     ` : ''}
