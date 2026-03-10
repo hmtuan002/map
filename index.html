@@ -63,7 +63,7 @@
         /* ==================== DẤU CHẤM VÀNG CHO THANH THÔNG TIN ==================== */
         .info-panel-content {
             padding: 16px;
-            max-height: 60vh;
+            max-height: 70vh; /* Tăng chiều cao tối đa lên 70vh */
             overflow-y: auto;
         }
         
@@ -309,6 +309,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             color: white;
+            padding-right: 30px; /* Tạo khoảng trống cho nút đóng */
         }
         
         .info-close {
@@ -550,25 +551,9 @@
             cursor: pointer;
         }
         
+        /* BỎ NÚT X TRÊN ẢNH */
         .image-container .close-btn {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            z-index: 10;
-            font-size: 1.5rem;
-            color: white;
-            background: rgba(0,0,0,0.5);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .image-container .close-btn:hover {
-            background: rgba(0,0,0,0.8);
-            color: white;
+            display: none !important;
         }
         
         .image-container.expanded {
@@ -625,6 +610,7 @@
             position: relative;
             margin-bottom: 1rem;
             margin-top: 1rem;
+            width: 100%;
         }
         
         #search-input {
@@ -644,6 +630,7 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            display: block;
         }
         
         #search-input:focus {
@@ -659,6 +646,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: normal;
+            opacity: 1;
         }
         
         .search-button {
@@ -678,6 +667,7 @@
             align-items: center;
             gap: 0.3rem;
             box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+            z-index: 2;
         }
         
         .search-button:hover { background-color: #5db8cc; }
@@ -701,7 +691,7 @@
             position: relative;
         }
         
-        /* Nút đóng sidebar - xuất hiện ở góc trái khi đóng */
+        /* Nút đóng sidebar - ban đầu ở góc phải thanh sidebar */
         .sidebar-toggle {
             position: absolute;
             top: 50%;
@@ -729,7 +719,8 @@
         
         /* Khi sidebar đóng, nút xuất hiện ở góc trái màn hình */
         .sidebar-collapsed + #map-container .sidebar-toggle,
-        .sidebar-collapsed ~ * .sidebar-toggle {
+        .sidebar-collapsed ~ * .sidebar-toggle,
+        #sidebar.sidebar-collapsed ~ .sidebar-toggle {
             right: auto;
             left: 20px;
             top: 20px;
@@ -1514,7 +1505,7 @@
                 <div id="result-messages" class="flex flex-col gap-4 w-full"></div>
             </div>
         </div>
-        <!-- Nút đóng sidebar sẽ xuất hiện ở góc trái khi đóng -->
+        <!-- Nút đóng sidebar - sẽ di chuyển ra góc trái khi sidebar đóng -->
         <div class="sidebar-toggle" onclick="toggleSidebar()">
             <i class="fas fa-chevron-left"></i>
         </div>
@@ -3333,16 +3324,23 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             container.innerHTML = `
                 <div class="image-title relative">
                     ${translations[currentLanguage].picture}: ${title}
-                    <span class="close-btn" onclick="event.stopPropagation(); this.parentElement.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </span>
+                    <!-- ĐÃ BỎ NÚT X Ở ĐÂY -->
                 </div>
                 <img src="${imageUrl}" alt="${title}" class="image-content" />
             `;
             
-            container.querySelector('.image-content').addEventListener('click', function(e) {
+            // Thêm sự kiện click vào ảnh để phóng to/thu nhỏ
+            const imgElement = container.querySelector('.image-content');
+            imgElement.addEventListener('click', function(e) {
                 e.stopPropagation();
                 container.classList.toggle('expanded');
+            });
+            
+            // Thêm sự kiện click bên ngoài ảnh để thu nhỏ khi ở chế độ phóng to
+            container.addEventListener('click', function(e) {
+                if (container.classList.contains('expanded') && e.target === container) {
+                    container.classList.remove('expanded');
+                }
             });
             
             return container;
