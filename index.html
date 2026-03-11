@@ -491,127 +491,13 @@
         
         .mindmap-controls-hidden { display: none !important; }
         
-        /* ==================== RESULT CONTAINER ==================== */
-        .result-container {
-            padding: 1.5rem;
-            background-color: var(--card-bg);
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-light);
-            border-left: 4px solid var(--accent-orange);
-            transition: all 0.3s ease;
-            width: 100%;
-            position: relative;
-        }
-        
-        .result-container .result-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--accent-orange);
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'Playfair Display', serif;
-            padding-right: 40px;
-        }
-        
-        .close-btn {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            cursor: pointer;
-            font-size: 1.75rem;
-            color: var(--text-secondary);
-            transition: color 0.2s;
-            line-height: 1;
-            z-index: 10;
-        }
-        
-        .close-btn:hover { color: var(--accent-orange); }
-        
-        .history-info-box .close-btn {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-        }
-        
-        /* ==================== IMAGE CONTAINER ==================== */
-        .image-container {
-            width: 100%;
-            margin: 1rem 0;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border-light);
-            position: relative;
-            cursor: pointer;
-        }
-        
-        .image-container .close-btn {
-            display: none !important;
-        }
-        
-        .image-container.expanded {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2000;
-            margin: 0;
-            border-radius: 0;
-            padding: 2rem;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: default;
-        }
-        
-        .image-content {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 0;
-            transition: all 0.3s ease;
-            display: block;
-        }
-        
-        .image-container.expanded .image-content {
-            width: auto;
-            height: auto;
-            max-width: 90%;
-            max-height: 80%;
-            object-fit: contain;
-        }
-        
-        .image-title {
-            text-align: center;
-            font-weight: 600;
-            margin: 0;
-            padding: 0.75rem 1rem;
-            color: var(--accent-orange);
-            font-size: 1rem;
-            border-bottom: 1px solid var(--border-light);
-            background-color: var(--card-bg);
-            font-family: 'Playfair Display', serif;
-            position: relative;
-            padding-right: 40px;
-        }
-        
-        /* ==================== SEARCH ==================== */
+        /* ==================== CSS CHO Ô TÌM KIẾM (CODE MỚI) ==================== */
         .search-wrapper {
             position: relative;
             margin-bottom: 1rem;
             margin-top: 1rem;
-            width: 100%;
         }
-        
+
         #search-input {
             width: 100%;
             padding: 0.75rem 5rem 0.75rem 1.2rem;
@@ -621,24 +507,22 @@
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
-            line-height: 1.2;
+            line-height: 1.5;
             resize: none;
             transition: all 0.2s;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-            min-height: 42px;
+            height: 48px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
-            display: block;
-            height: 42px;
         }
-        
+
         #search-input:focus {
             outline: none;
             border-color: var(--accent-orange);
             box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
+
         #search-input::placeholder {
             color: var(--text-secondary);
             font-style: italic;
@@ -646,10 +530,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 42px;
-            opacity: 1;
         }
-        
+
         .search-button {
             position: absolute;
             top: 50%;
@@ -659,20 +541,31 @@
             color: white;
             border: none;
             border-radius: 2rem;
-            padding: 0.3rem 1rem;
+            padding: 0.4rem 1rem;
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
+            transition: none;
             display: flex;
             align-items: center;
             gap: 0.3rem;
             box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
-            z-index: 2;
         }
-        
-        .search-button:hover { background-color: #5db8cc; }
-        
-        .search-button i { font-size: 0.8rem; }
+
+        .search-button:hover {
+            background-color: #5db8cc;
+            transform: translateY(-50%);
+            box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+        }
+
+        .search-button:active {
+            transform: translateY(-50%);
+            background-color: var(--button-cyan);
+        }
+
+        .search-button i {
+            font-size: 0.8rem;
+        }
         
         /* ==================== SIDEBAR (CODE MỚI) ==================== */
         #app {
@@ -753,6 +646,14 @@
             position: relative;
         }
         
+        .header-title h2 {
+            color: var(--accent-orange);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+        
+        .header-title i { color: var(--accent-orange); }
+        
         .language-switch {
             display: flex;
             align-items: center;
@@ -807,14 +708,6 @@
         
         input:checked + .slider:before { transform: translateX(30px); }
         
-        .header-title h2 {
-            color: var(--accent-orange);
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-        }
-        
-        .header-title i { color: var(--accent-orange); }
-        
         .content-container {
             flex: 1;
             padding: 1rem;
@@ -836,11 +729,6 @@
         
         .message-content { animation: fadeIn 0.3s ease-in-out; color: var(--text-primary); }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
         .main-content {
             flex: 1;
             height: 100%;
@@ -851,7 +739,7 @@
             pointer-events: none;
         }
         
-        /* NÚT ĐÓNG CHUNG CHO TẤT CẢ CÁC HỘP */
+        /* ===== CÁC LOẠI NÚT ĐÓNG CHO HỘP THÔNG TIN ===== */
         .close-btn {
             position: absolute;
             top: 1rem;
@@ -869,13 +757,12 @@
             background: rgba(0, 0, 0, 0.05);
             z-index: 10;
         }
-        
+
         .close-btn:hover {
             color: var(--accent-orange);
             background: rgba(244, 162, 97, 0.1);
         }
-        
-        /* HỘP THÔNG TIN CƠ BẢN */
+
         .info-box {
             padding: 1.5rem;
             background-color: var(--card-bg);
@@ -886,15 +773,36 @@
             border-left: 4px solid var(--accent-orange);
             position: relative;
         }
-        
+
         .info-box h2 {
             color: var(--accent-orange);
             font-family: 'Playfair Display', serif;
             margin-bottom: 1rem;
             padding-right: 2rem;
         }
-        
-        /* HỘP THÔNG TIN LỊCH SỬ QUỐC GIA */
+
+        .result-container {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--accent-orange);
+            position: relative;
+        }
+
+        .result-container .result-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-right: 2rem;
+            font-family: 'Playfair Display', serif;
+        }
+
         .history-info-box {
             padding: 1.5rem;
             background-color: var(--card-bg);
@@ -905,14 +813,24 @@
             border-left: 4px solid var(--accent-orange);
             position: relative;
         }
-        
+
         .history-info-box h2 {
             color: var(--accent-orange);
             font-family: 'Playfair Display', serif;
             padding-right: 2rem;
             margin-bottom: 1rem;
         }
-        
+
+        .image-container {
+            width: 100%;
+            margin: 1rem 0;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            position: relative;
+        }
+
         .image-container .close-btn {
             position: absolute;
             top: 0.75rem;
@@ -921,12 +839,12 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 10;
         }
-        
+
         .image-container .close-btn:hover {
             background: rgba(0, 0, 0, 0.8);
             color: var(--accent-orange);
         }
-        
+
         .mindmap-sieu-ngau .close-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -943,9 +861,58 @@
             top: 0.5rem;
             right: 0.5rem;
         }
-        
+
         .mindmap-sieu-ngau .close-btn:hover {
             background: #ff6b6b;
+        }
+        
+        .image-container.expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            margin: 0;
+            border-radius: 0;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+        }
+        
+        .image-content {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .image-container.expanded .image-content {
+            width: auto;
+            height: auto;
+            max-width: 90%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .image-title {
+            text-align: center;
+            font-weight: 600;
+            margin: 0;
+            padding: 0.75rem 1rem;
+            color: var(--accent-orange);
+            font-size: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            background-color: var(--card-bg);
+            font-family: 'Playfair Display', serif;
+            position: relative;
+            padding-right: 40px;
         }
         
         /* ==================== AUDIO CONTROLS ==================== */
@@ -1311,6 +1278,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 0 auto;
         }
         
         @keyframes spin3D {
@@ -1468,7 +1436,7 @@
     
     <!-- TOP BAR (ĐÃ ẨN SỐ LƯỢNG QUỐC GIA) -->
     <div class="top-bar-globe" id="topBarGlobe">
-        <div class="year-pill-globe" id="yearDisplay">1000 AD</div>
+        <div class="year-pill-globe" id="yearDisplay">2.010 CN</div>
         <div class="stats-pill-globe" id="regionCount" style="display: none;">0 quốc gia</div>
     </div>
     
@@ -1501,13 +1469,14 @@
                             </label>
                         </div>
                     </div>
+
                     <form id="search-form" class="mt-2">
                         <div class="search-wrapper">
                             <textarea id="search-input" rows="1"
                                 class="w-full"
                                 placeholder="Nhập sự kiện lịch sử, nhân vật, địa điểm"></textarea>
                             <button type="submit" class="search-button">
-                                <i class="fas fa-paper-plane"></i>
+                                <i class="fas fa-paper-plane"></i> 
                             </button>
                         </div>
                     </form>
@@ -1564,13 +1533,17 @@
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
-        // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY ====================
-        function reverseString(str) {
-            return str.split('').reverse().join('');
+        // ==================== CẤU HÌNH API KEY ====================
+        const ORIGINAL_API_KEY = "opW247Di-0FIVt7ik_Pnij73b34xmWFEDySazIA";
+        
+        function reverseApiKey(apiKey) {
+            return apiKey.split('').reverse().join('');
         }
-        const reversedKey = "w9IA54gPxd1JLqKbGo9yh5foD35urULPCySazIA";
-        const API_KEY = reverseString(reversedKey);
+        
+        const API_KEY = reverseApiKey(ORIGINAL_API_KEY);
+        console.log("API Key đã được đảo ngược bảo mật");
 
+        // Khởi tạo Gemini AI
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
@@ -1601,6 +1574,11 @@
         let transformer = null;
         let currentGeoJSON = null;
         let currentLanguage = 'vi';
+        
+        let abortController = null;
+        let isSending = false;
+        let isStopped = false;
+        let currentQueries = [];
         
         let layers = {
             borders: true
@@ -1698,7 +1676,7 @@
             }
         };
         
-        // ==================== TRANSLATIONS (ĐÃ CẬP NHẬT ĐẦY ĐỦ) ====================
+        // ==================== TRANSLATIONS ====================
         const translations = {
             vi: {
                 title: "Bản Đồ Lịch Sử 3D",
@@ -2013,35 +1991,29 @@
             const figureKeywords = [
                 "nhân vật", "vua", "hoàng đế", "tướng", "anh hùng", "nhà thơ", "nhà văn",
                 "nguyễn huệ", "trần hưng đạo", "nguyễn khuyến", "quang trung",
-                "lý thường kiệt", "ngô quyền", "chủ tịch", "bí thư", "character", "king", "emperor", "general", "hero", "poet", "writer", "Nguyễn Huệ", "Trần Hưng Đạo", "Nguyễn Khuyến", "Quang Trung", "Lý Thường Kiệt", "Ngô Quyền", "president", "secretary"
+                "lý thường kiệt", "ngô quyền", "chủ tịch", "bí thư", "character", "king", 
+                "emperor", "general", "hero", "poet", "writer"
             ];
             return figureKeywords.some(keyword => lowerQuery.includes(keyword));
         }
-        
+
         function isLandmarkQuery(query) {
             const lowerQuery = query.toLowerCase();
             const landmarkKeywords = [
-                "kinh thành", "đền", "chùa", "di tích", "thành", "cung điện", "địa danh", "địa điểm", "lăng", "mộ",
-                "huế", "thăng long", "cổ loa", "mỹ sơn", "văn miếu", "capital city", "temple", "pagoda", "heritage site", "fortress", "palace", "geographical name", "location", "tomb", "grave", "Hue", "Thang Long", "Co Loa", "My Son", "Van Mieu"
+                "kinh thành", "đền", "chùa", "di tích", "thành", "cung điện", "địa danh", 
+                "địa điểm", "lăng", "mộ", "huế", "thăng long", "cổ loa", "mỹ sơn", "văn miếu",
+                "capital city", "temple", "pagoda", "heritage site", "fortress", "palace"
             ];
-            return landmarkKeywords.some(keyword => lowerQuery.includes(keyword)) ||
-                Object.keys(vietnamHistoricalLocations).some(loc =>
-                    lowerQuery.includes(loc.toLowerCase()) ||
-                    (vietnamHistoricalLocations[loc].name_en &&
-                        lowerQuery.includes(vietnamHistoricalLocations[loc].name_en.toLowerCase()))
-                );
+            return landmarkKeywords.some(keyword => lowerQuery.includes(keyword));
         }
-        
+
         function isCountryQuery(query) {
             const lowerQuery = query.toLowerCase();
             const countryKeywords = [
-                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state"
+                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state",
+                "Việt Nam", "Trung Quốc", "Mỹ", "Pháp", "Anh", "Nhật Bản", "Hàn Quốc",
+                "Vietnam", "China", "USA", "France", "UK", "Japan", "Korea"
             ];
-            for (const country in countryNameMap) {
-                if (lowerQuery.includes(country.toLowerCase())) {
-                    return true;
-                }
-            }
             return countryKeywords.some(keyword => lowerQuery.includes(keyword));
         }
         
@@ -2059,6 +2031,62 @@
                 }
             }
             return null;
+        }
+        
+        // ==================== HÀM TẠO PROMPT ====================
+        function createFigurePrompt(query) {
+            return `
+TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về nhân vật lịch sử "${query}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+{
+    "name": "Tên nhân vật",
+    "time": "Thời gian sống (năm sinh - năm mất)",
+    "location": "Địa điểm cụ thể liên quan (ưu tiên nơi sinh)",
+    "lat": 10.38,
+    "lng": 106.35,
+    "summary": "Tóm tắt tiểu sử",
+    "achievements": ["Danh sách thành tựu nổi bật"],
+    "significance": "Ý nghĩa lịch sử"
+}`;
+        }
+
+        function createBattlePrompt(query) {
+            return `
+TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin chi tiết về trận chiến lịch sử "${query}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+{
+    "name": "Tên trận chiến",
+    "time": "Thời gian diễn ra",
+    "location": "Địa điểm cụ thể diễn ra",
+    "lat": 10.38,
+    "lng": 106.35,
+    "summary": "Tóm tắt trận chiến",
+    "troops": "Quân số (ví dụ: '50.000 quân Việt Nam, 80.000 quân địch')",
+    "tactics": "Chiến thuật sử dụng trong trận (ví dụ: 'Tập kích, bao vây, phục kích')",
+    "casualties": "Thương vong (ví dụ: 'Việt Nam: 5.000, Địch: 20.000')",
+    "heroes": ["Danh sách anh hùng tiêu biểu trong trận"],
+    "key_locations": ["Địa điểm quan trọng 1", "Địa điểm quan trọng 2"],
+    "factions": ["Danh sách các phe tham gia"],
+    "commanders": {"Phe A": "Tên chỉ huy", "Phe B": "Tên chỉ huy"},
+    "timeline": ["Sự kiện 1", "Sự kiện 2", "Sự kiện 3"],
+    "outcome": "Kết quả trận chiến",
+    "significance": "Ý nghĩa lịch sử"
+}`;
+        }
+
+        function createLandmarkPrompt(query) {
+            return `
+TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về địa danh lịch sử "${query}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+{
+    "name": "Tên địa danh",
+    "location": "Địa điểm cụ thể (ví dụ: 'Huế, Thừa Thiên Huế')",
+    "lat": 16.4697,
+    "lng": 107.5777,
+    "build_time": "Thời gian xây dựng (ví dụ: '1804-1833' hoặc 'Thế kỷ 19')",
+    "purpose": "Mục đích xây dựng địa danh",
+    "architecture": "Phong cách kiến trúc hoặc đặc điểm kiến trúc",
+    "contents": ["Danh sách các công trình hoặc vật phẩm nổi bật bên trong"],
+    "builders": ["Danh sách những người có công xây dựng"],
+    "dynasty": "Triều đại liên quan"
+}`;
         }
         
         // ==================== INFO PANEL FUNCTIONS ====================
@@ -2712,16 +2740,27 @@ Keep response under 250 words. Use bullet points.`;
             stopSpeech();
         }
         
-        // ==================== MAIN HANDLER ====================
+        // ==================== HÀM XỬ LÝ SUBMIT FORM TÌM KIẾM ====================
         async function handleSubmit(e) {
             if (e) e.preventDefault();
-            stopSpeech();
+
             const userQuery = searchInput.value.trim();
-            if (!userQuery) return;
-            clearPreviousData();
+            if (!userQuery || isSending) return;
+
+            isSending = true;
+            isStopped = false;
+            
+            currentQueries.push({
+                role: "user",
+                content: userQuery,
+                timestamp: new Date().toISOString()
+            });
+
             searchInput.value = "";
             showLoadingScreen();
-            
+
+            abortController = new AbortController();
+
             try {
                 let prompt = userQuery;
                 let responseType = "general";
@@ -2730,345 +2769,179 @@ Keep response under 250 words. Use bullet points.`;
                     const countryName = extractCountryName(userQuery);
                     if (countryName) {
                         toggleCountry(countryName);
+                        isSending = false;
                         hideLoadingScreen();
                         return;
                     }
                 } else if (isFigureQuery(userQuery)) {
                     responseType = "figure";
-                    prompt = currentLanguage === 'vi' ? `
-TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về nhân vật lịch sử "${userQuery}" bằng tiếng Việt. JSON phải có cấu trúc:
-{
-    "name": "Tên nhân vật",
-    "time": "Thời gian sống (năm sinh - năm mất)",
-    "location": "Địa điểm cụ thể liên quan (ưu tiên nơi sinh)",
-    "lat": 10.38,
-    "lng": 106.35,
-    "summary": "Tóm tắt tiểu sử",
-    "achievements": ["Danh sách thành tựu nổi bật"],
-    "significance": "Ý nghĩa lịch sử"
-}` : `
-RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical figure "${userQuery}" in English. JSON must have this structure:
-{
-    "name": "Character name",
-    "time": "Lifespan (birth year - death year)",
-    "location": "Specific related location (prioritize birthplace)",
-    "lat": 10.38,
-    "lng": 106.35,
-    "summary": "Biography summary",
-    "achievements": ["List of notable achievements"],
-    "significance": "Historical significance"
-}`;
+                    prompt = createFigurePrompt(userQuery);
                 } else if (isBattleQuery(userQuery)) {
                     responseType = "battle";
-                    prompt = currentLanguage === 'vi' ? `
-TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin chi tiết về trận chiến lịch sử "${userQuery}" bằng tiếng Việt. JSON phải có cấu trúc:
-{
-    "name": "Tên trận chiến",
-    "time": "Thời gian diễn ra",
-    "location": "Địa điểm cụ thể diễn ra",
-    "lat": 10.38,
-    "lng": 106.35,
-    "summary": "Tóm tắt trận chiến",
-    "troops": "Quân số (ví dụ: '50.000 quân Việt Nam, 80.000 quân địch')",
-    "tactics": "Chiến thuật sử dụng trong trận (ví dụ: 'Tập kích, bao vây, phục kích')",
-    "casualties": "Thương vong (ví dụ: 'Việt Nam: 5.000, Địch: 20.000')",
-    "heroes": ["Danh sách anh hùng tiêu biểu trong trận"],
-    "key_locations": ["Địa điểm quan trọng 1", "Địa điểm quan trọng 2"],
-    "factions": ["Danh sách các phe tham gia"],
-    "commanders": {"Phe A": "Tên chỉ huy", "Phe B": "Tên chỉ huy"},
-    "timeline": ["Sự kiện 1", "Sự kiện 2", "Sự kiện 3"],
-    "outcome": "Kết quả trận chiến",
-    "significance": "Ý nghĩa lịch sử"
-}` : `
-RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide detailed information about the historical battle "${userQuery}" in English. JSON must have this structure:
-{
-    "name": "Battle name",
-    "time": "Time period",
-    "location": "Specific location",
-    "lat": 10.38,
-    "lng": 106.35,
-    "summary": "Battle summary",
-    "troops": "Troop numbers (e.g., '50,000 Vietnamese, 80,000 enemy')",
-    "tactics": "Tactics used in battle",
-    "casualties": "Casualties (e.g., 'Vietnam: 5,000, Enemy: 20,000')",
-    "heroes": ["List of notable heroes in the battle"],
-    "key_locations": ["Key location 1", "Key location 2"],
-    "factions": ["List of participating factions"],
-    "commanders": {"Faction A": "Commander name", "Faction B": "Commander name"},
-    "timeline": ["Event 1", "Event 2", "Event 3"],
-    "outcome": "Battle outcome",
-    "significance": "Historical significance"
-}`;
+                    prompt = createBattlePrompt(userQuery);
                 } else if (isLandmarkQuery(userQuery)) {
                     responseType = "landmark";
-                    prompt = currentLanguage === 'vi' ? `
-TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về địa danh lịch sử "${userQuery}" bằng tiếng Việt. JSON phải có cấu trúc:
-{
-    "name": "Tên địa danh",
-    "location": "Địa điểm cụ thể",
-    "lat": 16.4697,
-    "lng": 107.5777,
-    "build_time": "Thời gian xây dựng",
-    "purpose": "Mục đích xây dựng",
-    "architecture": "Phong cách kiến trúc hoặc đặc điểm",
-    "contents": ["Danh sách công trình nổi bật bên trong"],
-    "builders": ["Danh sách người xây dựng"],
-    "dynasty": "Triều đại liên quan"
-}` : `
-RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical landmark "${userQuery}" in English. JSON must have this structure:
-{
-    "name": "Landmark name",
-    "location": "Specific location",
-    "lat": 16.4697,
-    "lng": 107.5777,
-    "build_time": "Construction time",
-    "purpose": "Purpose of construction",
-    "architecture": "Architectural style or features",
-    "contents": ["List of notable structures inside"],
-    "builders": ["List of builders"],
-    "dynasty": "Related dynasty"
-}`;
+                    prompt = createLandmarkPrompt(userQuery);
                 }
-                
-                const result = await model.generateContent(prompt);
+
+                const chatSession = model.startChat({
+                    history: currentQueries.map(query => ({
+                        role: query.role === "user" ? "user" : "model",
+                        parts: [{ text: query.content }]
+                    })),
+                    generationConfig: {
+                        maxOutputTokens: 3000,
+                        temperature: 0.7,
+                        topP: 0.1,
+                        topK: 16,
+                    }
+                });
+
+                if (isStopped) {
+                    throw new Error("Search stopped by user");
+                }
+
+                const result = await chatSession.sendMessage(prompt, { signal: abortController.signal });
+
+                if (isStopped) {
+                    throw new Error("Search stopped by user");
+                }
+
                 const response = await result.response;
-                let botReply = response.text();
-                console.log("Phản hồi từ Gemini:", botReply);
-                
-                if (responseType === "landmark") {
-                    try {
-                        let jsonStr = botReply;
-                        if (jsonStr.includes('```json')) {
-                            jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
-                        } else if (jsonStr.includes('```')) {
-                            jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
-                        } else if (jsonStr.includes('JSON')) {
-                            const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
-                            if (jsonMatch) {
-                                jsonStr = jsonMatch[0];
-                            }
-                        }
-                        
-                        let landmarkData;
-                        try {
-                            landmarkData = JSON.parse(jsonStr);
-                        } catch (e) {
-                            console.error("Lỗi parse JSON lần 1:", e);
-                            jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
-                            jsonStr = jsonStr.replace(/'/g, '"');
-                            jsonStr = jsonStr.replace(/,\s*}/g, '}');
-                            jsonStr = jsonStr.replace(/,\s*]/g, ']');
-                            landmarkData = JSON.parse(jsonStr);
-                        }
-                        
-                        const resultContainer = createResultContainer(landmarkData.name || userQuery);
-                        
-                        const imageUrl = await getWikipediaImage(landmarkData.name || userQuery);
-                        landmarkData.imageUrl = imageUrl;
-                        if (imageUrl) {
-                            const imageContainer = createImageContainer(landmarkData.name || userQuery, imageUrl);
-                            resultContainer.querySelector('.result-content').appendChild(imageContainer);
-                        }
-                        
-                        const infoDiv = document.createElement('div');
-                        infoDiv.className = 'info-panel-content';
-                        infoDiv.innerHTML = formatLandmarkWithYellowDots(landmarkData);
-                        resultContainer.querySelector('.result-content').appendChild(infoDiv);
-                        
-                        resultMessages.appendChild(resultContainer);
-                        
-                        if (landmarkData.lat && landmarkData.lng) {
-                            globe.pointOfView({ lat: landmarkData.lat, lng: landmarkData.lng, altitude: 1.5 });
-                        } else if (landmarkData.location) {
-                            const location = await getLocationCoordinates(landmarkData.location);
-                            if (location && location.lat && location.lng) {
-                                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.5 });
-                            }
-                        }
-                        
-                        const mindmapDiv = createMindmapContainerSieuNgau(landmarkData.name || userQuery, translations[currentLanguage].landmark_mindmap_title);
-                        resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
-                        const markdownContent = generateLandmarkMarkdown(landmarkData);
-                        await renderMarkmap(mindmapDiv, markdownContent, userQuery);
-                        enhanceMindmapWithSaveButton(mindmapDiv, userQuery);
-                        
-                        const narrationText = generateNarrationText(landmarkData);
-                        const audioControls = createAudioControls(narrationText, landmarkData.name || userQuery);
-                        resultContainer.querySelector('.result-content').appendChild(audioControls);
-                    } catch (e) {
-                        console.error("Lỗi phân tích JSON (địa danh):", e, "Phản hồi:", botReply);
-                        botReply = `${currentLanguage === 'vi' ? 'Thông tin về địa danh lịch sử:' : 'Information about historical landmark:'}\n\n${botReply}`;
-                        addMessageToUI("assistant", botReply);
-                    }
-                } else if (responseType === "figure") {
-                    try {
-                        let jsonStr = botReply;
-                        if (jsonStr.includes('```json')) {
-                            jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
-                        } else if (jsonStr.includes('```')) {
-                            jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
-                        } else if (jsonStr.includes('JSON')) {
-                            const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
-                            if (jsonMatch) {
-                                jsonStr = jsonMatch[0];
-                            }
-                        }
-                        
-                        let figureData;
-                        try {
-                            figureData = JSON.parse(jsonStr);
-                        } catch (e) {
-                            console.error("Lỗi parse JSON lần 1:", e);
-                            jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
-                            jsonStr = jsonStr.replace(/'/g, '"');
-                            jsonStr = jsonStr.replace(/,\s*}/g, '}');
-                            jsonStr = jsonStr.replace(/,\s*]/g, ']');
-                            figureData = JSON.parse(jsonStr);
-                        }
-                        
-                        const resultContainer = createResultContainer(figureData.name || userQuery);
-                        
-                        const imageUrl = await getWikipediaImage(figureData.name || userQuery);
-                        figureData.imageUrl = imageUrl;
-                        if (imageUrl) {
-                            const imageContainer = createImageContainer(figureData.name || userQuery, imageUrl);
-                            resultContainer.querySelector('.result-content').appendChild(imageContainer);
-                        }
-                        
-                        const infoDiv = document.createElement('div');
-                        infoDiv.className = 'info-panel-content';
-                        infoDiv.innerHTML = formatFigureWithYellowDots(figureData);
-                        resultContainer.querySelector('.result-content').appendChild(infoDiv);
-                        
-                        resultMessages.appendChild(resultContainer);
-                        
-                        if (figureData.lat && figureData.lng) {
-                            globe.pointOfView({ lat: figureData.lat, lng: figureData.lng, altitude: 1.5 });
-                        } else if (figureData.location) {
-                            const location = await getLocationCoordinates(figureData.location);
-                            if (location && location.lat && location.lng) {
-                                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.5 });
-                            }
-                        }
-                        
-                        const mindmapDiv = createMindmapContainerSieuNgau(figureData.name || userQuery, translations[currentLanguage].figure_mindmap_title);
-                        resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
-                        const markdownContent = generateFigureMarkdown(figureData);
-                        await renderMarkmap(mindmapDiv, markdownContent, userQuery);
-                        enhanceMindmapWithSaveButton(mindmapDiv, userQuery);
-                        
-                        const narrationText = generateNarrationText(figureData);
-                        const audioControls = createAudioControls(narrationText, figureData.name || userQuery);
-                        resultContainer.querySelector('.result-content').appendChild(audioControls);
-                    } catch (e) {
-                        console.error("Lỗi phân tích JSON (nhân vật):", e, "Phản hồi:", botReply);
-                        botReply = `${currentLanguage === 'vi' ? 'Thông tin về nhân vật lịch sử:' : 'Information about historical figure:'}\n\n${botReply}`;
-                        addMessageToUI("assistant", botReply);
-                    }
-                } else if (responseType === "battle") {
-                    try {
-                        let jsonStr = botReply;
-                        if (jsonStr.includes('```json')) {
-                            jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
-                        } else if (jsonStr.includes('```')) {
-                            jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
-                        } else if (jsonStr.includes('JSON')) {
-                            const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
-                            if (jsonMatch) {
-                                jsonStr = jsonMatch[0];
-                            }
-                        }
-                        
-                        let battleData;
-                        try {
-                            if (!jsonStr.startsWith('{') && !jsonStr.startsWith('[')) {
-                                throw new Error("Phản hồi không phải JSON hợp lệ");
-                            }
-                            battleData = JSON.parse(jsonStr);
-                        } catch (e) {
-                            console.error("Lỗi phân tích JSON đầu tiên:", e, "JSON thô:", jsonStr);
-                            try {
-                                jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')
-                                    .replace(/'/g, '"')
-                                    .replace(/,\s*}/g, '}')
-                                    .replace(/,\s*]/g, ']');
-                                battleData = JSON.parse(jsonStr);
-                            } catch (e2) {
-                                console.error("Lỗi phân tích JSON sau khi sửa:", e2, "JSON thô:", jsonStr);
-                                botReply = `${currentLanguage === 'vi' ? 'Thông tin về trận chiến:' : 'Information about battle:'}\n\n${botReply}`;
-                                addMessageToUI("assistant", botReply);
-                                return;
-                            }
-                        }
-                        
-                        const resultContainer = createResultContainer(battleData.name || userQuery);
-                        
-                        const imageUrl = await getWikipediaImage(battleData.name || userQuery);
-                        battleData.imageUrl = imageUrl;
-                        if (imageUrl) {
-                            const imageContainer = createImageContainer(battleData.name || userQuery, imageUrl);
-                            resultContainer.querySelector('.result-content').appendChild(imageContainer);
-                        }
-                        
-                        const infoDiv = document.createElement('div');
-                        infoDiv.className = 'info-panel-content';
-                        infoDiv.innerHTML = formatBattleWithYellowDots(battleData);
-                        resultContainer.querySelector('.result-content').appendChild(infoDiv);
-                        
-                        resultMessages.appendChild(resultContainer);
-                        
-                        if (battleData.lat && battleData.lng) {
-                            globe.pointOfView({ lat: battleData.lat, lng: battleData.lng, altitude: 1.5 });
-                        } else if (battleData.location) {
-                            const location = await getLocationCoordinates(battleData.location);
-                            if (location && location.lat && location.lng) {
-                                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.5 });
-                            }
-                        }
-                        
-                        const mindmapDiv = createMindmapContainerSieuNgau(battleData.name || userQuery, translations[currentLanguage].mindmap_title);
-                        resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
-                        const markdownContent = generateBattleMarkdown(battleData);
-                        await renderMarkmap(mindmapDiv, markdownContent, userQuery);
-                        enhanceMindmapWithSaveButton(mindmapDiv, userQuery);
-                        
-                        if (battleData.timeline && Array.isArray(battleData.timeline) && battleData.timeline.length > 0) {
-                            const timelineDiv = document.createElement('div');
-                            timelineDiv.className = 'timeline-container';
-                            timelineDiv.innerHTML = `
-                                <h3 class="text-lg font-semibold mb-3 text-accent">
-                                    <i class="fas fa-history mr-2"></i>
-                                    ${translations[currentLanguage].battle_timeline}
-                                </h3>
-                                ${battleData.timeline.map((event, index) => `
-                                    <div class="timeline-item">
-                                        <div class="timeline-content">
-                                            <div class="timeline-time">${translations[currentLanguage].event} ${index + 1}</div>
-                                            <div class="timeline-text">${event}</div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            `;
-                            resultContainer.querySelector('.result-content').appendChild(timelineDiv);
-                        }
-                        
-                        const narrationText = generateNarrationText(battleData);
-                        const audioControls = createAudioControls(narrationText, battleData.name || userQuery);
-                        resultContainer.querySelector('.result-content').appendChild(audioControls);
-                    } catch (e) {
-                        console.error("Lỗi phân tích JSON (trận chiến):", e, "Phản hồi:", botReply);
-                        botReply = `${currentLanguage === 'vi' ? 'Thông tin về trận chiến:' : 'Information about battle:'}\n\n${botReply}`;
-                        addMessageToUI("assistant", botReply);
-                    }
-                } else {
-                    addMessageToUI("assistant", botReply);
-                }
+                const botReply = response.text();
+
+                processAndDisplayResult(botReply, userQuery, responseType);
+
             } catch (error) {
+                handleSearchError(error);
+            } finally {
+                isSending = false;
+                hideLoadingScreen();
+                abortController = null;
+            }
+        }
+
+        // Hàm xử lý và hiển thị kết quả
+        function processAndDisplayResult(botReply, userQuery, responseType) {
+            console.log("Phản hồi từ Gemini:", botReply);
+            
+            try {
+                let jsonStr = botReply;
+                if (jsonStr.includes('```json')) {
+                    jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
+                } else if (jsonStr.includes('```')) {
+                    jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+                } else if (jsonStr.includes('JSON')) {
+                    const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        jsonStr = jsonMatch[0];
+                    }
+                }
+
+                const data = JSON.parse(jsonStr);
+                
+                displayResultCard(data, userQuery, responseType);
+                
+            } catch (e) {
+                console.error("Lỗi parse JSON:", e);
+                addMessageToUI("assistant", botReply);
+            }
+
+            currentQueries.push({
+                role: "assistant",
+                content: botReply,
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        // Hàm hiển thị kết quả dạng card
+        function displayResultCard(data, title, responseType) {
+            const container = createResultContainer(data.name || title);
+            
+            const imageUrl = data.imageUrl || null;
+            if (imageUrl) {
+                const imageContainer = createImageContainer(data.name || title, imageUrl);
+                container.querySelector('.result-content').appendChild(imageContainer);
+            }
+            
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'info-panel-content';
+            
+            if (responseType === "battle") {
+                infoDiv.innerHTML = formatBattleWithYellowDots(data);
+            } else if (responseType === "figure") {
+                infoDiv.innerHTML = formatFigureWithYellowDots(data);
+            } else if (responseType === "landmark") {
+                infoDiv.innerHTML = formatLandmarkWithYellowDots(data);
+            }
+            
+            container.querySelector('.result-content').appendChild(infoDiv);
+            
+            if (data.lat && data.lng) {
+                globe.pointOfView({ lat: data.lat, lng: data.lng, altitude: 1.5 });
+            } else if (data.location) {
+                getLocationCoordinates(data.location).then(location => {
+                    if (location && location.lat && location.lng) {
+                        globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.5 });
+                    }
+                });
+            }
+            
+            let mindmapTitle = translations[currentLanguage].mindmap_title;
+            if (responseType === "figure") mindmapTitle = translations[currentLanguage].figure_mindmap_title;
+            if (responseType === "landmark") mindmapTitle = translations[currentLanguage].landmark_mindmap_title;
+            
+            const mindmapDiv = createMindmapContainerSieuNgau(data.name || title, mindmapTitle);
+            container.querySelector('.result-content').appendChild(mindmapDiv);
+            
+            let markdownContent = "";
+            if (responseType === "battle") {
+                markdownContent = generateBattleMarkdown(data);
+            } else if (responseType === "figure") {
+                markdownContent = generateFigureMarkdown(data);
+            } else if (responseType === "landmark") {
+                markdownContent = generateLandmarkMarkdown(data);
+            }
+            
+            renderMarkmap(mindmapDiv, markdownContent, userQuery).then(() => {
+                enhanceMindmapWithSaveButton(mindmapDiv, userQuery);
+            });
+            
+            if (responseType === "battle" && data.timeline && Array.isArray(data.timeline) && data.timeline.length > 0) {
+                const timelineDiv = document.createElement('div');
+                timelineDiv.className = 'timeline-container';
+                timelineDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold mb-3 text-accent">
+                        <i class="fas fa-history mr-2"></i>
+                        ${translations[currentLanguage].battle_timeline}
+                    </h3>
+                    ${data.timeline.map((event, index) => `
+                        <div class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-time">${translations[currentLanguage].event} ${index + 1}</div>
+                                <div class="timeline-text">${event}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+                container.querySelector('.result-content').appendChild(timelineDiv);
+            }
+            
+            const narrationText = generateNarrationText(data);
+            const audioControls = createAudioControls(narrationText, data.name || title);
+            container.querySelector('.result-content').appendChild(audioControls);
+            
+            resultMessages.appendChild(container);
+        }
+
+        // Hàm hiển thị thông báo lỗi
+        function handleSearchError(error) {
+            if (error.name === 'AbortError' || error.message === "Search stopped by user") {
+                console.log("Tìm kiếm đã bị dừng bởi người dùng");
+                addMessageToUI("assistant", "Tìm kiếm đã dừng theo yêu cầu của bạn.");
+            } else {
                 console.error("Lỗi trong handleSubmit:", error);
                 addMessageToUI("assistant", translations[currentLanguage].processing_error);
-            } finally {
-                hideLoadingScreen();
-                scrollToTop();
             }
         }
         
