@@ -608,6 +608,7 @@
             color: white;
         }
         
+        /* ===== TIMELINE - ĐÃ THU NHỎ 20% ===== */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
@@ -624,46 +625,46 @@
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 16px 20px;
+            border-radius: 16px;
+            padding: 12px 16px;
             border: 1px solid var(--border-light);
         }
         
         .timeline-slider-globe {
             -webkit-appearance: none;
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
+            height: 6px;
+            border-radius: 3px;
             background: #555;
             outline: none;
-            margin: 8px 0;
+            margin: 6px 0;
         }
         
         .timeline-slider-globe::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--accent-orange);
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
         
         .playback-controls-globe {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
+            gap: 10px;
+            margin-top: 8px;
         }
         
         .playback-btn-globe {
             background: rgba(255,255,255,0.5);
             border: 1px solid var(--border-light);
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
+            width: 36px;
+            height: 36px;
             color: var(--text-primary);
-            font-size: 18px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -1060,7 +1061,7 @@
             line-height: 1.5;
         }
         
-        /* ===== IMAGE CONTAINER ===== */
+        /* ===== IMAGE CONTAINER - TĂNG CHIỀU CAO ẢNH ===== */
         .image-container {
             width: 100%;
             margin: 1rem 0;
@@ -1096,7 +1097,7 @@
         
         .image-content {
             width: 100%;
-            height: 300px;
+            height: 400px;
             object-fit: cover;
             border-radius: 0;
             transition: all 0.3s ease;
@@ -1302,11 +1303,11 @@
                 width: 95%;
                 bottom: 20px;
             }
-            .timeline-bar-globe { padding: 12px 16px; }
+            .timeline-bar-globe { padding: 8px 12px; }
             .playback-btn-globe {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
             }
             .layer-panel { left: 20px; }
             #sidebar { width: 300px; }
@@ -1542,35 +1543,37 @@
             }
         }
         
-        // ==================== HÀM TÌM INDEX NĂM GẦN NHẤT VỚI THẾ KỶ ====================
+        // ==================== HÀM TÌM INDEX NĂM GẦN NHẤT VỚI THẾ KỶ - CHỈ TÌM NĂM LỚN HƠN HOẶC BẰNG ====================
         function findYearIndexByCentury(century, isBC = false) {
+            let targetYear;
             if (isBC) {
-                const targetYear = -(century * 100) + 1;
-                let closestIndex = 0;
-                let minDiff = Infinity;
-                for (let idx = 0; idx < availableYears.length; idx++) {
-                    const item = availableYears[idx];
-                    const diff = Math.abs(item.year - targetYear);
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        closestIndex = idx;
-                    }
-                }
-                return closestIndex;
+                targetYear = -(century * 100) + 1;
             } else {
-                const targetYear = century * 100;
-                let closestIndex = 0;
-                let minDiff = Infinity;
-                for (let idx = 0; idx < availableYears.length; idx++) {
-                    const item = availableYears[idx];
+                targetYear = century * 100;
+            }
+            
+            let closestIndex = -1;
+            let minDiff = Infinity;
+            
+            // CHỈ DUYỆT CÁC NĂM LỚN HƠN HOẶC BẰNG targetYear
+            for (let idx = 0; idx < availableYears.length; idx++) {
+                const item = availableYears[idx];
+                // Chỉ xét năm >= targetYear
+                if (item.year >= targetYear) {
                     const diff = Math.abs(item.year - targetYear);
                     if (diff < minDiff) {
                         minDiff = diff;
                         closestIndex = idx;
                     }
                 }
-                return closestIndex;
             }
+            
+            // Nếu không tìm thấy năm nào lớn hơn, lấy năm lớn nhất có sẵn
+            if (closestIndex === -1 && availableYears.length > 0) {
+                closestIndex = availableYears.length - 1;
+            }
+            
+            return closestIndex;
         }
         
         // ==================== SPEECH SYNTHESIS ====================
@@ -1628,7 +1631,7 @@
             }
         };
         
-        // ==================== TRANSLATIONS (ĐẦY ĐỦ) ====================
+        // ==================== TRANSLATIONS (ĐẦY ĐỦ SONG NGỮ) ====================
         const translations = {
             vi: {
                 title: "Bản Đồ Lịch Sử 3D",
@@ -2876,12 +2879,12 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         
                         resultMessages.appendChild(resultContainer);
                         
-                        // AI xác định thế kỷ và tự động kéo đến
+                        // AI xác định thế kỷ và tự động kéo đến - CHỈ TÌM NĂM LỚN HƠN
                         if (landmarkData.century) {
                             const isBC = landmarkData.centuryType === "BC";
                             const targetIndex = findYearIndexByCentury(landmarkData.century, isBC);
-                            if (targetIndex !== undefined && targetIndex !== currentYearIndex) {
-                                console.log(`Tìm thấy thế kỷ ${landmarkData.century}${isBC ? ' TCN' : ''}, chuyển đến năm ${availableYears[targetIndex].label}`);
+                            if (targetIndex !== undefined && targetIndex !== -1 && targetIndex !== currentYearIndex) {
+                                console.log(`Tìm thấy thế kỷ ${landmarkData.century}${isBC ? ' TCN' : ''}, chuyển đến năm ${availableYears[targetIndex].label} (năm lớn hơn hoặc bằng năm mục tiêu)`);
                                 setTimeout(function() {
                                     loadYear(targetIndex);
                                 }, 500);
@@ -2953,12 +2956,12 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         
                         resultMessages.appendChild(resultContainer);
                         
-                        // AI xác định thế kỷ và tự động kéo đến
+                        // AI xác định thế kỷ và tự động kéo đến - CHỈ TÌM NĂM LỚN HƠN
                         if (figureData.century) {
                             const isBC = figureData.centuryType === "BC";
                             const targetIndex = findYearIndexByCentury(figureData.century, isBC);
-                            if (targetIndex !== undefined && targetIndex !== currentYearIndex) {
-                                console.log(`Tìm thấy thế kỷ ${figureData.century}${isBC ? ' TCN' : ''}, chuyển đến năm ${availableYears[targetIndex].label}`);
+                            if (targetIndex !== undefined && targetIndex !== -1 && targetIndex !== currentYearIndex) {
+                                console.log(`Tìm thấy thế kỷ ${figureData.century}${isBC ? ' TCN' : ''}, chuyển đến năm ${availableYears[targetIndex].label} (năm lớn hơn hoặc bằng năm mục tiêu)`);
                                 setTimeout(function() {
                                     loadYear(targetIndex);
                                 }, 500);
@@ -3040,12 +3043,12 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         
                         resultMessages.appendChild(resultContainer);
                         
-                        // AI xác định thế kỷ và tự động kéo đến
+                        // AI xác định thế kỷ và tự động kéo đến - CHỈ TÌM NĂM LỚN HƠN
                         if (battleData.century) {
                             const isBC = battleData.centuryType === "BC";
                             const targetIndex = findYearIndexByCentury(battleData.century, isBC);
-                            if (targetIndex !== undefined && targetIndex !== currentYearIndex) {
-                                console.log(`Tìm thấy thế kỷ ${battleData.century}${isBC ? ' TCN' : ''}, chuyển đến năm ${availableYears[targetIndex].label}`);
+                            if (targetIndex !== undefined && targetIndex !== -1 && targetIndex !== currentYearIndex) {
+                                console.log(`Tìm thấy thế kỷ ${battleData.century}${isBC ? ' TCN' : ''}, chuyển đến năm ${availableYears[targetIndex].label} (năm lớn hơn hoặc bằng năm mục tiêu)`);
                                 setTimeout(function() {
                                     loadYear(targetIndex);
                                 }, 500);
