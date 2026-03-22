@@ -608,7 +608,7 @@
             color: white;
         }
         
-        /* ===== TIMELINE - ĐÃ GIẢM CHIỀU DÀI 20%, TĂNG CHIỀU CAO 10% ===== */
+        /* ===== TIMELINE ===== */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
@@ -1061,7 +1061,7 @@
             line-height: 1.5;
         }
         
-        /* ===== IMAGE CONTAINER - CẮT TỪ TRÊN XUỐNG (object-position: top center) ===== */
+        /* ===== IMAGE CONTAINER ===== */
         .image-container {
             width: 100%;
             margin: 1rem 0;
@@ -1489,6 +1489,12 @@
         let currentGeoJSON = null;
         let currentLanguage = 'vi';
         
+        // ==================== SPEECH SYNTHESIS VARIABLES ====================
+        let speechSynthesisUtterance = null;
+        let isSpeaking = false;
+        let speechProgressInterval = null;
+        let currentSpeechText = '';
+        
         let layers = {
             borders: true
         };
@@ -1533,12 +1539,11 @@
             { year: 2010, file: 'world_2010.geojson', label: '2.010 CN' }
         ];
         
-        // ==================== HÀM TÌM INDEX NĂM GẦN NHẤT - CHỈ TÌM NĂM LỚN HƠN HOẶC BẰNG ====================
+        // ==================== HÀM TÌM INDEX NĂM GẦN NHẤT ====================
         function findYearIndexByTargetYear(targetYear) {
             let closestIndex = -1;
             let minDiff = Infinity;
             
-            // CHỈ DUYỆT CÁC NĂM LỚN HƠN HOẶC BẰNG targetYear
             for (let idx = 0; idx < availableYears.length; idx++) {
                 const item = availableYears[idx];
                 if (item.year >= targetYear) {
@@ -1557,11 +1562,45 @@
             return closestIndex;
         }
         
-        // ==================== SPEECH SYNTHESIS ====================
-        let speechSynthesisUtterance = null;
-        let isSpeaking = false;
-        let speechProgressInterval = null;
-        let currentSpeechText = '';
+        // ==================== SPEECH SYNTHESIS FUNCTIONS ====================
+        function stopSpeech() {
+            if (speechSynthesisUtterance) {
+                try {
+                    speechSynthesis.cancel();
+                    isSpeaking = false;
+                    const progressBars = document.querySelectorAll('.audio-progress-bar');
+                    for (let i = 0; i < progressBars.length; i++) {
+                        progressBars[i].style.width = '0%';
+                    }
+                    const playBtns = document.querySelectorAll('#play-audio');
+                    for (let i = 0; i < playBtns.length; i++) {
+                        if (playBtns[i]) playBtns[i].disabled = false;
+                    }
+                    const pauseBtns = document.querySelectorAll('#pause-audio');
+                    const stopBtns = document.querySelectorAll('#stop-audio');
+                    for (let i = 0; i < pauseBtns.length; i++) {
+                        if (pauseBtns[i]) pauseBtns[i].disabled = true;
+                    }
+                    for (let i = 0; i < stopBtns.length; i++) {
+                        if (stopBtns[i]) stopBtns[i].disabled = true;
+                    }
+                    if (speechProgressInterval) {
+                        clearInterval(speechProgressInterval);
+                        speechProgressInterval = null;
+                    }
+                } catch (e) {
+                    console.error("Lỗi khi dừng giọng nói:", e);
+                }
+            }
+        }
+        
+        // ==================== HÀM NGẮT GIỌNG NÓI KHI THỰC HIỆN CHỨC NĂNG KHÁC ====================
+        function stopSpeechForNewAction() {
+            if (isSpeaking) {
+                stopSpeech();
+                console.log("Đã dừng đọc do thực hiện chức năng khác");
+            }
+        }
         
         // ==================== KEYWORDS ====================
         const battleKeywords = [
@@ -1612,7 +1651,7 @@
             }
         };
         
-        // ==================== TRANSLATIONS (ĐẦY ĐỦ SONG NGỮ) ====================
+        // ==================== TRANSLATIONS ====================
         const translations = {
             vi: {
                 title: "Bản Đồ Lịch Sử 3D",
@@ -1801,7 +1840,8 @@
             currentLanguage = lang;
             document.documentElement.lang = lang;
             searchInput.placeholder = translations[lang].search_placeholder;
-            document.querySelector('.header-title span').textContent = translations[lang].title;
+            const headerTitle = document.querySelector('.header-title span');
+            if (headerTitle) headerTitle.textContent = translations[lang].title;
             languageToggle.checked = lang === 'en';
             
             const loadingText = document.getElementById('loadingText');
@@ -1903,6 +1943,18 @@
                     } else {
                         el.classList.remove('ui-hidden');
                     }
+                }
+            }
+        }
+        
+        // ==================== HÀM ẨN/HIỆN NÚT ĐÓNG THANH THÔNG TIN ====================
+        function toggleCloseButtons(hide) {
+            const closeBtns = document.querySelectorAll('.country-info-close, .info-close, #sidebarToggleNew');
+            for (let i = 0; i < closeBtns.length; i++) {
+                if (hide) {
+                    closeBtns[i].style.display = 'none';
+                } else {
+                    closeBtns[i].style.display = '';
                 }
             }
         }
@@ -2202,10 +2254,13 @@
             globe.labelsData(labels);
         }
         
+        // ==================== SỬA LỖI THỨ 1: HÀM queryLocalHistory TRẢ LỜI BẰNG NGÔN NGỮ PHÙ HỢP ====================
         function handleTerritoryClick(polygon, event, coordinates) {
             const name = polygon.properties?.SUBJECTO || polygon.properties?.NAME || 'Không xác định';
             const lat = coordinates.lat;
             const lng = coordinates.lng;
+            // Dừng đọc nếu đang phát
+            stopSpeechForNewAction();
             queryLocalHistory(lat, lng, name);
         }
         
@@ -2244,18 +2299,23 @@
             infoPanelContent.innerHTML = html;
         }
         
+        // ==================== SỬA LỖI THỨ 1: queryGemini TRẢ LỜI BẰNG TIẾNG ANH KHI Ở CHẾ ĐỘ TIẾNG ANH ====================
         async function queryGemini(lat, lng, placeName, year) {
-            const yearLabel = year < 0 ? Math.abs(year) + ' TCN' : year + ' CN';
+            const yearLabel = year < 0 ? Math.abs(year) + ' BC' : year + ' AD';
             
-            const prompt = `Bạn là một chuyên gia lịch sử. Hãy cung cấp một cái nhìn tổng quát về ${placeName} trong thời kỳ ${yearLabel}.
-Bao gồm (nếu có liên quan):
-- Các dân tộc hoặc bộ tộc bản địa
-- Các khu định cư, thuộc địa hoặc thành phố
-- Kiểm soát chính trị (đế chế, vương quốc, bộ tộc)
-- Các sự kiện hoặc xung đột đáng chú ý
-- Hoạt động kinh tế
-- Các nhân vật lịch sử nổi tiếng
-Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
+            // Xác định ngôn ngữ trả lời dựa trên currentLanguage
+            const responseLanguage = currentLanguage === 'en' ? 'English' : 'Vietnamese';
+            
+            const prompt = `You are a history expert. Provide an overview of ${placeName} during the period ${yearLabel}.
+Respond in ${responseLanguage}.
+Include (if relevant):
+- Indigenous peoples or tribes
+- Settlements, colonies, or cities
+- Political control (empires, kingdoms, tribes)
+- Notable events or conflicts
+- Economic activities
+- Famous historical figures
+Keep the response under 250 words. Use bullet points.`;
             
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${API_KEY}`, {
                 method: 'POST',
@@ -2267,33 +2327,43 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
             });
             
             if (!response.ok) {
-                throw new Error(`Lỗi API: ${response.status}`);
+                throw new Error(`API Error: ${response.status}`);
             }
             
             const data = await response.json();
             const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            return text || 'Không có thông tin';
+            return text || 'No information available';
         }
         
         function setupGlobeControls() {
             const timelineSlider = document.getElementById('timelineSlider');
             timelineSlider.addEventListener('input', function(e) {
                 const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
+                // Dừng đọc khi thay đổi thời gian
+                stopSpeechForNewAction();
                 loadYear(index);
             });
             
             const prevBtn = document.getElementById('prevBtn');
             prevBtn.addEventListener('click', function() {
+                // Dừng đọc khi chuyển năm
+                stopSpeechForNewAction();
                 loadYear(Math.max(0, currentYearIndex - 1));
             });
             
             const nextBtn = document.getElementById('nextBtn');
             nextBtn.addEventListener('click', function() {
+                // Dừng đọc khi chuyển năm
+                stopSpeechForNewAction();
                 loadYear(Math.min(availableYears.length - 1, currentYearIndex + 1));
             });
             
             const playBtn = document.getElementById('playBtn');
-            playBtn.addEventListener('click', togglePlay);
+            playBtn.addEventListener('click', function() {
+                // Dừng đọc khi bật/tắt phát tự động
+                stopSpeechForNewAction();
+                togglePlay();
+            });
             
             const layerBtns = document.querySelectorAll('.layer-btn');
             for (let i = 0; i < layerBtns.length; i++) {
@@ -2421,7 +2491,7 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
                     const link = document.createElement('a');
                     const title = query ? query.replace(/[^a-zA-Z0-9À-ỹ]/g, '_') : 'mindmap';
                     const timestamp = new Date().getTime();
-                    link.download = title + '_sodotutuдуy_' + timestamp + '.png';
+                    link.download = title + '_mindmap_' + timestamp + '.png';
                     link.href = canvas.toDataURL('image/png');
                     link.click();
                     
@@ -2707,11 +2777,16 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
         
         // ==================== EVENT LISTENERS ====================
         function setupEventListeners() {
-            searchForm.addEventListener('submit', handleSubmit);
+            searchForm.addEventListener('submit', function(e) {
+                // Dừng đọc khi tìm kiếm mới
+                stopSpeechForNewAction();
+                handleSubmit(e);
+            });
             searchInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     if (searchInput.value.trim() !== '') {
+                        stopSpeechForNewAction();
                         searchForm.dispatchEvent(new Event('submit'));
                     }
                 }
@@ -2720,7 +2795,7 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
         
         function clearPreviousData() {
             resultMessages.innerHTML = '';
-            stopSpeech();
+            stopSpeechForNewAction();
         }
         
         // ==================== MAIN HANDLER ====================
@@ -2728,7 +2803,7 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
             if (e) {
                 e.preventDefault();
             }
-            stopSpeech();
+            stopSpeechForNewAction();
             const userQuery = searchInput.value.trim();
             if (!userQuery) {
                 return;
@@ -2751,61 +2826,61 @@ Giữ phản hồi dưới 250 từ. Sử dụng các dấu bullet.`;
                 } else if (isFigureQuery(userQuery)) {
                     responseType = "figure";
                     prompt = `
-TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về nhân vật lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical figure "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
 {
-    "name": "Tên nhân vật",
-    "time": "Thời gian sống (năm sinh - năm mất) - PHẢI CÓ NĂM CỤ THỂ (VD: 1010-1080)",
-    "location": "Địa điểm cụ thể liên quan (ưu tiên nơi sinh)",
+    "name": "Figure name",
+    "time": "Lifespan (year of birth - year of death) - MUST HAVE SPECIFIC YEAR (eg: 1010-1080)",
+    "location": "Specific related location (prefer birthplace)",
     "lat": 10.38,
     "lng": 106.35,
-    "summary": "Tóm tắt tiểu sử",
-    "achievements": ["Danh sách thành tựu nổi bật"],
-    "significance": "Ý nghĩa lịch sử",
-    "yearValue": NĂM CỤ THỂ (lấy từ năm sinh hoặc năm mất, ví dụ 1010),
+    "summary": "Biography summary",
+    "achievements": ["List of notable achievements"],
+    "significance": "Historical significance",
+    "yearValue": SPECIFIC YEAR (from birth or death year, eg: 1010),
     "isBC": true/false
 }
                     `;
                 } else if (isBattleQuery(userQuery)) {
                     responseType = "battle";
                     prompt = `
-TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin chi tiết về trận chiến lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide detailed information about the historical battle "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
 {
-    "name": "Tên trận chiến",
-    "time": "Thời gian diễn ra - PHẢI CÓ NĂM CỤ THỂ (VD: 1288, 1954)",
-    "location": "Địa điểm cụ thể diễn ra",
+    "name": "Battle name",
+    "time": "Time of battle - MUST HAVE SPECIFIC YEAR (eg: 1288, 1954)",
+    "location": "Specific location",
     "lat": 10.38,
     "lng": 106.35,
-    "summary": "Tóm tắt trận chiến",
-    "troops": "Quân số",
-    "tactics": "Chiến thuật",
-    "casualties": "Thương vong",
-    "heroes": ["Danh sách anh hùng"],
-    "key_locations": ["Địa điểm quan trọng"],
-    "factions": ["Danh sách các phe"],
-    "commanders": {"Phe A": "Tên chỉ huy"},
-    "timeline": ["Sự kiện 1"],
-    "outcome": "Kết quả",
-    "significance": "Ý nghĩa lịch sử",
-    "yearValue": NĂM CỤ THỂ (lấy từ thời gian diễn ra trận chiến, ví dụ 1288),
+    "summary": "Battle summary",
+    "troops": "Troop numbers",
+    "tactics": "Tactics",
+    "casualties": "Casualties",
+    "heroes": ["List of heroes"],
+    "key_locations": ["Important locations"],
+    "factions": ["List of factions"],
+    "commanders": {"Faction A": "Commander name"},
+    "timeline": ["Event 1"],
+    "outcome": "Result",
+    "significance": "Historical significance",
+    "yearValue": SPECIFIC YEAR (from battle time, eg: 1288),
     "isBC": true/false
 }
                     `;
                 } else if (isLandmarkQuery(userQuery)) {
                     responseType = "landmark";
                     prompt = `
-TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về địa danh lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical landmark "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
 {
-    "name": "Tên địa danh",
-    "location": "Địa điểm cụ thể",
+    "name": "Landmark name",
+    "location": "Specific location",
     "lat": 16.4697,
     "lng": 107.5777,
-    "build_time": "Thời gian xây dựng - PHẢI CÓ NĂM CỤ THỂ (VD: 1804, 1049)",
-    "purpose": "Mục đích xây dựng",
-    "architecture": "Phong cách kiến trúc",
-    "contents": ["Danh sách công trình nổi bật"],
-    "builders": ["Danh sách người xây dựng"],
-    "dynasty": "Triều đại",
-    "yearValue": NĂM CỤ THỂ (lấy từ thời gian xây dựng, ví dụ 1049),
+    "build_time": "Construction time - MUST HAVE SPECIFIC YEAR (eg: 1804, 1049)",
+    "purpose": "Purpose of construction",
+    "architecture": "Architectural style",
+    "contents": ["List of notable structures"],
+    "builders": ["List of builders"],
+    "dynasty": "Dynasty",
+    "yearValue": SPECIFIC YEAR (from construction time, eg: 1049),
     "isBC": true/false
 }
                     `;
@@ -2860,7 +2935,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         resultContainer.querySelector('.result-content').appendChild(infoDiv);
                         resultMessages.appendChild(resultContainer);
                         
-                        // ===== SỬA LỖI THỨ 3: AI XÁC ĐỊNH NĂM VÀ CHỈ TÌM NĂM LỚN HƠN =====
                         if (parsedData.yearValue && !isNaN(parsedData.yearValue)) {
                             let targetYear = parsedData.yearValue;
                             if (parsedData.isBC === true) {
@@ -2868,7 +2942,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                             }
                             const targetIndex = findYearIndexByTargetYear(targetYear);
                             if (targetIndex !== -1 && targetIndex !== currentYearIndex) {
-                                console.log(`Tìm thấy năm ${targetYear} (${parsedData.isBC ? 'TCN' : 'CN'}), chuyển đến năm ${availableYears[targetIndex].label} (năm lớn hơn hoặc bằng)`);
+                                console.log(`Tìm thấy năm ${targetYear} (${parsedData.isBC ? 'TCN' : 'CN'}), chuyển đến năm ${availableYears[targetIndex].label}`);
                                 setTimeout(function() {
                                     loadYear(targetIndex);
                                 }, 500);
@@ -3222,37 +3296,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             return audioControls;
         }
         
-        function stopSpeech() {
-            if (speechSynthesisUtterance) {
-                try {
-                    speechSynthesis.cancel();
-                    isSpeaking = false;
-                    const progressBars = document.querySelectorAll('.audio-progress-bar');
-                    for (let i = 0; i < progressBars.length; i++) {
-                        progressBars[i].style.width = '0%';
-                    }
-                    const playBtns = document.querySelectorAll('#play-audio');
-                    for (let i = 0; i < playBtns.length; i++) {
-                        playBtns[i].disabled = false;
-                    }
-                    const pauseBtns = document.querySelectorAll('#pause-audio');
-                    const stopBtns = document.querySelectorAll('#stop-audio');
-                    for (let i = 0; i < pauseBtns.length; i++) {
-                        pauseBtns[i].disabled = true;
-                    }
-                    for (let i = 0; i < stopBtns.length; i++) {
-                        stopBtns[i].disabled = true;
-                    }
-                    if (speechProgressInterval) {
-                        clearInterval(speechProgressInterval);
-                        speechProgressInterval = null;
-                    }
-                } catch (e) {
-                    console.error("Lỗi khi dừng giọng nói:", e);
-                }
-            }
-        }
-        
         function createResultContainer(title) {
             const container = document.createElement('div');
             container.className = 'result-container';
@@ -3268,7 +3311,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             return container;
         }
         
-        // ===== SỬA LỖI THỨ 4: ẢNH CẮT TỪ TRÊN XUỐNG =====
+        // ===== SỬA LỖI THỨ 2 & 4: ẢNH CẮT TỪ TRÊN XUỐNG VÀ ẨN NÚT ĐÓNG KHI MỞ TOÀN MÀN HÌNH =====
         function createImageContainer(title, imageUrl) {
             const container = document.createElement('div');
             container.className = 'image-container';
@@ -3283,27 +3326,27 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             imgElement.addEventListener('click', function(e) {
                 e.stopPropagation();
                 container.classList.toggle('expanded');
-                // ===== SỬA LỖI THỨ 2: KHI XEM ẢNH THÌ ẨN NÚT ĐÓNG THANH THÔNG TIN =====
                 if (container.classList.contains('expanded')) {
-                    const closeBtns = document.querySelectorAll('.country-info-close, .info-close');
-                    closeBtns.forEach(btn => btn.style.display = 'none');
+                    toggleCloseButtons(true);
+                    toggleUIElements(true);
                 } else {
-                    const closeBtns = document.querySelectorAll('.country-info-close, .info-close');
-                    closeBtns.forEach(btn => btn.style.display = '');
+                    toggleCloseButtons(false);
+                    toggleUIElements(false);
                 }
             });
             
             container.addEventListener('click', function(e) {
                 if (container.classList.contains('expanded') && e.target === container) {
                     container.classList.remove('expanded');
-                    const closeBtns = document.querySelectorAll('.country-info-close, .info-close');
-                    closeBtns.forEach(btn => btn.style.display = '');
+                    toggleCloseButtons(false);
+                    toggleUIElements(false);
                 }
             });
             
             return container;
         }
         
+        // ===== SỬA LỖI THỨ 2: KHI MỞ SƠ ĐỒ TƯ DUY TOÀN MÀN HÌNH THÌ ẨN NÚT ĐÓNG =====
         function createMindmapContainerSieuNgau(title, mindmapTitle) {
             const mindmapDiv = document.createElement('div');
             mindmapDiv.className = 'mindmap-sieu-ngau';
@@ -3329,23 +3372,20 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 if (e.target === this || (e.target.closest('.mindmap-title') && !e.target.closest('.control-btn'))) {
                     mindmapDiv.classList.toggle('expanded');
                     
-                    // ===== SỬA LỖI THỨ 2: KHI XEM SƠ ĐỒ TƯ DUY THÌ ẨN NÚT ĐÓNG THANH THÔNG TIN =====
                     if (mindmapDiv.classList.contains('expanded')) {
-                        const closeBtns = document.querySelectorAll('.country-info-close, .info-close');
-                        closeBtns.forEach(btn => btn.style.display = 'none');
+                        toggleCloseButtons(true);
+                        toggleUIElements(true);
                         const controls = mindmapDiv.querySelector('.mindmap-controls');
                         if (controls) {
                             controls.classList.remove('mindmap-controls-hidden');
                         }
-                        toggleUIElements(true);
                     } else {
-                        const closeBtns = document.querySelectorAll('.country-info-close, .info-close');
-                        closeBtns.forEach(btn => btn.style.display = '');
+                        toggleCloseButtons(false);
+                        toggleUIElements(false);
                         const controls = mindmapDiv.querySelector('.mindmap-controls');
                         if (controls) {
                             controls.classList.add('mindmap-controls-hidden');
                         }
-                        toggleUIElements(false);
                     }
                     
                     setTimeout(function() {
