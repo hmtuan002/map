@@ -1355,7 +1355,7 @@
         <button class="layer-btn active" data-layer="borders" data-tooltip="Biên giới">🗺️</button>
     </div>
     
-    <!-- NÚT ĐÓNG/MỞ MỚI (ĐÃ SỬA LỖI) -->
+    <!-- NÚT ĐÓNG/MỞ MỚI -->
     <div class="sidebar-toggle-new" id="sidebarToggleNew">
         <i class="fas fa-chevron-left"></i>
     </div>
@@ -1597,6 +1597,7 @@
             }
         }
         
+        // ==================== HÀM NGẮT GIỌNG NÓI KHI THỰC HIỆN CHỨC NĂNG KHÁC ====================
         function stopSpeechForNewAction() {
             if (isSpeaking) {
                 stopSpeech();
@@ -1849,7 +1850,7 @@
             if (mainTitleText) mainTitleText.textContent = translations[lang].title;
             languageToggle.checked = lang === 'en';
             if (infoPanelDisclaimer) infoPanelDisclaimer.textContent = translations[lang].historical_context;
-            if (countryInfoDisclaimer) countryInfoDisclaimer.textContent = translations[lang].country_info_close;
+            if (countryInfoDisclaimer) countryInfoDisclaimer.textContent = translations[lang].historical_context;
             
             const loadingText = document.getElementById('loadingText');
             const loaderInfo = document.getElementById('loaderInfo');
@@ -1954,6 +1955,7 @@
             }
         }
         
+        // ==================== HÀM ẨN/HIỆN NÚT ĐÓNG THANH THÔNG TIN ====================
         function toggleCloseButtons(hide) {
             const closeBtns = document.querySelectorAll('.country-info-close, .info-close, #sidebarToggleNew');
             for (let i = 0; i < closeBtns.length; i++) {
@@ -2073,6 +2075,7 @@
             infoPanel.classList.remove('visible');
         }
         
+        // ==================== COUNTRY INFO PANEL FUNCTIONS ====================
         function showCountryInfoPanel(title, subtitle, content) {
             countryInfoTitle.textContent = title;
             countryInfoSubtitle.textContent = subtitle;
@@ -2180,15 +2183,20 @@
             renderBorders(currentGeoJSON, yearData.year);
         }
         
+        // ==================== SỬA LỖI THỨ 1: QUỐC GIA KHÔNG ĐƯỢC TÔ MÀU Ở CÁC NĂM CŨ ====================
         function renderBorders(geojson, year) {
             if (!layers.borders) {
                 globe.polygonsData([]);
                 return;
             }
             
+            // SỬA LỖI: Xây dựng entities với fallback cho thuộc tính
             const entities = [];
             for (let i = 0; i < geojson.features.length; i++) {
-                const name = geojson.features[i].properties.SUBJECTO || geojson.features[i].properties.NAME;
+                const name = geojson.features[i].properties.SUBJECTO 
+                          || geojson.features[i].properties.NAME 
+                          || geojson.features[i].properties.name 
+                          || ('region_' + i);
                 if (name && !entities.includes(name)) {
                     entities.push(name);
                 }
@@ -2197,8 +2205,16 @@
             const polygons = [];
             for (let i = 0; i < geojson.features.length; i++) {
                 const f = geojson.features[i];
-                const entityName = f.properties.SUBJECTO || f.properties.NAME;
-                const colorIndex = entities.indexOf(entityName) % colorPalette.length;
+                // SỬA LỖI: Fallback cho entityName, tránh null/undefined
+                const entityName = f.properties.SUBJECTO 
+                                || f.properties.NAME 
+                                || f.properties.name 
+                                || ('region_' + i);
+                let colorIndex = entities.indexOf(entityName) % colorPalette.length;
+                // SỬA LỖI: Xử lý index âm
+                if (colorIndex < 0) {
+                    colorIndex = i % colorPalette.length;
+                }
                 polygons.push({
                     ...f,
                     color: colorPalette[colorIndex] + '99'
@@ -2259,6 +2275,7 @@
             globe.labelsData(labels);
         }
         
+        // ==================== SỬA LỖI THỨ 2: NÚT ĐÓNG/MỞ THANH THÔNG TIN HOẠT ĐỘNG ====================
         function handleTerritoryClick(polygon, event, coordinates) {
             const name = polygon.properties?.SUBJECTO || polygon.properties?.NAME || 'Không xác định';
             const lat = coordinates.lat;
@@ -2777,6 +2794,10 @@ Keep the response under 250 words. Use bullet points.`;
                 stopSpeechForNewAction();
                 handleSubmit(e);
             });
+            
+            // SỬA LỖI THỨ 2: Đăng ký sự kiện click cho nút toggle sidebar
+            sidebarToggleNew.addEventListener('click', toggleSidebarNew);
+            
             searchInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -3306,6 +3327,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             return container;
         }
         
+        // ===== SỬA LỖI THỨ 2: ẢNH CẮT TỪ TRÊN XUỐNG VÀ ẨN NÚT ĐÓNG KHI MỞ TOÀN MÀN HÌNH =====
         function createImageContainer(title, imageUrl) {
             const container = document.createElement('div');
             container.className = 'image-container';
@@ -3340,6 +3362,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             return container;
         }
         
+        // ===== SỬA LỖI THỨ 2: KHI MỞ SƠ ĐỒ TƯ DUY TOÀN MÀN HÌNH THÌ ẨN NÚT ĐÓNG =====
         function createMindmapContainerSieuNgau(title, mindmapTitle) {
             const mindmapDiv = document.createElement('div');
             mindmapDiv.className = 'mindmap-sieu-ngau';
