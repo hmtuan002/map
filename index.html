@@ -68,9 +68,9 @@
             pointer-events: none;
         }
         
-        /* ===== SIDEBAR ===== */
+        /* ===== SIDEBAR - ĐÃ TĂNG CHIỀU RỘNG TỪ 460px LÊN 560px ===== */
         #sidebar {
-            width: 460px;
+            width: 560px;
             height: 100%;
             background-color: var(--card-bg);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
@@ -91,10 +91,11 @@
             left: -100%;
         }
         
+        /* ===== NÚT ĐÓNG/MỞ SIDEBAR - ĐÃ CĂN CHỈNH LẠI VỚI CHIỀU RỘNG MỚI ===== */
         .sidebar-toggle-new {
             position: fixed;
             top: 20px;
-            left: 460px;
+            left: 560px;
             width: 44px;
             height: 44px;
             background-color: var(--accent-orange);
@@ -327,11 +328,11 @@
             color: var(--text-primary);
         }
         
-        /* ===== COUNTRY INFO PANEL LEFT - TĂNG CHIỀU RỘNG ===== */
+        /* ===== COUNTRY INFO PANEL LEFT - ĐÃ CĂN CHỈNH VỚI SIDEBAR MỚI ===== */
         .country-info-panel-left {
             position: fixed;
             top: 20px;
-            left: 480px;
+            left: 580px;
             width: 520px;
             max-width: 90vw;
             max-height: 80vh;
@@ -426,7 +427,7 @@
             border-top: 1px solid var(--border-light);
         }
         
-        /* ===== INFO PANEL - TĂNG CHIỀU RỘNG ===== */
+        /* ===== INFO PANEL ===== */
         .info-panel {
             position: fixed;
             top: 50%;
@@ -555,9 +556,10 @@
             display: none !important;
         }
         
+        /* ===== LAYER PANEL - ĐÃ CĂN CHỈNH VỚI SIDEBAR MỚI ===== */
         .layer-panel {
             position: fixed;
-            left: 480px;
+            left: 600px;
             top: 50%;
             transform: translateY(-50%);
             display: flex;
@@ -608,14 +610,14 @@
             color: white;
         }
         
-        /* ===== TIMELINE ===== */
+        /* ===== TIMELINE - ĐÃ TĂNG CHIỀU DÀI TỪ 72% LÊN 85% VÀ MAX-WIDTH TỪ 640px LÊN 800px ===== */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 72%;
-            max-width: 640px;
+            width: 85%;
+            max-width: 800px;
             z-index: 15;
             pointer-events: auto;
             transition: opacity 0.3s ease;
@@ -1302,7 +1304,7 @@
         
         @media (max-width: 768px) {
             .timeline-globe {
-                width: 85%;
+                width: 90%;
                 bottom: 20px;
             }
             .timeline-bar-globe { padding: 8px 12px; }
@@ -1933,9 +1935,9 @@
                 toggleIcon.classList.remove('fa-chevron-right');
                 toggleIcon.classList.add('fa-chevron-left');
                 toggleBtn.classList.remove('collapsed');
-                layerPanel.style.left = '480px';
+                layerPanel.style.left = '600px';
                 if (countryPanel.classList.contains('visible')) {
-                    countryPanel.style.left = '480px';
+                    countryPanel.style.left = '580px';
                 }
             }
         }
@@ -2101,7 +2103,7 @@
             if (sidebar.classList.contains('sidebar-collapsed')) {
                 countryInfoPanel.style.left = '20px';
             } else {
-                countryInfoPanel.style.left = '480px';
+                countryInfoPanel.style.left = '580px';
             }
         }
         
@@ -2199,14 +2201,12 @@
             renderBorders(currentGeoJSON, yearData.year);
         }
         
-        // ==================== SỬA LỖI THỨ 1: QUỐC GIA KHÔNG ĐƯỢC TÔ MÀU Ở CÁC NĂM CŨ ====================
         function renderBorders(geojson, year) {
             if (!layers.borders) {
                 globe.polygonsData([]);
                 return;
             }
             
-            // SỬA LỖI: Xây dựng entities với fallback cho thuộc tính
             const entities = [];
             for (let i = 0; i < geojson.features.length; i++) {
                 const name = geojson.features[i].properties.SUBJECTO 
@@ -2221,13 +2221,11 @@
             const polygons = [];
             for (let i = 0; i < geojson.features.length; i++) {
                 const f = geojson.features[i];
-                // SỬA LỖI: Fallback cho entityName, tránh null/undefined
                 const entityName = f.properties.SUBJECTO 
                                 || f.properties.NAME 
                                 || f.properties.name 
                                 || ('region_' + i);
                 let colorIndex = entities.indexOf(entityName) % colorPalette.length;
-                // SỬA LỖI: Xử lý index âm
                 if (colorIndex < 0) {
                     colorIndex = i % colorPalette.length;
                 }
@@ -2291,7 +2289,6 @@
             globe.labelsData(labels);
         }
         
-        // ==================== SỬA LỖI THỨ 2: NÚT ĐÓNG/MỞ THANH THÔNG TIN HOẠT ĐỘNG ====================
         function handleTerritoryClick(polygon, event, coordinates) {
             const name = polygon.properties?.SUBJECTO || polygon.properties?.NAME || 'Không xác định';
             const lat = coordinates.lat;
@@ -2443,7 +2440,6 @@ Keep the response under 250 words. Use bullet points.`;
             }
         }
         
-        // ==================== LẤY TỌA ĐỘ CHÍNH XÁC ====================
         function getExactLocation(name) {
             const normalizedName = name.toLowerCase();
             const locationKeys = Object.keys(vietnamHistoricalLocations);
@@ -2458,7 +2454,6 @@ Keep the response under 250 words. Use bullet points.`;
             return null;
         }
         
-        // ==================== LƯU SƠ ĐỒ TƯ DUY ====================
         async function saveMindmapAsImage(container, query) {
             try {
                 const svg = container.querySelector('svg');
@@ -2569,7 +2564,6 @@ Keep the response under 250 words. Use bullet points.`;
             }
         }
         
-        // ==================== HIỂN THỊ VỚI DẤU CHẤM VÀNG ====================
         function getFieldTitle(key) {
             const titles = {
                 'name': '📛 Tên',
@@ -2706,11 +2700,9 @@ Keep the response under 250 words. Use bullet points.`;
             return html;
         }
         
-        // ==================== SỬA LỖI THỨ 2 & 3: THÊM NHIỀU THÔNG TIN CHO NHÂN VẬT VÀ ĐẢM BẢO TIẾNG VIỆT ====================
         function formatFigureWithYellowDots(data) {
             let html = '';
             
-            // Thông tin cơ bản
             html += '<div class="info-section">';
             html += '<h4 class="section-title"><i class="fas fa-info-circle"></i> ' + translations[currentLanguage].battle_name + '</h4>';
             html += '<p class="with-dot"><strong>' + (currentLanguage === 'vi' ? 'Thời gian sống' : 'Lifespan') + ':</strong> ' + (data.time || translations[currentLanguage].unknown) + '</p>';
@@ -2720,7 +2712,6 @@ Keep the response under 250 words. Use bullet points.`;
             }
             html += '</div>';
             
-            // Tiểu sử
             if (data.biography) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-book-open"></i> ' + translations[currentLanguage].biography + '</h4>';
@@ -2733,7 +2724,6 @@ Keep the response under 250 words. Use bullet points.`;
                 html += '</div>';
             }
             
-            // Gia đình
             if (data.family) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-users"></i> ' + translations[currentLanguage].family + '</h4>';
@@ -2749,7 +2739,6 @@ Keep the response under 250 words. Use bullet points.`;
                 html += '</div>';
             }
             
-            // Học vấn
             if (data.education) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-graduation-cap"></i> ' + translations[currentLanguage].education + '</h4>';
@@ -2765,7 +2754,6 @@ Keep the response under 250 words. Use bullet points.`;
                 html += '</div>';
             }
             
-            // Sự nghiệp
             if (data.career) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-briefcase"></i> ' + translations[currentLanguage].career + '</h4>';
@@ -2781,7 +2769,6 @@ Keep the response under 250 words. Use bullet points.`;
                 html += '</div>';
             }
             
-            // Thành tựu
             if (data.achievements && data.achievements.length > 0) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-trophy"></i> ' + translations[currentLanguage].battle_achievements + '</h4>';
@@ -2793,7 +2780,6 @@ Keep the response under 250 words. Use bullet points.`;
                 html += '</div>';
             }
             
-            // Các trận đánh tham gia
             if (data.battles && data.battles.length > 0) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-fist-raised"></i> ' + translations[currentLanguage].battles + '</h4>';
@@ -2805,7 +2791,6 @@ Keep the response under 250 words. Use bullet points.`;
                 html += '</div>';
             }
             
-            // Tác phẩm
             if (data.works && data.works.length > 0) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-pen-fancy"></i> ' + translations[currentLanguage].works + '</h4>';
@@ -2817,7 +2802,6 @@ Keep the response under 250 words. Use bullet points.`;
                 html += '</div>';
             }
             
-            // Câu nói nổi tiếng
             if (data.quotes && data.quotes.length > 0) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-quote-left"></i> ' + translations[currentLanguage].quotes + '</h4>';
@@ -2829,7 +2813,6 @@ Keep the response under 250 words. Use bullet points.`;
                 html += '</div>';
             }
             
-            // Di sản
             if (data.legacy) {
                 html += '<div class="info-section">';
                 html += '<h4 class="section-title"><i class="fas fa-landmark"></i> ' + translations[currentLanguage].legacy + '</h4>';
@@ -2910,14 +2893,12 @@ Keep the response under 250 words. Use bullet points.`;
             return html;
         }
         
-        // ==================== EVENT LISTENERS ====================
         function setupEventListeners() {
             searchForm.addEventListener('submit', function(e) {
                 stopSpeechForNewAction();
                 handleSubmit(e);
             });
             
-            // SỬA LỖI THỨ 2: Đăng ký sự kiện click cho nút toggle sidebar
             sidebarToggleNew.addEventListener('click', toggleSidebarNew);
             
             searchInput.addEventListener('keydown', function(e) {
@@ -2936,7 +2917,6 @@ Keep the response under 250 words. Use bullet points.`;
             stopSpeechForNewAction();
         }
         
-        // ==================== MAIN HANDLER VỚI PROMPT MỞ RỘNG ====================
         async function handleSubmit(e) {
             if (e) {
                 e.preventDefault();
@@ -2963,7 +2943,6 @@ Keep the response under 250 words. Use bullet points.`;
                     }
                 } else if (isFigureQuery(userQuery)) {
                     responseType = "figure";
-                    // SỬA LỖI: Prompt mở rộng với nhiều thông tin hơn, đảm bảo tiếng Việt khi ngôn ngữ là Vietnamese
                     prompt = `
 RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide comprehensive information about the historical figure "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}.
 
@@ -3464,7 +3443,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             return container;
         }
         
-        // ===== SỬA LỖI THỨ 2: ẢNH CẮT TỪ TRÊN XUỐNG VÀ ẨN NÚT ĐÓNG KHI MỞ TOÀN MÀN HÌNH =====
         function createImageContainer(title, imageUrl) {
             const container = document.createElement('div');
             container.className = 'image-container';
@@ -3499,7 +3477,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             return container;
         }
         
-        // ===== SỬA LỖI THỨ 2: KHI MỞ SƠ ĐỒ TƯ DUY TOÀN MÀN HÌNH THÌ ẨN NÚT ĐÓNG =====
         function createMindmapContainerSieuNgau(title, mindmapTitle) {
             const mindmapDiv = document.createElement('div');
             mindmapDiv.className = 'mindmap-sieu-ngau';
