@@ -2,1510 +2,1256 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Hệ Thống Thi Thử Lịch Sử - HISTEST</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📜</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
     <style>
-        @import url('https://unpkg.com/normalize.css') layer(normalize);
+        /* ==================== RESET & NORMALIZE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        @layer normalize, base, demo;
+        /* ==================== CSS VARIABLES ==================== */
+        :root {
+            --bg-color: #FDF5E6;
+            --card-bg: #FFFEF7;
+            --card-outline: #DEB887;
+            --text-primary: #2C1810;
+            --text-secondary: #5C4033;
+            --border-color: #DEB887;
+            --gradient-start: #8B4513;
+            --gradient-mid: #CD853F;
+            --gradient-end: #F4A460;
+            --gradient: linear-gradient(135deg, #8B4513, #CD853F, #DAA520, #F4A460);
+            --primary-color: #8B4513;
+            --primary-dark: #5D2E0C;
+            --accent-color: #DAA520;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 12px 35px rgba(0, 0, 0, 0.15);
+            --success-color: #2E7D32;
+            --success-light: #81C784;
+            --error-color: #C62828;
+            --error-light: #EF5350;
+            --warning-color: #FF9800;
+            --warning-light: #FFB74D;
+            --info-color: #2196F3;
+            --info-light: #64B5F6;
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 20px;
+            --border-radius-xl: 30px;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
 
-        @layer base {
-            :root {
-                --font-size-min: 16;
-                --font-size-max: 20;
-                --font-ratio-min: 1.2;
-                --font-ratio-max: 1.33;
-                --font-width-min: 375;
-                --font-width-max: 1500;
-                
-                --bg-color: #FDF5E6;
-                --card-bg: #FFFEF7;
-                --card-outline: #DEB887;
-                --text-primary: #2C1810;
-                --text-secondary: #5C4033;
-                --border-color: #DEB887;
-                --button-bg: rgba(139, 69, 19, 0.08);
-                --grid-color: #CD853F;
-                --gradient: linear-gradient(135deg, #8B4513, #CD853F, #DAA520, #F4A460);
-                --primary-color: #8B4513;
-                --accent-color: #DAA520;
-                --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-                --scrollbar-track: #F5E6D3;
-                --scrollbar-thumb: #CD853F;
-                --scrollbar-thumb-hover: #8B4513;
-                --verification-color: #2E7D32;
-                --verification-bg: rgba(46, 125, 50, 0.1);
-                --success-color: #2E7D32;
-                --error-color: #C62828;
+        /* ==================== BASE STYLES ==================== */
+        body {
+            background: var(--bg-color);
+            font-family: 'Segoe UI', 'Roboto', 'Times New Roman', 'Noto Serif', serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(205, 133, 63, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(205, 133, 63, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ==================== CONTAINER & LAYOUT ==================== */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        main {
+            width: 100%;
+        }
+
+        /* ==================== EXAM CARD ==================== */
+        .exam-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--card-outline);
+            margin-bottom: 2rem;
+            transition: var(--transition-normal);
+        }
+
+        .exam-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* ==================== HEADER ==================== */
+        .header-image {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--card-outline);
+        }
+
+        .header-image h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .header-image p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* ==================== MODE SELECTOR ==================== */
+        .creation-mode-selector {
+            margin-bottom: 2rem;
+            background: rgba(139, 69, 19, 0.03);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            border: 2px solid rgba(139, 69, 19, 0.15);
+        }
+
+        .creation-mode-selector h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.2rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Mode Tabs */
+        .mode-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .mode-tab {
+            flex: 1;
+            min-width: 160px;
+            padding: 1rem 1.5rem;
+            background: var(--card-bg);
+            border: 2px solid var(--card-outline);
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mode-tab i {
+            font-size: 1.8rem;
+        }
+
+        .mode-tab:hover {
+            border-color: var(--primary-color);
+            background: rgba(139, 69, 19, 0.05);
+            transform: translateY(-3px);
+        }
+
+        .mode-tab.active {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(218, 165, 32, 0.1));
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+        }
+
+        /* Mode Content */
+        .mode-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .mode-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
             }
-
-            html {
-                color-scheme: light;
-            }
-
-            *,
-            *:after,
-            *:before {
-                box-sizing: border-box;
-            }
-
-            ::-webkit-scrollbar {
-                width: 10px;
-                height: 10px;
-            }
-
-            ::-webkit-scrollbar-track {
-                background: var(--scrollbar-track);
-                border-radius: 5px;
-                border: 1px solid var(--card-outline);
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background: var(--scrollbar-thumb);
-                border-radius: 5px;
-                border: 1px solid var(--card-outline);
-            }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: var(--scrollbar-thumb-hover);
-            }
-
-            * {
-                scrollbar-width: thin;
-                scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-            }
-
-            body {
-                background: var(--bg-color);
-                display: grid;
-                place-items: center;
-                min-height: 100vh;
-                font-family: 'Segoe UI', 'Roboto', 'Times New Roman', serif;
-                line-height: 1.5;
-                color: var(--text-primary);
-                padding: 2rem;
-                margin: 0;
-            }
-
-            body::before {
-                --size: 45px;
-                --line: var(--grid-color);
-                content: '';
-                height: 100vh;
-                width: 100vw;
-                position: fixed;
-                background: linear-gradient(
-                        90deg,
-                        var(--line) 1px,
-                        transparent 1px var(--size)
-                    )
-                    calc(var(--size) * 0.36) 50% / var(--size) var(--size),
-                    linear-gradient(var(--line) 1px, transparent 1px var(--size)) 0%
-                        calc(var(--size) * 0.32) / var(--size) var(--size);
-                mask: linear-gradient(-20deg, transparent 50%, white);
-                top: 0;
-                transform-style: flat;
-                pointer-events: none;
-                z-index: -1;
-                opacity: 0.5;
-            }
-
-            .web-icon {
-                position: fixed;
-                top: 1rem;
-                left: 1rem;
-                width: 48px;
-                aspect-ratio: 1;
-                display: grid;
-                place-items: center;
-                opacity: 0.8;
-                transition: opacity 0.2s;
-                background: var(--card-bg);
-                border-radius: 50%;
-                box-shadow: var(--shadow);
-            }
-
-            .web-icon:hover {
+            to {
                 opacity: 1;
-                transform: scale(1.05);
-            }
-
-            .web-icon img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-
-            .sr-only {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                padding: 0;
-                margin: -1px;
-                overflow: hidden;
-                clip: rect(0, 0, 0, 0);
-                white-space: nowrap;
-                border-width: 0;
-            }
-            
-            .mr-2 {
-                margin-right: 0.5rem;
-            }
-            
-            .text-red-500 {
-                color: #ef4444;
-            }
-            
-            .w-full {
-                width: 100%;
-            }
-            
-            .border {
-                border: 1px solid var(--card-outline);
-            }
-            
-            .rounded-lg {
-                border-radius: 8px;
-            }
-            
-            .p-2 {
-                padding: 0.5rem;
-            }
-            
-            .mt-1 {
-                margin-top: 0.25rem;
-            }
-            
-            .mt-3 {
-                margin-top: 0.75rem;
-            }
-            
-            .mb-2 {
-                margin-bottom: 0.5rem;
-            }
-            
-            .mb-3 {
-                margin-bottom: 0.75rem;
-            }
-            
-            .text-green-600 {
-                color: var(--verification-color);
-            }
-            
-            .font-semibold {
-                font-weight: 600;
-            }
-            
-            .text-center {
-                text-align: center;
-            }
-            
-            .flex {
-                display: flex;
-            }
-            
-            .flex-wrap {
-                flex-wrap: wrap;
-            }
-            
-            .items-center {
-                align-items: center;
-            }
-            
-            .justify-between {
-                justify-content: space-between;
-            }
-            
-            .gap-2 {
-                gap: 0.5rem;
-            }
-            
-            .gap-3 {
-                gap: 0.75rem;
-            }
-            
-            .flex-1 {
-                flex: 1;
+                transform: translateY(0);
             }
         }
 
-        @layer demo {
+        .mode-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: var(--border-radius-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* ==================== FORM ELEMENTS ==================== */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-label i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        textarea, 
+        input[type="text"], 
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: var(--border-radius-sm);
+            border: 2px solid var(--card-outline);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition-fast);
+            font-family: inherit;
+        }
+
+        textarea:focus,
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .placeholder-fix::placeholder {
+            color: #aaa;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        /* Custom Topic Area */
+        .custom-topic-area {
+            margin-top: 1rem;
+        }
+
+        .info-note {
+            background: rgba(139, 69, 19, 0.05);
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-sm);
+            border-left: 3px solid var(--primary-color);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.75rem;
+        }
+
+        /* ==================== BLOCKY STYLES ==================== */
+        .blocky-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .blocky-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--card-bg);
+            border: 2px solid var(--card-outline);
+            border-radius: var(--border-radius-xl);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .blocky-btn:hover {
+            background: rgba(139, 69, 19, 0.1);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .blocky-preview {
+            background: rgba(0, 0, 0, 0.02);
+            border: 2px dashed var(--card-outline);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .blocky-empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 3rem 1rem;
+        }
+
+        .blocky-empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .blocky-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-outline);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: var(--transition-fast);
+        }
+
+        .blocky-item:hover {
+            box-shadow: var(--shadow);
+            border-color: var(--primary-color);
+        }
+
+        .blocky-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--card-outline);
+        }
+
+        .blocky-item-type {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .blocky-item-remove {
+            background: none;
+            border: none;
+            color: var(--error-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition-fast);
+        }
+
+        .blocky-item-remove:hover {
+            background: rgba(198, 40, 40, 0.1);
+            transform: scale(1.1);
+        }
+
+        .blocky-item-content {
+            margin-bottom: 0.75rem;
+        }
+
+        .blocky-item-content input,
+        .blocky-item-content textarea {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .blocky-options {
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+        }
+
+        .blocky-option {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .blocky-option input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* ==================== ACTION BUTTONS ==================== */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .left-buttons {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .action-buttons .right-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .generate-btn {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--border-radius-xl);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .settings-btn {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--card-outline);
+            border-radius: var(--border-radius-xl);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-btn:hover {
+            background: rgba(139, 69, 19, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        /* ==================== SETTINGS PANEL ==================== */
+        .settings-panel {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: none;
+            border: 2px solid var(--card-outline);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-panel.active {
+            display: block;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .settings-card {
+            background: rgba(139, 69, 19, 0.02);
+            border-radius: var(--border-radius-sm);
+            padding: 1.25rem;
+            border: 1px solid var(--card-outline);
+        }
+
+        .settings-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Time Slider */
+        .time-slider-container {
+            margin-top: 0.5rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--card-outline);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .time-value {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* ==================== PROGRESS ==================== */
+        .progress-container {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            border: 2px solid var(--card-outline);
+            display: none;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .progress-title {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .progress-bar-wrapper {
+            width: 100%;
+            height: 10px;
+            background-color: #E0E0E0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ==================== EXAM RESULT ==================== */
+        .exam-result-container {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border-radius: var(--border-radius-md);
+            padding: 2rem;
+            border: 2px solid var(--card-outline);
+            display: none;
+        }
+
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--card-outline);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .exam-header h3 {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+
+        .exam-info {
+            background: rgba(139, 69, 19, 0.05);
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Timer Display */
+        .timer-display {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1rem;
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .timer-display.warning {
+            animation: timerBlink 1s infinite;
+            background: linear-gradient(135deg, var(--warning-color), #F57C00);
+        }
+
+        @keyframes timerBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Question Styles */
+        .question-item {
+            background: var(--card-bg);
+            border: 2px solid var(--card-outline);
+            border-radius: var(--border-radius-sm);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: var(--transition-fast);
+        }
+
+        .question-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .question-text {
+            flex: 1;
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+
+        .question-points {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--border-radius-xl);
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Multiple Choice Options */
+        .mc-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .mc-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .mc-option:hover {
+            background: rgba(139, 69, 19, 0.05);
+            border-color: var(--card-outline);
+        }
+
+        .mc-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .mc-option label {
+            flex: 1;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        /* True/False Styles */
+        .tf-statements {
+            margin-top: 1rem;
+        }
+
+        .tf-statement {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: var(--border-radius-sm);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .tf-statement-text {
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tf-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .tf-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--border-radius-xl);
+            border: 2px solid var(--card-outline);
+            background: var(--card-bg);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-fast);
+        }
+
+        .tf-btn.true:hover {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .tf-btn.false:hover {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .tf-btn.selected-true {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .tf-btn.selected-false {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        /* Section Header */
+        .section-header {
+            margin: 1.5rem 0 1rem 0;
+            padding: 0.75rem 1rem;
+            background: rgba(139, 69, 19, 0.08);
+            border-radius: var(--border-radius-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .section-header h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Exam Actions */
+        .exam-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .exam-action-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .take-exam-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+
+        .exam-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ==================== MODAL ==================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-md);
+            width: 90%;
+            max-width: 650px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 2px solid var(--card-outline);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: var(--error-color);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 2px solid var(--card-outline);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* Score Display */
+        .score-display {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--gradient);
+            border-radius: var(--border-radius-md);
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .score-number {
+            font-size: 3.5rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .score-detail {
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+
+        .result-stats {
+            background: rgba(139, 69, 19, 0.1);
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1rem;
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        .result-detail {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .result-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--card-outline);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .result-correct {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .result-incorrect {
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        /* ==================== UTILITIES ==================== */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 0.75rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 0.75rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
             body {
-                align-content: center;
-                gap: 2rem;
-                margin: 0;
-                padding: 2rem;
-                min-height: 100vh;
-                display: grid;
-                place-items: center;
+                padding: 10px;
             }
 
-            .app-container {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 2rem;
-                width: 100%;
-                padding-top: 40px;
-            }
-            
-            main {
-                touch-action: none;
-                padding-block: 2rem;
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                gap: 2rem;
-                align-items: center;
-            }
-            
-            .exam-tool {
-                padding: 0 0;
-                background-color: transparent;
-                width: 100%;
-            }
-            
             .exam-card {
-                background: var(--card-bg);
-                border-radius: 20px;
-                padding: 2.5rem;
-                box-shadow: var(--shadow);
-                transition: all 0.4s ease;
-                margin-bottom: 2rem;
-                width: 100%;
-                max-width: 1000px;
-                margin: 0 auto;
-                border: 2px solid var(--card-outline);
+                padding: 1.25rem;
             }
-            
-            .header-image {
-                text-align: center;
-                margin-bottom: 1.5rem;
+
+            .header-image h1 {
+                font-size: 1.5rem;
             }
-            
-            .header-image img {
-                max-width: 65%;
-                height: auto;
-            }
-            
-            .creation-mode-selector {
-                margin-bottom: 2rem;
-                background: rgba(139, 69, 19, 0.05);
-                border-radius: 15px;
-                padding: 1.5rem;
-                border: 2px solid rgba(139, 69, 19, 0.2);
-            }
-            
-            .creation-mode-selector h3 {
-                color: var(--primary-color);
-                margin: 0 0 1rem 0;
-                font-size: 1.2rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            
-            .mode-tabs {
-                display: flex;
-                gap: 1rem;
-                margin-bottom: 1.5rem;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                padding-bottom: 10px;
-            }
-            
+
             .mode-tab {
-                flex: 1;
-                min-width: 0;
-                padding: 1rem;
-                background: var(--card-bg);
-                border: 2px solid var(--card-outline);
-                border-radius: 12px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-weight: 600;
-                color: var(--text-secondary);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 0.5rem;
-                white-space: nowrap;
+                min-width: 120px;
+                padding: 0.75rem;
             }
-            
-            .mode-tab:hover {
-                border-color: var(--primary-color);
-                background: rgba(139, 69, 19, 0.05);
-                transform: translateY(-3px);
-            }
-            
-            .mode-tab.active {
-                background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(218, 165, 32, 0.1));
-                border-color: var(--primary-color);
-                color: var(--primary-color);
-                box-shadow: 0 4px 15px rgba(139, 69, 19, 0.15);
-            }
-            
+
             .mode-tab i {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
             }
-            
-            .mode-content {
-                display: none;
-                animation: fadeIn 0.3s ease;
-            }
-            
-            .mode-content.active {
-                display: block;
-            }
-            
-            .mode-description {
-                color: var(--text-secondary);
-                font-size: 0.95rem;
-                margin-bottom: 1rem;
-                padding: 0.5rem;
-                background: rgba(255, 255, 255, 0.5);
-                border-radius: 8px;
-                border-left: 3px solid var(--primary-color);
-            }
-            
-            .ai-prompt-area {
-                margin-bottom: 1.5rem;
-            }
-            
-            .ai-prompt-area textarea {
-                width: 100%;
-                min-height: 120px;
-                padding: 1rem;
-                border-radius: 12px;
-                border: 2px solid var(--card-outline);
-                background-color: var(--card-bg);
-                color: var(--text-primary);
-                font-size: 1rem;
-                resize: vertical;
-                transition: all 0.3s ease;
-                font-family: inherit;
-                line-height: 1.6;
-            }
-            
-            .ai-prompt-area textarea:focus {
-                outline: none;
-                border-color: var(--primary-color);
-                box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
-            }
-            
-            .ai-prompt-examples {
-                margin-top: 0.5rem;
-                font-size: 0.9rem;
-                color: var(--text-secondary);
-            }
-            
-            .ai-prompt-examples ul {
-                margin: 0.5rem 0 0 1.5rem;
-                padding: 0;
-            }
-            
-            .ai-prompt-examples li {
-                margin-bottom: 0.25rem;
-            }
-            
-            .blocky-controls {
-                display: flex;
-                gap: 1rem;
-                margin-bottom: 1.5rem;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                padding-bottom: 10px;
-            }
-            
-            .blocky-btn {
-                padding: 0.75rem 1.5rem;
-                background: var(--card-bg);
-                border: 2px solid var(--card-outline);
-                border-radius: 30px;
-                color: var(--text-primary);
-                font-size: 0.95rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                white-space: nowrap;
-                flex-shrink: 0;
-            }
-            
-            .blocky-btn:hover {
-                background: rgba(139, 69, 19, 0.1);
-                border-color: var(--primary-color);
-            }
-            
-            .blocky-preview {
-                background: rgba(0, 0, 0, 0.02);
-                border: 2px dashed var(--card-outline);
-                border-radius: 12px;
-                padding: 1.5rem;
-                min-height: 200px;
-                margin-bottom: 1.5rem;
-            }
-            
-            .blocky-empty-state {
-                text-align: center;
-                color: var(--text-secondary);
-                padding: 3rem 1rem;
-            }
-            
-            .blocky-empty-state i {
-                font-size: 3rem;
-                margin-bottom: 1rem;
-                opacity: 0.5;
-            }
-            
+
             .action-buttons {
-                display: flex;
-                gap: 1rem;
-                margin-bottom: 2rem;
-                flex-wrap: wrap;
+                flex-direction: column;
             }
-            
-            .action-buttons.text-mode {
-                justify-content: space-between;
-            }
-            
-            .action-buttons.ai-mode,
-            .action-buttons.blocky-mode {
-                justify-content: flex-start;
-            }
-            
-            .action-buttons .left-buttons {
-                display: flex;
-                gap: 1rem;
-                flex: 1;
-            }
-            
+
+            .action-buttons .left-buttons,
             .action-buttons .right-buttons {
-                display: flex;
-                gap: 1rem;
-            }
-            
-            .generate-btn {
-                background: var(--gradient);
-                color: white;
-                padding: 1rem 2rem;
-                border: none;
-                border-radius: 30px;
-                font-size: 1.1rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-                position: relative;
-                overflow: hidden;
-                z-index: 1;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                white-space: nowrap;
-            }
-            
-            .generate-btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 0%;
-                height: 100%;
-                background: rgba(255, 255, 255, 0.2);
-                transition: all 0.5s;
-                z-index: -1;
-            }
-            
-            .generate-btn:hover::before {
                 width: 100%;
             }
-            
-            .generate-btn:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-            }
-            
-            .generate-btn:disabled {
-                background: #ccc;
-                cursor: not-allowed;
-                transform: none;
-                box-shadow: none;
-                opacity: 0.7;
-            }
-            
-            .random-btn {
-                background: linear-gradient(135deg, #9C27B0, #7B1FA2);
-                color: white;
-                padding: 1rem 1.5rem;
-                border: none;
-                border-radius: 30px;
-                font-size: 1rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-                position: relative;
-                overflow: hidden;
-                z-index: 1;
-                white-space: nowrap;
-            }
-            
-            .random-btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 0%;
-                height: 100%;
-                background: rgba(255, 255, 255, 0.2);
-                transition: all 0.5s;
-                z-index: -1;
-            }
-            
-            .random-btn:hover::before {
-                width: 100%;
-            }
-            
-            .random-btn:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-                opacity: 0.95;
-            }
-            
+
+            .generate-btn,
             .settings-btn {
-                background: var(--card-bg);
-                color: var(--text-primary);
-                padding: 1rem 1.5rem;
-                border: 2px solid var(--card-outline);
-                border-radius: 30px;
-                font-size: 1rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
+                width: 100%;
                 justify-content: center;
-                white-space: nowrap;
             }
-            
-            .settings-btn:hover {
-                background: rgba(139, 69, 19, 0.1);
-                border-color: var(--primary-color);
-            }
-            
-            .input-area {
-                margin-bottom: 2rem;
-                position: relative;
-            }
-            
-            textarea {
-                width: 100%;
-                min-height: 200px;
-                padding: 1.5rem;
-                border-radius: 12px;
-                border: 2px solid var(--card-outline);
-                background-color: var(--card-bg);
-                color: var(--text-primary);
-                font-size: 1rem;
-                resize: vertical;
-                transition: all 0.3s ease;
-                font-family: inherit;
-                line-height: 1.6;
-                white-space: pre-wrap;
-            }
-            
-            textarea:focus {
-                outline: none;
-                border-color: var(--primary-color);
-                box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
-            }
-            
-            .word-count {
-                position: absolute;
-                bottom: 10px;
-                right: 15px;
-                font-size: 0.85rem;
-                color: var(--text-secondary);
-                background: rgba(255, 255, 255, 0.9);
-                padding: 2px 8px;
-                border-radius: 10px;
-                border: 1px solid var(--card-outline);
-            }
-            
-            .settings-panel {
-                background: var(--card-bg);
-                border-radius: 15px;
-                padding: 1.5rem;
-                margin-bottom: 2rem;
-                display: none;
-            }
-            
-            .settings-panel.active {
-                display: block;
-                animation: fadeIn 0.3s ease;
-            }
-            
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            .options-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 1.5rem;
-            }
-            
-            .option-card {
-                background: var(--card-bg);
-                border-radius: 12px;
-                padding: 1.5rem;
-                box-shadow: var(--shadow);
-                transition: all 0.3s ease;
-                border-left: 5px solid var(--primary-color);
-                border: 2px solid var(--card-outline);
-            }
-            
-            .option-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-                border-color: var(--primary-color);
-            }
-            
-            .option-card h3 {
-                color: var(--primary-color);
-                margin-bottom: 1rem;
-                font-size: 1.2rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            
-            .duration-control {
-                margin-top: 15px;
-            }
-            
-            .duration-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 10px;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            
-            .duration-control label {
-                font-weight: 600;
-                color: var(--text-primary);
-                font-size: 1rem;
-            }
-            
-            #examTimeValue {
-                font-weight: bold;
-                color: var(--primary-color);
-                font-size: 1.1rem;
-                margin-left: 5px;
-            }
-            
-            .duration-buttons {
-                display: flex;
-                gap: 8px;
-            }
-            
-            .duration-btn {
-                padding: 6px 12px;
-                background: var(--card-bg);
-                border: 2px solid var(--card-outline);
-                border-radius: 20px;
-                color: var(--text-primary);
-                font-size: 0.9rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                font-weight: 500;
-            }
-            
-            .duration-btn:hover {
-                background: rgba(139, 69, 19, 0.1);
-                border-color: var(--primary-color);
-            }
-            
-            .duration-btn.active {
-                background: var(--primary-color);
-                color: white;
-                border-color: var(--primary-color);
-            }
-            
-            #examTimeSlider {
-                width: 100%;
-                height: 10px;
-                -webkit-appearance: none;
-                appearance: none;
-                background: linear-gradient(to right, var(--primary-color) 0%, var(--primary-color) 50%, var(--border-color) 50%, var(--border-color) 100%);
-                border-radius: 5px;
-                outline: none;
-                margin-top: 10px;
-            }
-            
-            #examTimeSlider::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 26px;
-                height: 26px;
-                border-radius: 50%;
-                background: var(--primary-color);
-                cursor: pointer;
-                border: 3px solid white;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-                transition: all 0.2s ease;
-            }
-            
-            .toggle-container {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 1rem;
-                padding: 8px 0;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            }
-            
-            .toggle-label {
-                font-weight: 500;
-                color: var(--text-primary);
-                font-size: 0.95rem;
-                flex: 1;
-            }
-            
-            .toggle-switch {
-                position: relative;
-                display: inline-block;
-                width: 50px;
-                height: 26px;
-                flex-shrink: 0;
-            }
-            
-            .toggle-switch input {
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
-            
-            .toggle-slider {
-                position: absolute;
-                cursor: pointer;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-color: #ccc;
-                transition: .4s;
-                border-radius: 34px;
-                border: 2px solid #aaa;
-            }
-            
-            .toggle-slider:before {
-                position: absolute;
-                content: "";
-                height: 18px;
-                width: 18px;
-                left: 2px;
-                bottom: 2px;
-                background-color: white;
-                transition: .4s;
-                border-radius: 50%;
-                border: 1px solid #ddd;
-            }
-            
-            input:checked + .toggle-slider {
-                background-color: var(--primary-color);
-                border-color: var(--primary-color);
-            }
-            
-            input:checked + .toggle-slider:before {
-                transform: translateX(24px);
-            }
-            
-            .select-container {
-                margin-bottom: 1rem;
-            }
-            
-            .block-label {
-                display: block;
-                font-size: 0.9rem;
-                color: var(--text-secondary);
-                margin-bottom: 0.5rem;
-                font-weight: 500;
-            }
-            
-            select {
-                width: 100%;
-                padding: 0.85rem;
-                border-radius: 10px;
-                border: 2px solid var(--card-outline);
-                background-color: var(--card-bg);
-                color: var(--text-primary);
-                font-size: 1rem;
-                transition: all 0.3s ease;
-                font-family: inherit;
-                cursor: pointer;
-            }
-            
-            .progress-container {
-                margin-top: 2rem;
-                background-color: var(--card-bg);
-                border-radius: 15px;
-                padding: 1.8rem;
-                box-shadow: var(--shadow);
-                border: 2px solid var(--card-outline);
-            }
-            
-            .progress-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.2rem;
-            }
-            
-            .progress-title {
-                font-weight: 700;
-                color: var(--primary-color);
-                font-size: 1.3rem;
-            }
-            
-            .progress-status {
-                font-size: 1rem;
-                color: var(--text-primary);
-                font-weight: 500;
-            }
-            
-            .progress-bar {
-                height: 12px;
-                background-color: #e0e0e0;
-                border-radius: 6px;
-                overflow: hidden;
-                margin-bottom: 1.2rem;
-                border: 2px solid #ccc;
-            }
-            
-            .progress-fill {
-                height: 100%;
-                background: var(--gradient);
-                border-radius: 6px;
-                transition: width 0.4s ease;
-            }
-            
-            .progress-items {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                gap: 0.8rem;
-                max-height: 220px;
-                overflow-y: auto;
-                padding-right: 10px;
-            }
-            
-            .progress-item {
-                display: flex;
-                align-items: center;
-                font-size: 1rem;
-                color: var(--text-primary);
-                padding: 8px 12px;
-                border-radius: 8px;
-                border: 2px solid transparent;
-                background: rgba(0, 0, 0, 0.02);
-                transition: all 0.3s ease;
-            }
-            
-            .progress-item.completed {
-                color: var(--primary-color);
-                border-color: rgba(139, 69, 19, 0.4);
-                background-color: rgba(139, 69, 19, 0.08);
-            }
-            
-            .progress-item.pending {
-                color: #9ca3af;
-                border-color: rgba(156, 163, 175, 0.3);
-            }
-            
-            .progress-item.error {
-                color: #ef4444;
-                border-color: rgba(239, 68, 68, 0.4);
-                background-color: rgba(239, 68, 68, 0.08);
-            }
-            
-            .progress-item.verification {
-                color: var(--verification-color);
-                border-color: rgba(46, 125, 50, 0.4);
-                background-color: var(--verification-bg);
-                font-weight: 600;
-                animation: pulse 2s infinite;
-            }
-            
-            @keyframes pulse {
-                0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.4); }
-                70% { box-shadow: 0 0 0 10px rgba(46, 125, 50, 0); }
-                100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
-            }
-            
-            .exam-result-container {
-                margin-top: 2rem;
-                background: var(--card-bg);
-                border-radius: 15px;
-                padding: 2rem;
-                box-shadow: var(--shadow);
-                border: 2px solid var(--card-outline);
-            }
-            
+
             .exam-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.5rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px solid var(--card-outline);
-                flex-wrap: wrap;
-                gap: 1rem;
-            }
-            
-            .exam-header h3 {
-                color: var(--primary-color);
-                font-size: 1.3rem;
-                margin: 0;
-            }
-            
-            .exam-code {
-                background: rgba(139, 69, 19, 0.1);
-                padding: 0.5rem 1rem;
-                border-radius: 20px;
-                font-weight: 600;
-                color: var(--primary-color);
-                border: 2px solid var(--primary-color);
-            }
-            
-            .exam-info {
-                background: rgba(139, 69, 19, 0.05);
-                padding: 1rem;
-                border-radius: 8px;
-                margin-bottom: 1.5rem;
-                border: 1px solid var(--card-outline);
-            }
-            
-            /* Multiple Choice Styles */
-            .mc-options {
-                display: flex;
                 flex-direction: column;
-                gap: 10px;
-                margin-top: 10px;
+                text-align: center;
             }
-            
-            .mc-option {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 10px;
-                border-radius: 8px;
-                cursor: pointer;
-                transition: all 0.2s;
-                border: 1px solid transparent;
+
+            .timer-display {
+                font-size: 1.2rem;
             }
-            
-            .mc-option:hover {
-                background: rgba(139, 69, 19, 0.05);
-                border-color: var(--border-color);
+
+            .question-header {
+                flex-direction: column;
             }
-            
-            .mc-option input {
-                width: auto;
-                margin: 0;
+        }
+
+        @media (max-width: 480px) {
+            .mode-tabs {
+                flex-direction: column;
             }
-            
-            .mc-option label {
-                flex: 1;
-                cursor: pointer;
+
+            .mode-tab {
+                min-width: auto;
             }
-            
-            /* True/False Styles */
-            .tf-statements {
-                margin-top: 15px;
-            }
-            
-            .tf-statement {
-                margin-bottom: 15px;
-                padding: 12px;
-                background: rgba(0, 0, 0, 0.02);
-                border-radius: 8px;
-                border-left: 3px solid var(--primary-color);
-            }
-            
+
             .tf-buttons {
-                display: flex;
-                gap: 15px;
-                margin-top: 8px;
-            }
-            
-            .tf-btn {
-                padding: 6px 20px;
-                border-radius: 30px;
-                border: 2px solid var(--border-color);
-                background: var(--card-bg);
-                cursor: pointer;
-                font-weight: 500;
-                transition: all 0.2s;
-            }
-            
-            .tf-btn.true:hover {
-                background: var(--success-color);
-                color: white;
-                border-color: var(--success-color);
-            }
-            
-            .tf-btn.false:hover {
-                background: var(--error-color);
-                color: white;
-                border-color: var(--error-color);
-            }
-            
-            .tf-btn.selected-true {
-                background: var(--success-color);
-                color: white;
-                border-color: var(--success-color);
-            }
-            
-            .tf-btn.selected-false {
-                background: var(--error-color);
-                color: white;
-                border-color: var(--error-color);
-            }
-            
-            .preview-exam {
-                font-family: inherit;
-            }
-            
-            .preview-exam .exam-title {
-                text-align: center;
-                color: var(--primary-color);
-                font-size: 1.8rem;
-                margin-bottom: 1rem;
-                padding-bottom: 1rem;
-                border-bottom: 3px solid var(--primary-color);
-            }
-            
-            .preview-exam .exam-section {
-                margin-bottom: 2rem;
-            }
-            
-            .preview-exam .section-title {
-                color: var(--primary-color);
-                font-size: 1.3rem;
-                margin-bottom: 1rem;
-                padding-bottom: 0.5rem;
-                border-bottom: 2px solid rgba(139, 69, 19, 0.3);
-            }
-            
-            .preview-exam .text-content {
-                background: rgba(0, 0, 0, 0.02);
-                padding: 1rem;
-                border-radius: 8px;
-                margin-bottom: 1.5rem;
-                border-left: 4px solid var(--primary-color);
-                line-height: 1.7;
-                white-space: pre-wrap;
-                font-family: 'Times New Roman', Times, serif;
-            }
-            
-            .preview-exam .question-item {
-                background: var(--card-bg);
-                border: 2px solid var(--card-outline);
-                border-radius: 8px;
-                padding: 1.5rem;
-                margin-bottom: 1rem;
-            }
-            
-            .preview-exam .question-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 1rem;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            
-            .preview-exam .question-text {
-                flex: 1;
-                font-weight: 500;
-                color: var(--text-primary);
-                font-size: 1.05rem;
-            }
-            
-            .preview-exam .question-points {
-                background: var(--primary-color);
-                color: white;
-                padding: 0.25rem 0.75rem;
-                border-radius: 20px;
-                font-size: 0.9rem;
-                font-weight: 600;
-                flex-shrink: 0;
-            }
-            
-            .exam-actions {
-                display: flex;
-                gap: 1rem;
-                justify-content: center;
-                margin-top: 2rem;
-                flex-wrap: wrap;
-            }
-            
-            .exam-action-btn {
-                padding: 12px 24px;
-                border-radius: 8px;
-                border: none;
-                font-size: 1rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            .preview-btn { background: linear-gradient(135deg, #9C27B0, #7B1FA2); color: white; }
-            .edit-btn { background: linear-gradient(135deg, #FF9800, #F57C00); color: white; }
-            .save-btn { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; }
-            .take-exam-btn { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; }
-            .submit-btn { background: linear-gradient(135deg, #2196F3, #1976D2); color: white; }
-            
-            .exam-action-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            }
-            
-            .modal {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 1000;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .modal.active {
-                display: flex;
-                animation: fadeIn 0.3s ease;
-            }
-            
-            .modal-content {
-                background: var(--card-bg);
-                border-radius: 12px;
-                width: 90%;
-                max-width: 600px;
-                max-height: 90vh;
-                display: flex;
                 flex-direction: column;
-                border: 3px solid var(--primary-color);
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             }
-            
-            .modal-header {
-                padding: 1.5rem;
-                border-bottom: 2px solid var(--card-outline);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            .modal-header h3 {
-                color: var(--primary-color);
-                margin: 0;
-                font-size: 1.3rem;
-            }
-            
-            .close-modal {
-                background: none;
-                border: none;
-                font-size: 1.5rem;
-                color: var(--text-secondary);
-                cursor: pointer;
-            }
-            
-            .modal-body {
-                padding: 1.5rem;
-                overflow-y: auto;
-                flex: 1;
-            }
-            
-            .modal-footer {
-                padding: 1.5rem;
-                border-top: 2px solid var(--card-outline);
-                display: flex;
-                justify-content: flex-end;
-                gap: 1rem;
-            }
-            
-            .score-display {
+
+            .tf-btn {
+                width: 100%;
                 text-align: center;
-                padding: 20px;
-                background: var(--gradient);
-                border-radius: 15px;
-                color: white;
-                margin-bottom: 20px;
-            }
-            
-            .score-number {
-                font-size: 3rem;
-                font-weight: bold;
-            }
-            
-            .result-detail {
-                max-height: 400px;
-                overflow-y: auto;
-            }
-            
-            .result-item {
-                padding: 10px;
-                border-bottom: 1px solid var(--border-color);
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            
-            .result-correct { color: var(--success-color); }
-            .result-incorrect { color: var(--error-color); }
-            
-            @media (max-width: 768px) {
-                body { padding: 1rem; }
-                .exam-card { padding: 1.5rem; }
-                .mode-tab { min-width: 120px; }
-                .exam-header { flex-direction: column; text-align: center; }
             }
         }
     </style>
 </head>
 <body>
-    <a aria-label="Website Icon" class="web-icon" href="#" rel="noreferrer noopener">
-        <i class="fas fa-landmark" style="font-size: 28px; color: var(--primary-color);"></i>
-    </a>
-    
     <div class="app-container">
         <main>
-            <div class="exam-tool">
-                <div class="exam-card">
-                    <div class="header-image">
-                        <h1 style="color: var(--primary-color); font-size: 2rem; margin: 0;">
-                            <i class="fas fa-scroll"></i> HỆ THỐNG THI THỬ LỊCH SỬ <i class="fas fa-landmark"></i>
-                        </h1>
-                        <p style="color: var(--text-secondary); margin-top: 10px;">AI tạo đề thi - Thi trực tiếp - Chấm điểm tự động</p>
-                    </div>
-                    
-                    <div class="creation-mode-selector">
-                        <h3><i class="fas fa-sliders-h"></i> CHẾ ĐỘ TẠO ĐỀ THI</h3>
-                        <div class="mode-tabs">
-                            <!-- VẤN ĐỀ 2: Đã sửa tab đầu tiên thành "Tạo đề THPTQG" -->
-                            <div class="mode-tab active" data-mode="text">
-                                <i class="fas fa-graduation-cap"></i>
-                                <span>Tạo đề THPTQG</span>
-                            </div>
-                            <div class="mode-tab" data-mode="ai">
-                                <i class="fas fa-robot"></i>
-                                <span>Tạo bằng AI</span>
-                            </div>
-                            <div class="mode-tab" data-mode="blocky">
-                                <i class="fas fa-cubes"></i>
-                                <span>Tạo Blocky</span>
-                            </div>
-                        </div>
-                        
-                        <!-- VẤN ĐỀ 2: Đã thay nội dung phần mode-text -->
-                        <div class="mode-content active" id="mode-text">
-                            <div class="mode-description">
-                                <strong>Mô tả:</strong> Tạo đề thi Lịch sử THPTQG chuẩn cấu trúc Bộ GD&ĐT: 24 câu trắc nghiệm (Phần I) + 4 câu đúng/sai (Phần II). Thời gian 50 phút.
-                            </div>
-                            <div class="ai-prompt-area">
-                                <div class="select-container" style="margin-bottom:1rem;">
-                                    <label class="block-label">
-                                        <i class="fas fa-list"></i> Phạm vi đề thi
-                                    </label>
-                                    <select id="thptTopicScope">
-                                        <option value="full">Toàn bộ nội dung thi THPTQG (ngẫu nhiên)</option>
-                                        <option value="custom">Chọn sự kiện / giai đoạn cụ thể</option>
-                                    </select>
-                                </div>
-
-                                <!-- Ô này chỉ hiện khi chọn "custom", mặc định ẩn -->
-                                <div id="customTopicArea" style="display:none; margin-bottom:1rem;">
-                                    <label class="block-label">
-                                        <i class="fas fa-search"></i> Nhập sự kiện hoặc giai đoạn lịch sử muốn ra đề
-                                    </label>
-                                    <textarea id="inputText" rows="4"
-                                        placeholder="Ví dụ:&#10;- Cách mạng tháng Tám 1945&#10;- Chiến dịch Điện Biên Phủ 1954&#10;- Công cuộc Đổi mới từ 1986&#10;- Chiến tranh Lạnh&#10;- ASEAN và Liên Hợp Quốc">
-                                    </textarea>
-                                </div>
-
-                                <!-- Hiển thị khi chọn "full" -->
-                                <div id="fullTopicNote" style="padding:0.75rem; background:rgba(139,69,19,0.07);
-                                    border-radius:8px; border-left:3px solid var(--primary-color);
-                                    color:var(--text-secondary); font-size:0.95rem;">
-                                    <strong>Nội dung sẽ bao gồm:</strong> Lịch sử Việt Nam hiện đại
-                                    (Cách mạng tháng Tám, kháng chiến chống Pháp, chống Mỹ, Đổi mới 1986)
-                                    + Lịch sử thế giới (Liên Hợp Quốc, ASEAN, Chiến tranh Lạnh).
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mode-content" id="mode-ai">
-                            <div class="mode-description">
-                                <strong>Mô tả:</strong> Nhập yêu cầu bằng tiếng Việt, AI sẽ tự động tạo đề thi từ A-Z dựa trên yêu cầu của bạn.
-                            </div>
-                            <div class="ai-prompt-area">
-                                <textarea id="aiPrompt" placeholder="Nhập yêu cầu tạo đề thi Lịch sử...&#10;&#10;Ví dụ:&#10;- Tạo đề thi Lịch sử Việt Nam giai đoạn 1945-1975 với 10 câu hỏi&#10;- Tạo đề thi về Chiến tranh thế giới thứ hai&#10;- Tạo đề thi về ASEAN và Liên Hợp Quốc"></textarea>
-                                <div class="ai-prompt-examples">
-                                    <strong>Ví dụ yêu cầu AI:</strong>
-                                    <ul>
-                                        <li>Tạo đề thi về Cách mạng tháng Tám 1945</li>
-                                        <li>Tạo đề thi về Chiến dịch Điện Biên Phủ</li>
-                                        <li>Tạo đề thi về Công cuộc Đổi mới ở Việt Nam</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mode-content" id="mode-blocky">
-                            <div class="mode-description">
-                                <strong>Mô tả:</strong> Tạo đề thi bằng cách thêm, xóa và chỉnh sửa từng khối câu hỏi và nội dung.
-                            </div>
-                            <div class="blocky-controls">
-                                <button id="addTextBlockBtn" class="blocky-btn">
-                                    <i class="fas fa-paragraph"></i> Thêm văn bản
-                                </button>
-                                <button id="addQuestionBlockBtn" class="blocky-btn">
-                                    <i class="fas fa-question-circle"></i> Thêm câu hỏi
-                                </button>
-                                <button id="clearBlocksBtn" class="blocky-btn">
-                                    <i class="fas fa-trash"></i> Xóa tất cả
-                                </button>
-                            </div>
-                            <div class="blocky-preview" id="blockyPreview">
-                                <div class="blocky-empty-state">
-                                    <i class="fas fa-cubes"></i>
-                                    <h4>Chưa có nội dung</h4>
-                                    <p>Bấm vào nút "Thêm văn bản" hoặc "Thêm câu hỏi" để bắt đầu tạo đề thi</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="action-buttons text-mode" id="actionButtonsContainer">
-                        <div class="left-buttons">
-                            <button id="generateExamBtn" class="generate-btn">
-                                <i class="fas fa-file-alt mr-2"></i> Tạo Đề Thi
-                            </button>
-                            <button id="generateRandomExamBtn" class="random-btn">
-                                <i class="fas fa-dice mr-2"></i> Đề Thi Ngẫu Nhiên
-                            </button>
-                        </div>
-                        <div class="right-buttons">
-                            <button id="settingsBtn" class="settings-btn">
-                                <i class="fas fa-cog mr-2"></i> Cài đặt
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-panel" id="settingsPanel">
-                        <div class="options-grid">
-                            <div class="option-card">
-                                <h3><i class="fas fa-clock"></i> Thời gian làm bài</h3>
-                                <div class="duration-control">
-                                    <div class="duration-header">
-                                        <label>Thời gian: <span id="examTimeValue">50 phút</span></label>
-                                        <div class="duration-buttons">
-                                            <button type="button" class="duration-btn" data-value="45">45p</button>
-                                            <button type="button" class="duration-btn" data-value="50">50p</button>
-                                            <button type="button" class="duration-btn" data-value="60">60p</button>
-                                        </div>
-                                    </div>
-                                    <input type="range" id="examTimeSlider" min="30" max="120" step="5" value="50">
-                                </div>
-                            </div>
-                            
-                            <div class="option-card">
-                                <h3><i class="fas fa-sliders-h"></i> Cài đặt đề thi</h3>
-                                <div class="select-container">
-                                    <label class="block-label">Độ khó</label>
-                                    <select id="difficulty">
-                                        <option value="easy">Dễ</option>
-                                        <option value="medium" selected>Trung bình</option>
-                                        <option value="hard">Khó</option>
-                                    </select>
-                                </div>
-                                <div class="select-container">
-                                    <label class="block-label">Loại câu hỏi</label>
-                                    <select id="questionType">
-                                        <option value="mixed" selected>Hỗn hợp (TN + Đ/S)</option>
-                                        <option value="mc">Chỉ trắc nghiệm</option>
-                                        <option value="tf">Chỉ đúng/sai</option>
-                                    </select>
-                                </div>
-                                <div class="mt-3">
-                                    <label class="block-label">Số câu hỏi</label>
-                                    <input type="number" id="questionCount" min="3" max="20" value="10" class="w-full p-2 border rounded-lg">
-                                </div>
-                            </div>
-                            
-                            <div class="option-card">
-                                <h3><i class="fas fa-random"></i> Tạo đề thi ngẫu nhiên</h3>
-                                <div class="select-container">
-                                    <label class="block-label">Chọn giai đoạn lịch sử</label>
-                                    <select id="randomPeriod">
-                                        <option value="random" selected>Ngẫu nhiên</option>
-                                        <option value="vietnam_1945_1954">Việt Nam 1945-1954</option>
-                                        <option value="vietnam_1954_1975">Việt Nam 1954-1975</option>
-                                        <option value="vietnam_doi_moi">Việt Nam Đổi mới</option>
-                                        <option value="world_war">Chiến tranh thế giới</option>
-                                        <option value="asean_un">ASEAN & Liên Hợp Quốc</option>
-                                    </select>
-                                </div>
-                                <div class="select-container">
-                                    <label class="block-label">Chủ đề ưu tiên</label>
-                                    <select id="randomTopic">
-                                        <option value="any" selected>Bất kỳ</option>
-                                        <option value="chinh_tri">Chính trị</option>
-                                        <option value="kinh_te">Kinh tế</option>
-                                        <option value="van_hoa">Văn hóa - Xã hội</option>
-                                        <option value="quan_su">Quân sự</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="option-card">
-                                <h3><i class="fas fa-sticky-note"></i> Ghi chú cho đề thi</h3>
-                                <textarea id="examNotes" placeholder="Nhập ghi chú cho đề thi... (Ví dụ: Phân bổ thời gian, trọng tâm kiến thức, tiêu chí chấm điểm...)" rows="4"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-container" id="progressContainer" style="display: none;">
-                        <div class="progress-header">
-                            <div class="progress-title">Đang tạo đề thi</div>
-                            <div class="progress-status" id="progressStatus">Đang xử lý...</div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                        </div>
-                        <div class="progress-items" id="progressItems"></div>
-                    </div>
-                    
-                    <div class="exam-result-container" id="examResult" style="display: none;"></div>
+            <div class="exam-card">
+                <!-- Header -->
+                <div class="header-image">
+                    <h1>
+                        <i class="fas fa-scroll"></i>
+                        HỆ THỐNG THI THỬ LỊCH SỬ
+                        <i class="fas fa-landmark"></i>
+                    </h1>
+                    <p>AI tạo đề thi chuẩn cấu trúc THPTQG - Thi trực tiếp có thời gian - Chấm điểm tự động</p>
                 </div>
+
+                <!-- Mode Selector -->
+                <div class="creation-mode-selector">
+                    <h3>
+                        <i class="fas fa-sliders-h"></i>
+                        CHẾ ĐỘ TẠO ĐỀ THI
+                    </h3>
+                    <div class="mode-tabs">
+                        <div class="mode-tab active" data-mode="thpt">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Tạo đề THPTQG</span>
+                        </div>
+                        <div class="mode-tab" data-mode="ai">
+                            <i class="fas fa-robot"></i>
+                            <span>Tạo bằng AI</span>
+                        </div>
+                        <div class="mode-tab" data-mode="blocky">
+                            <i class="fas fa-cubes"></i>
+                            <span>Tạo Blocky</span>
+                        </div>
+                    </div>
+
+                    <!-- Mode: THPTQG -->
+                    <div class="mode-content active" id="mode-thpt-content">
+                        <div class="mode-description">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Mô tả:</strong> Tạo đề thi Lịch sử THPTQG chuẩn cấu trúc Bộ GD&ĐT gồm 24 câu trắc nghiệm (Phần I) và 4 câu đúng/sai (Phần II). Mỗi câu đúng/sai có 4 ý a, b, c, d. Thời gian làm bài 50 phút.
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-list"></i>
+                                Phạm vi đề thi
+                            </label>
+                            <select id="thptScope">
+                                <option value="full">Toàn bộ nội dung thi THPTQG (tự động chọn ngẫu nhiên)</option>
+                                <option value="custom">Chọn sự kiện / giai đoạn lịch sử cụ thể</option>
+                            </select>
+                        </div>
+                        <div id="thptCustomArea" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-search"></i>
+                                    Nhập sự kiện hoặc giai đoạn lịch sử
+                                </label>
+                                <textarea id="thptCustomTopic" rows="4" class="placeholder-fix" placeholder="Ví dụ:&#10;- Cách mạng tháng Tám 1945&#10;- Chiến dịch Điện Biên Phủ 1954&#10;- Công cuộc Đổi mới từ 1986&#10;- Chiến tranh Lạnh&#10;- ASEAN và Liên Hợp Quốc"></textarea>
+                            </div>
+                        </div>
+                        <div id="thptFullNote" class="info-note">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Nội dung sẽ bao gồm:</strong> Lịch sử Việt Nam hiện đại (Cách mạng tháng Tám, kháng chiến chống Pháp, kháng chiến chống Mỹ, Đổi mới 1986) và Lịch sử thế giới (Liên Hợp Quốc, ASEAN, Chiến tranh Lạnh).
+                        </div>
+                    </div>
+
+                    <!-- Mode: AI -->
+                    <div class="mode-content" id="mode-ai-content">
+                        <div class="mode-description">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Mô tả:</strong> Nhập yêu cầu bằng tiếng Việt, AI sẽ tự động tạo đề thi từ A-Z dựa trên yêu cầu của bạn.
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-comment"></i>
+                                Yêu cầu tạo đề thi
+                            </label>
+                            <textarea id="aiPrompt" rows="5" class="placeholder-fix" placeholder="Nhập yêu cầu tạo đề thi Lịch sử...&#10;&#10;Ví dụ:&#10;- Tạo đề thi Lịch sử Việt Nam giai đoạn 1945-1975 với 10 câu hỏi&#10;- Tạo đề thi về Chiến tranh thế giới thứ hai&#10;- Tạo đề thi về ASEAN và Liên Hợp Quốc"></textarea>
+                        </div>
+                        <div class="info-note">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Gợi ý:</strong> Bạn có thể yêu cầu AI tạo đề theo chủ đề, giai đoạn lịch sử, hoặc theo cấu trúc cụ thể.
+                        </div>
+                    </div>
+
+                    <!-- Mode: Blocky -->
+                    <div class="mode-content" id="mode-blocky-content">
+                        <div class="mode-description">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Mô tả:</strong> Tạo đề thi bằng cách thêm và chỉnh sửa từng câu hỏi trắc nghiệm và câu hỏi đúng/sai. Mỗi câu đúng/sai có 4 ý a, b, c, d.
+                        </div>
+                        <div class="blocky-controls">
+                            <button id="addMCBlockBtn" class="blocky-btn">
+                                <i class="fas fa-question-circle"></i>
+                                Thêm câu trắc nghiệm
+                            </button>
+                            <button id="addTFBlockBtn" class="blocky-btn">
+                                <i class="fas fa-check-double"></i>
+                                Thêm câu đúng/sai
+                            </button>
+                            <button id="clearAllBlocksBtn" class="blocky-btn">
+                                <i class="fas fa-trash-alt"></i>
+                                Xóa tất cả
+                            </button>
+                        </div>
+                        <div class="blocky-preview" id="blockyPreview">
+                            <div class="blocky-empty-state">
+                                <i class="fas fa-cubes"></i>
+                                <h4>Chưa có câu hỏi nào</h4>
+                                <p>Bấm vào nút "Thêm câu trắc nghiệm" hoặc "Thêm câu đúng/sai" để bắt đầu tạo đề thi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons" id="actionButtonsContainer">
+                    <div class="left-buttons">
+                        <button id="generateExamBtn" class="generate-btn">
+                            <i class="fas fa-file-alt"></i>
+                            Tạo Đề Thi
+                        </button>
+                    </div>
+                    <div class="right-buttons">
+                        <button id="openSettingsBtn" class="settings-btn">
+                            <i class="fas fa-cog"></i>
+                            Cài đặt
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Settings Panel -->
+                <div class="settings-panel" id="settingsPanel">
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h4>
+                                <i class="fas fa-clock"></i>
+                                Thời gian làm bài
+                            </h4>
+                            <div class="time-slider-container">
+                                <input type="range" id="examTimeSlider" min="30" max="120" step="5" value="50">
+                                <div class="time-value">
+                                    <span id="examTimeValue">50</span> phút
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <button type="button" class="blocky-btn" data-time="45" style="padding: 0.3rem 0.8rem;">45 phút</button>
+                                <button type="button" class="blocky-btn" data-time="50" style="padding: 0.3rem 0.8rem;">50 phút</button>
+                                <button type="button" class="blocky-btn" data-time="60" style="padding: 0.3rem 0.8rem;">60 phút</button>
+                                <button type="button" class="blocky-btn" data-time="90" style="padding: 0.3rem 0.8rem;">90 phút</button>
+                            </div>
+                        </div>
+                        <div class="settings-card">
+                            <h4>
+                                <i class="fas fa-chart-line"></i>
+                                Độ khó đề thi
+                            </h4>
+                            <select id="difficultySelect">
+                                <option value="easy">Dễ</option>
+                                <option value="medium" selected>Trung bình</option>
+                                <option value="hard">Khó</option>
+                            </select>
+                        </div>
+                        <div class="settings-card">
+                            <h4>
+                                <i class="fas fa-sticky-note"></i>
+                                Ghi chú cho đề thi
+                            </h4>
+                            <textarea id="examNotes" rows="3" class="placeholder-fix" placeholder="Nhập ghi chú cho đề thi... (Ví dụ: Phân bổ thời gian, trọng tâm kiến thức, tiêu chí chấm điểm...)"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Container -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-header">
+                        <span class="progress-title">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Đang tạo đề thi
+                        </span>
+                        <span id="progressStatus">Đang xử lý...</span>
+                    </div>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <!-- Exam Result Container -->
+                <div class="exam-result-container" id="examResultContainer"></div>
             </div>
         </main>
     </div>
@@ -1514,319 +1260,307 @@
     <div id="resultModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-chart-simple"></i> KẾT QUẢ BÀI THI</h3>
-                <button class="close-modal">&times;</button>
+                <h3>
+                    <i class="fas fa-chart-simple"></i>
+                    KẾT QUẢ BÀI THI
+                </h3>
+                <button class="close-modal" id="closeResultModalBtn">&times;</button>
             </div>
-            <div class="modal-body" id="resultContent"></div>
+            <div class="modal-body" id="resultModalBody"></div>
             <div class="modal-footer">
-                <button class="modal-btn secondary-btn" id="closeResultBtn">Đóng</button>
+                <button id="closeResultFooterBtn" class="exam-action-btn submit-btn" style="background: var(--primary-color);">Đóng</button>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
     <script>
-        // ==================== VẤN ĐỀ 1: API KEY BẢO MẬT (ĐẢO NGƯỢC) ====================
-        // Key được lưu ngược để bảo mật, code tự động đảo lại khi chạy
-        const REVERSED_API_KEY = "Mns7CmK4lIftkRY8wbwNt5etZ9552EHWAySazIA";
+        // ==================== API CONFIGURATION ====================
+        const REVERSED_API_KEY = "k5z7rnmNE3UkwIieSn0HkBMP6O2l0Fs0BySazIA";
         const GEMINI_API_KEY = REVERSED_API_KEY.split('').reverse().join('');
         
-        let currentExamBlocks = [];
-        let currentExamCode = '';
+        // ==================== GLOBAL VARIABLES ====================
+        let currentMode = 'thpt';
         let currentExamData = null;
+        let currentExamCode = '';
         let userAnswers = {};
+        let examTimerInterval = null;
+        let remainingSeconds = 0;
+        let isExamActive = false;
+        let isExamSubmitted = false;
+        let blockyQuestions = [];
         let examSettings = {
             time: 50,
-            difficulty: 'medium',
-            grade: '12',
-            questionCount: 10,
-            questionType: 'mixed'
+            difficulty: 'medium'
         };
         
-        let currentRealWorkInfo = null;
-        let currentCreationMode = 'text';
-        let blockyBlocks = [];
-        let richTextEditors = [];
-        
-        let generationProgress = { total: 0, completed: 0, items: [] };
-        
-        // API Endpoints
-        const API_ENDPOINTS = [
-            {
-                name: "Gemini API",
-                url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-                active: true
-            }
-        ];
-        
-        let activeApiIndex = 0;
-        
-        // ==================== VẤN ĐỀ 1: HÀM GEMINI ĐÃ CẢI TIẾN XỬ LÝ LỖI CHI TIẾT ====================
-        async function callGeminiAPI(prompt) {
-            const api = API_ENDPOINTS[activeApiIndex];
-            
-            const response = await fetch(api.url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { maxOutputTokens: 8192, temperature: 0.7 }
-                })
-            });
-            
-            // Lý do thêm đoạn này: nếu API trả lỗi HTTP thì đọc message cụ thể
-            // thay vì chỉ báo "failed" chung chung như code cũ
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error('Gọi API thất bại: ' + (errData?.error?.message || response.status));
-            }
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        }
-        
-        function countWords(text) {
-            return text.trim().split(/\s+/).filter(w => w.length > 0).length;
-        }
-        
-        function updateProgress() {
-            const fill = document.getElementById('progressFill');
-            const status = document.getElementById('progressStatus');
-            const items = document.getElementById('progressItems');
-            const percent = generationProgress.total ? Math.round((generationProgress.completed / generationProgress.total) * 100) : 0;
-            fill.style.width = `${percent}%`;
-            status.textContent = percent === 100 ? 'Hoàn thành!' : `Đang xử lý... ${percent}%`;
-            
-            items.innerHTML = generationProgress.items.map(item => `
-                <div class="progress-item ${item.status}">
-                    <i class="fas fa-${item.status === 'completed' ? 'check-circle' : item.status === 'error' ? 'exclamation-circle' : item.status === 'verification' ? 'check-double' : 'clock'}"></i>
-                    ${item.name}
-                </div>
-            `).join('');
-        }
-        
-        function addProgressItem(name, type = 'normal') {
-            generationProgress.items.push({ name, status: 'pending' });
-            generationProgress.total++;
-            updateProgress();
-        }
-        
-        function completeProgressItem(index) {
-            generationProgress.items[index].status = 'completed';
-            generationProgress.completed++;
-            updateProgress();
-        }
-        
-        function markAsVerification(index) {
-            generationProgress.items[index].status = 'verification';
-            updateProgress();
-        }
-        
+        // ==================== HELPER FUNCTIONS ====================
         function formatDuration(minutes) {
-            return minutes < 60 ? `${minutes} phút` : `${Math.floor(minutes/60)} giờ ${minutes%60} phút`;
+            if (minutes < 60) {
+                return minutes + ' phút';
+            }
+            let hours = Math.floor(minutes / 60);
+            let mins = minutes % 60;
+            return hours + ' giờ ' + mins + ' phút';
+        }
+        
+        function formatTime(seconds) {
+            let minutes = Math.floor(seconds / 60);
+            let secs = seconds % 60;
+            return minutes + ':' + (secs < 10 ? '0' + secs : secs);
         }
         
         function generateExamCode() {
             return Math.random().toString(36).substring(2, 8).toUpperCase();
         }
         
-        function processContentForStorage(content) {
-            if (!content) return '';
-            return content.replace(/\n/g, '|||NEWLINE|||');
-        }
-        
-        function displayContentWithLineBreaks(content) {
-            if (!content) return '';
-            return content.includes('|||NEWLINE|||') ? content.replace(/\|\|\|NEWLINE\|\|\|/g, '\n') : content;
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
         
         function markdownToHtml(text) {
             if (!text) return '';
-            text = displayContentWithLineBreaks(text);
-            return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                       .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                       .replace(/\n/g, '<br>');
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\n/g, '<br>');
         }
         
-        // ==================== VẤN ĐỀ 2 & 3: HÀM TẠO ĐỀ THPTQG CHUẨN ====================
+        // ==================== API CALL FUNCTION ====================
+        async function callGeminiAPI(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            
+            const requestBody = {
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: prompt
+                            }
+                        ]
+                    }
+                ],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 8192,
+                    topP: 0.95,
+                    topK: 40
+                }
+            };
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error('Gọi API thất bại: ' + (errorData.error?.message || response.statusText));
+            }
+            
+            const data = await response.json();
+            
+            if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts) {
+                throw new Error('API trả về dữ liệu không hợp lệ');
+            }
+            
+            return data.candidates[0].content.parts[0].text;
+        }
+        
+        // ==================== GENERATE THPT EXAM ====================
         async function generateTHPTExam(topicDescription) {
-            const prompt = `Bạn là giáo viên Lịch sử chuyên ra đề thi THPTQG Việt Nam.
-Hãy tạo đề thi Lịch sử THPTQG chuẩn cấu trúc Bộ GD&ĐT dựa trên phạm vi sau:
+            const prompt = `Bạn là một giáo viên Lịch sử chuyên nghiệp, có kinh nghiệm ra đề thi THPT Quốc gia môn Lịch sử. Hãy tạo một đề thi THPTQG môn Lịch sử hoàn chỉnh với cấu trúc chuẩn của Bộ Giáo dục và Đào tạo dựa trên phạm vi sau:
 
-${topicDescription}
+PHẠM VI ĐỀ THI: ${topicDescription}
 
-YÊU CẦU BẮT BUỘC VỀ CẤU TRÚC:
-- Phần I: Đúng 24 câu trắc nghiệm 4 lựa chọn A/B/C/D, mỗi câu 0.25 điểm (tổng 6.0 điểm)
-- Phần II: Đúng 4 câu đúng/sai, mỗi câu có đúng 4 ý a,b,c,d (tổng 4.0 điểm)
-  Thang điểm đúng/sai: đúng 1 ý=0.1đ, 2 ý=0.25đ, 3 ý=0.5đ, 4 ý=1.0đ
-- Câu hỏi phải chính xác lịch sử, đáp án hợp lý, phù hợp trình độ THPTQG
+YÊU CẦU CẤU TRÚC ĐỀ THI:
+- Phần I: Gồm 24 câu hỏi trắc nghiệm lựa chọn (4 đáp án A, B, C, D), mỗi câu 0.25 điểm (tổng 6.0 điểm)
+- Phần II: Gồm 4 câu hỏi dạng Đúng/Sai, MỖI CÂU CÓ ĐÚNG 4 Ý a, b, c, d, mỗi câu 1.0 điểm (tổng 4.0 điểm)
+- Thang điểm cho câu Đúng/Sai: đúng 1 ý được 0.1 điểm, đúng 2 ý được 0.25 điểm, đúng 3 ý được 0.5 điểm, đúng 4 ý được 1.0 điểm
 
-CHỈ trả về JSON, không thêm bất kỳ text hay markdown nào bên ngoài JSON:
+YÊU CẦU VỀ NỘI DUNG:
+- Câu hỏi phải chính xác về mặt lịch sử
+- Nội dung phù hợp với chương trình THPT
+- Đáp án phải hợp lý và chính xác
+- Các câu hỏi phải đa dạng, bao quát kiến thức trong phạm vi đã cho
+
+QUAN TRỌNG: Trong câu hỏi đúng/sai, các ý a, b, c, d PHẢI được viết dưới dạng "a) Nội dung ý a", không được viết lặp lại chữ a. Ví dụ đúng: "a) Đường lối Đổi mới được đề ra tại Đại hội VI (1986)". Ví dụ sai: "a. a) Đường lối Đổi mới..."
+
+CHỈ TRẢ VỀ MỘT JSON DUY NHẤT, KHÔNG CÓ BẤT KỲ TEXT NÀO KHÁC NGOÀI JSON. Định dạng JSON như sau:
+
 {
-  "title": "ĐỀ THI THPT QUỐC GIA MÔN LỊCH SỬ",
-  "description": "Thời gian làm bài: 50 phút (không kể thời gian phát đề)",
-  "workInfo": {"title": "Lịch sử THPTQG", "author": "Bộ GD&ĐT", "genre": "Trắc nghiệm"},
-  "blocks": [
-    {
-      "type": "section_header",
-      "title": "PHẦN I: TRẮC NGHIỆM LỰA CHỌN (6.0 điểm)",
-      "content": "Thí sinh chọn một phương án đúng trong 4 phương án A, B, C, D.",
-      "points": 0
+    "title": "ĐỀ THI THPT QUỐC GIA MÔN LỊCH SỬ",
+    "description": "Thời gian làm bài: 50 phút, không kể thời gian phát đề",
+    "workInfo": {
+        "title": "Lịch sử Việt Nam và thế giới",
+        "author": "Bộ Giáo dục và Đào tạo",
+        "genre": "Trắc nghiệm"
     },
-    {
-      "type": "mc_question",
-      "title": "Câu 1",
-      "content": "Nội dung câu hỏi lịch sử ở đây?",
-      "points": 0.25,
-      "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
-      "correct": 0
-    },
-    // ... tiếp tục đến Câu 24 ...
-    {
-      "type": "section_header",
-      "title": "PHẦN II: TRẮC NGHIỆM ĐÚNG/SAI (4.0 điểm)",
-      "content": "Thí sinh xác định mỗi ý a), b), c), d) là đúng hay sai.",
-      "points": 0
-    },
-    {
-      "type": "tf_question",
-      "title": "Câu 25",
-      "content": "Nội dung câu hỏi đúng/sai ở đây?",
-      "points": 1.0,
-      "statements": [
-        {"text": "a) Nội dung ý a", "correct": true},
-        {"text": "b) Nội dung ý b", "correct": false},
-        {"text": "c) Nội dung ý c", "correct": true},
-        {"text": "d) Nội dung ý d", "correct": false}
-      ]
-    }
-    // ... tiếp tục đến Câu 28 ...
-  ]
+    "blocks": [
+        {
+            "type": "section_header",
+            "title": "PHẦN I: CÂU HỎI TRẮC NGHIỆM LỰA CHỌN (6.0 điểm)",
+            "content": "Thí sinh chọn một phương án đúng nhất trong các phương án A, B, C, D cho mỗi câu hỏi.",
+            "points": 0
+        },
+        {
+            "type": "mc_question",
+            "title": "Câu 1",
+            "content": "Nội dung câu hỏi trắc nghiệm số 1",
+            "points": 0.25,
+            "options": ["A. Nội dung lựa chọn A", "B. Nội dung lựa chọn B", "C. Nội dung lựa chọn C", "D. Nội dung lựa chọn D"],
+            "correct": 0
+        },
+        ... (tiếp tục 24 câu trắc nghiệm)
+        {
+            "type": "section_header",
+            "title": "PHẦN II: CÂU HỎI ĐÚNG/SAI (4.0 điểm)",
+            "content": "Thí sinh xác định mỗi ý a), b), c), d) là đúng hoặc sai.",
+            "points": 0
+        },
+        {
+            "type": "tf_question",
+            "title": "Câu 25",
+            "content": "Nội dung câu hỏi đúng/sai",
+            "points": 1.0,
+            "statements": [
+                {"text": "a) Nội dung ý a", "correct": true},
+                {"text": "b) Nội dung ý b", "correct": false},
+                {"text": "c) Nội dung ý c", "correct": true},
+                {"text": "d) Nội dung ý d", "correct": false}
+            ]
+        },
+        ... (tiếp tục 4 câu đúng/sai)
+    ]
 }`;
 
             const result = await callGeminiAPI(prompt);
-            // Lý do dùng regex: AI đôi khi trả về text thừa trước/sau JSON,
-            // regex giúp trích xuất đúng phần JSON dù có text thừa
+            
             const jsonMatch = result.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                try {
-                    return JSON.parse(jsonMatch[0]);
-                } catch(e) {
-                    throw new Error('AI trả về JSON lỗi cú pháp, vui lòng thử lại!');
-                }
+            if (!jsonMatch) {
+                throw new Error('Không thể trích xuất JSON từ phản hồi của AI');
             }
-            throw new Error('Không thể tạo đề thi, vui lòng thử lại!');
+            
+            try {
+                return JSON.parse(jsonMatch[0]);
+            } catch (e) {
+                throw new Error('AI trả về JSON lỗi cú pháp, vui lòng thử lại!');
+            }
         }
         
-        async function generateExamWithGemini(text, workInfo = null) {
-            const prompt = `Bạn là giáo viên Lịch sử. Hãy tạo đề thi Lịch sử từ nội dung sau:
-            
-            NỘI DUNG: ${text}
-            
-            YÊU CẦU:
-            - Thời gian: ${examSettings.time} phút
-            - Độ khó: ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}
-            - Số câu hỏi: ${examSettings.questionCount}
-            - Loại câu hỏi: ${examSettings.questionType === 'mixed' ? 'Hỗn hợp trắc nghiệm và đúng/sai' : examSettings.questionType === 'mc' ? 'Chỉ trắc nghiệm' : 'Chỉ đúng/sai'}
-            
-            Định dạng JSON trả về:
-            {
-                "title": "Tiêu đề đề thi",
-                "description": "Mô tả ngắn",
-                "workInfo": {"title": "Chủ đề", "author": "Giai đoạn", "genre": "Lĩnh vực"},
-                "blocks": [
-                    {"type": "text", "title": "Phần I: NỘI DUNG", "content": "Nội dung văn bản", "points": 0},
-                    {"type": "mc_question", "title": "Câu hỏi 1", "content": "Nội dung câu hỏi", "points": 0.25, "options": ["A. ...", "B. ...", "C. ...", "D. ..."], "correct": 0},
-                    {"type": "tf_question", "title": "Câu hỏi 2", "content": "Nội dung câu hỏi", "points": 1.0, "statements": [
-                        {"text": "Ý a: ...", "correct": true},
-                        {"text": "Ý b: ...", "correct": false}
-                    ]}
-                ]
-            }`;
-            
+        // ==================== GENERATE AI EXAM ====================
+        async function generateAIExam(userPrompt) {
+            const prompt = `Bạn là giáo viên Lịch sử. Hãy tạo một đề thi Lịch sử theo yêu cầu sau:
+
+YÊU CẦU: ${userPrompt}
+
+CÀI ĐẶT:
+- Độ khó: ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}
+
+YÊU CẦU ĐỊNH DẠNG JSON:
+{
+    "title": "Tiêu đề đề thi",
+    "description": "Mô tả ngắn về đề thi",
+    "workInfo": {"title": "Chủ đề", "author": "AI", "genre": "Trắc nghiệm"},
+    "blocks": [
+        {"type": "mc_question", "title": "Câu 1", "content": "Nội dung câu hỏi", "points": 0.25, "options": ["A. ...", "B. ...", "C. ...", "D. ..."], "correct": 0},
+        {"type": "tf_question", "title": "Câu 2", "content": "Nội dung câu hỏi", "points": 1.0, "statements": [
+            {"text": "a) ...", "correct": true},
+            {"text": "b) ...", "correct": false},
+            {"text": "c) ...", "correct": true},
+            {"text": "d) ...", "correct": false}
+        ]}
+    ]
+}
+
+CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
+
             const result = await callGeminiAPI(prompt);
             const jsonMatch = result.match(/\{[\s\S]*\}/);
-            if (jsonMatch) return JSON.parse(jsonMatch[0]);
-            throw new Error('Không parse được JSON');
+            if (!jsonMatch) {
+                throw new Error('Không thể trích xuất JSON từ phản hồi của AI');
+            }
+            return JSON.parse(jsonMatch[0]);
         }
         
-        async function generateExamFromAIPrompt(promptText) {
-            const fullPrompt = `Tạo đề thi Lịch sử theo yêu cầu: ${promptText}
-            
-            Thời gian: ${examSettings.time} phút
-            Độ khó: ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}
-            Số câu: ${examSettings.questionCount}
-            
-            Định dạng JSON như trên.`;
-            
-            const result = await callGeminiAPI(fullPrompt);
-            const jsonMatch = result.match(/\{[\s\S]*\}/);
-            if (jsonMatch) return JSON.parse(jsonMatch[0]);
-            throw new Error('Không parse được JSON');
-        }
-        
-        // ==================== VẤN ĐỀ 3: THÊM XỬ LÝ SECTION_HEADER VÀO HÀM RENDER ====================
+        // ==================== RENDER EXAM FOR TAKING ====================
         function renderExamForTaking(examData) {
-            if (!examData || !examData.blocks) return;
+            if (!examData || !examData.blocks) {
+                console.error('Dữ liệu đề thi không hợp lệ');
+                return;
+            }
             
             currentExamData = examData;
             userAnswers = {};
+            isExamActive = true;
+            isExamSubmitted = false;
             
             let html = `
-                <div class="exam-container">
-                    <div class="exam-header">
-                        <h3><i class="fas fa-file-alt"></i> ${examData.title || 'ĐỀ THI LỊCH SỬ'}</h3>
-                        <div class="exam-code">Mã đề: ${currentExamCode}</div>
-                    </div>
-                    <div class="exam-info">
-                        <p><strong>Thời gian:</strong> ${examSettings.time} phút | <strong>Độ khó:</strong> ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}</p>
-                        <p>${examData.description || ''}</p>
-                    </div>
-                    <div id="examQuestions"></div>
-                    <div class="exam-actions">
-                        <button id="submitExamBtn" class="exam-action-btn submit-btn"><i class="fas fa-paper-plane"></i> Nộp bài</button>
-                        <button id="resetExamBtn" class="exam-action-btn edit-btn"><i class="fas fa-undo"></i> Làm lại</button>
-                    </div>
+                <div class="exam-header">
+                    <h3>
+                        <i class="fas fa-file-alt"></i>
+                        ${escapeHtml(examData.title || 'ĐỀ THI LỊCH SỬ')}
+                    </h3>
+                </div>
+                <div id="timerDisplay" class="timer-display">
+                    ⏱️ Thời gian còn lại: ${formatTime(remainingSeconds)}
+                </div>
+                <div class="exam-info">
+                    ${markdownToHtml(examData.description || '')}
+                </div>
+                <div id="examQuestionsContainer"></div>
+                <div class="exam-actions">
+                    <button id="submitExamFinalBtn" class="exam-action-btn submit-btn">
+                        <i class="fas fa-paper-plane"></i> Nộp bài
+                    </button>
+                    <button id="resetExamAnswersBtn" class="exam-action-btn reset-btn">
+                        <i class="fas fa-undo-alt"></i> Làm lại
+                    </button>
                 </div>
             `;
             
-            document.getElementById('examResult').innerHTML = html;
+            document.getElementById('examResultContainer').innerHTML = html;
             
             let questionsHtml = '';
-            let mcCounter = 1, tfCounter = 1;
+            let mcCounter = 1;
+            let tfCounter = 1;
             
-            examData.blocks.forEach((block, idx) => {
-                // VẤN ĐỀ 3: Thêm xử lý section_header
+            examData.blocks.forEach((block, blockIndex) => {
                 if (block.type === 'section_header') {
                     questionsHtml += `
-                        <div style="margin-top:2rem; margin-bottom:1rem;">
-                            <h3 style="font-size:1.15rem; background:rgba(139,69,19,0.08);
-                                padding:0.75rem 1rem; border-radius:8px;
-                                color:var(--primary-color); margin:0 0 0.5rem 0;">
-                                ${block.title}
-                            </h3>
-                            <p style="color:var(--text-secondary); font-style:italic;
-                                margin:0; font-size:0.95rem;">${block.content}</p>
-                        </div>
-                    `;
-                } else if (block.type === 'text') {
-                    questionsHtml += `
-                        <div class="exam-section">
-                            <h3 class="section-title">${block.title || 'Nội dung'}</h3>
-                            <div class="text-content">${markdownToHtml(block.content)}</div>
+                        <div class="section-header">
+                            <h4>${escapeHtml(block.title)}</h4>
+                            <p>${escapeHtml(block.content)}</p>
                         </div>
                     `;
                 } else if (block.type === 'mc_question') {
+                    const cleanOptions = block.options.map(opt => {
+                        return opt.replace(/^[A-D]\.\s*/i, '');
+                    });
+                    
                     questionsHtml += `
-                        <div class="question-item" data-qid="mc_${idx}">
+                        <div class="question-item" data-question-type="mc" data-block-index="${blockIndex}">
                             <div class="question-header">
-                                <div class="question-text"><strong>Câu ${mcCounter} (Trắc nghiệm):</strong> ${block.content}</div>
+                                <div class="question-text">
+                                    <strong>Câu ${mcCounter} (Trắc nghiệm):</strong> ${markdownToHtml(block.content)}
+                                </div>
                                 <div class="question-points">${block.points || 0.25} điểm</div>
                             </div>
-                            <div class="mc-options" data-qid="mc_${idx}">
-                                ${block.options.map((opt, optIdx) => `
-                                    <div class="mc-option" onclick="selectMCAnswer(${idx}, ${optIdx})">
-                                        <input type="radio" name="mc_${idx}" value="${optIdx}" id="mc_${idx}_${optIdx}">
-                                        <label for="mc_${idx}_${optIdx}"><strong>${String.fromCharCode(65+optIdx)}.</strong> ${opt}</label>
+                            <div class="mc-options">
+                                ${cleanOptions.map((opt, optIndex) => `
+                                    <div class="mc-option" onclick="selectMCOption(${blockIndex}, ${optIndex})">
+                                        <input type="radio" name="mc_${blockIndex}" value="${optIndex}" id="mc_${blockIndex}_${optIndex}">
+                                        <label for="mc_${blockIndex}_${optIndex}">
+                                            <strong>${String.fromCharCode(65 + optIndex)}.</strong> ${escapeHtml(opt)}
+                                        </label>
                                     </div>
                                 `).join('')}
                             </div>
@@ -1835,18 +1569,22 @@ CHỈ trả về JSON, không thêm bất kỳ text hay markdown nào bên ngoà
                     mcCounter++;
                 } else if (block.type === 'tf_question') {
                     questionsHtml += `
-                        <div class="question-item" data-qid="tf_${idx}">
+                        <div class="question-item" data-question-type="tf" data-block-index="${blockIndex}">
                             <div class="question-header">
-                                <div class="question-text"><strong>Câu ${tfCounter} (Đúng/Sai):</strong> ${block.content}</div>
+                                <div class="question-text">
+                                    <strong>Câu ${tfCounter} (Đúng/Sai):</strong> ${markdownToHtml(block.content)}
+                                </div>
                                 <div class="question-points">${block.points || 1.0} điểm</div>
                             </div>
                             <div class="tf-statements">
-                                ${block.statements.map((stmt, stmtIdx) => `
-                                    <div class="tf-statement">
-                                        <strong>${String.fromCharCode(97+stmtIdx)}.</strong> ${stmt.text}
-                                        <div class="tf-buttons" data-qid="tf_${idx}_${stmtIdx}">
-                                            <button type="button" class="tf-btn true" onclick="selectTFAnswer(${idx}, ${stmtIdx}, true)">ĐÚNG</button>
-                                            <button type="button" class="tf-btn false" onclick="selectTFAnswer(${idx}, ${stmtIdx}, false)">SAI</button>
+                                ${block.statements.map((stmt, stmtIndex) => `
+                                    <div class="tf-statement" data-statement-index="${stmtIndex}">
+                                        <div class="tf-statement-text">
+                                            ${escapeHtml(stmt.text)}
+                                        </div>
+                                        <div class="tf-buttons">
+                                            <button type="button" class="tf-btn true" onclick="selectTFAnswer(${blockIndex}, ${stmtIndex}, true, this)">ĐÚNG</button>
+                                            <button type="button" class="tf-btn false" onclick="selectTFAnswer(${blockIndex}, ${stmtIndex}, false, this)">SAI</button>
                                         </div>
                                     </div>
                                 `).join('')}
@@ -1857,466 +1595,746 @@ CHỈ trả về JSON, không thêm bất kỳ text hay markdown nào bên ngoà
                 }
             });
             
-            document.getElementById('examQuestions').innerHTML = questionsHtml;
-            document.getElementById('examResult').style.display = 'block';
+            document.getElementById('examQuestionsContainer').innerHTML = questionsHtml;
+            document.getElementById('examResultContainer').style.display = 'block';
+            
+            startExamTimer();
+            
+            document.getElementById('submitExamFinalBtn').addEventListener('click', () => submitExam());
+            document.getElementById('resetExamAnswersBtn').addEventListener('click', () => resetExamAnswers());
         }
         
-        window.selectMCAnswer = function(blockIdx, answerIdx) {
-            userAnswers[`mc_${blockIdx}`] = answerIdx;
-            const radios = document.querySelectorAll(`input[name="mc_${blockIdx}"]`);
-            radios.forEach((radio, i) => { radio.checked = (i === answerIdx); });
+        // ==================== EXAM TIMER ====================
+        function startExamTimer() {
+            if (examTimerInterval) {
+                clearInterval(examTimerInterval);
+            }
+            
+            examTimerInterval = setInterval(() => {
+                if (!isExamActive || isExamSubmitted) return;
+                
+                if (remainingSeconds <= 0) {
+                    clearInterval(examTimerInterval);
+                    examTimerInterval = null;
+                    submitExam();
+                } else {
+                    remainingSeconds--;
+                    const timerElement = document.getElementById('timerDisplay');
+                    if (timerElement) {
+                        timerElement.innerHTML = `⏱️ Thời gian còn lại: ${formatTime(remainingSeconds)}`;
+                        if (remainingSeconds <= 60) {
+                            timerElement.classList.add('warning');
+                        }
+                    }
+                }
+            }, 1000);
+        }
+        
+        // ==================== SELECT ANSWER FUNCTIONS ====================
+        window.selectMCOption = function(blockIndex, optionIndex) {
+            if (isExamSubmitted) return;
+            userAnswers[`mc_${blockIndex}`] = optionIndex;
+            const radios = document.querySelectorAll(`input[name="mc_${blockIndex}"]`);
+            radios.forEach((radio, idx) => {
+                radio.checked = (idx === optionIndex);
+            });
         };
         
-        window.selectTFAnswer = function(blockIdx, stmtIdx, isTrue) {
-            const key = `tf_${blockIdx}_${stmtIdx}`;
-            userAnswers[key] = isTrue;
+        window.selectTFAnswer = function(blockIndex, statementIndex, isTrue, btnElement) {
+            if (isExamSubmitted) return;
+            const answerKey = `tf_${blockIndex}_${statementIndex}`;
+            userAnswers[answerKey] = isTrue;
             
-            const container = document.querySelector(`.tf-buttons[data-qid="tf_${blockIdx}_${stmtIdx}"]`);
-            if (container) {
-                container.querySelectorAll('.tf-btn').forEach(btn => {
-                    btn.classList.remove('selected-true', 'selected-false');
-                });
-                const targetBtn = container.querySelector(isTrue ? '.true' : '.false');
-                if (targetBtn) targetBtn.classList.add(isTrue ? 'selected-true' : 'selected-false');
+            const statementDiv = btnElement.closest('.tf-statement');
+            if (statementDiv) {
+                const trueBtn = statementDiv.querySelector('.tf-btn.true');
+                const falseBtn = statementDiv.querySelector('.tf-btn.false');
+                
+                if (trueBtn) {
+                    trueBtn.classList.remove('selected-true');
+                }
+                if (falseBtn) {
+                    falseBtn.classList.remove('selected-false');
+                }
+                
+                if (isTrue && trueBtn) {
+                    trueBtn.classList.add('selected-true');
+                } else if (!isTrue && falseBtn) {
+                    falseBtn.classList.add('selected-false');
+                }
             }
         };
         
-        window.submitExam = function() {
-            if (!currentExamData) return;
+        function resetExamAnswers() {
+            if (isExamSubmitted) return;
+            userAnswers = {};
+            if (currentExamData) {
+                remainingSeconds = examSettings.time * 60;
+                renderExamForTaking(currentExamData);
+            }
+        }
+        
+        // ==================== SUBMIT EXAM ====================
+        function submitExam() {
+            if (isExamSubmitted) return;
             
-            let totalScore = 0, maxScore = 0;
-            const details = [];
-            let mcCounter = 1, tfCounter = 1;
+            if (examTimerInterval) {
+                clearInterval(examTimerInterval);
+                examTimerInterval = null;
+            }
+            isExamActive = false;
+            isExamSubmitted = true;
             
-            currentExamData.blocks.forEach((block, idx) => {
+            if (!currentExamData || !currentExamData.blocks) {
+                console.error('Không có dữ liệu đề thi');
+                return;
+            }
+            
+            let totalScore = 0;
+            let maxScore = 0;
+            const resultDetails = [];
+            let mcCounter = 1;
+            let tfCounter = 1;
+            let mcCorrect = 0;
+            let mcTotal = 0;
+            let tfPerfectCount = 0;
+            let tfTotal = 0;
+            
+            currentExamData.blocks.forEach((block, blockIndex) => {
                 if (block.type === 'mc_question') {
                     maxScore += block.points;
-                    const userAnswer = userAnswers[`mc_${idx}`];
+                    mcTotal++;
+                    const userAnswer = userAnswers[`mc_${blockIndex}`];
                     const isCorrect = (userAnswer === block.correct);
-                    if (isCorrect) totalScore += block.points;
-                    details.push({
-                        question: `Câu ${mcCounter} (TN)`,
-                        correct: isCorrect,
-                        points: block.points,
-                        userAnswer: userAnswer !== undefined ? String.fromCharCode(65+userAnswer) : 'Chưa trả lời',
-                        correctAnswer: String.fromCharCode(65+block.correct)
+                    if (isCorrect) {
+                        totalScore += block.points;
+                        mcCorrect++;
+                    }
+                    
+                    resultDetails.push({
+                        type: 'mc',
+                        number: mcCounter,
+                        isCorrect: isCorrect,
+                        userAnswer: userAnswer !== undefined ? String.fromCharCode(65 + userAnswer) : 'Chưa trả lời',
+                        correctAnswer: String.fromCharCode(65 + block.correct),
+                        points: block.points
                     });
                     mcCounter++;
                 } else if (block.type === 'tf_question') {
                     maxScore += block.points;
+                    tfTotal++;
                     let correctCount = 0;
-                    block.statements.forEach((stmt, stmtIdx) => {
-                        const userAnswer = userAnswers[`tf_${idx}_${stmtIdx}`];
-                        if (userAnswer === stmt.correct) correctCount++;
+                    
+                    block.statements.forEach((stmt, stmtIndex) => {
+                        const userAnswer = userAnswers[`tf_${blockIndex}_${stmtIndex}`];
+                        if (userAnswer === stmt.correct) {
+                            correctCount++;
+                        }
                     });
+                    
                     let pointsEarned = 0;
                     if (correctCount === 1) pointsEarned = 0.1;
                     else if (correctCount === 2) pointsEarned = 0.25;
                     else if (correctCount === 3) pointsEarned = 0.5;
                     else if (correctCount === 4) pointsEarned = 1.0;
+                    
                     totalScore += pointsEarned;
-                    details.push({
-                        question: `Câu ${tfCounter} (Đ/S)`,
+                    if (correctCount === 4) tfPerfectCount++;
+                    
+                    resultDetails.push({
+                        type: 'tf',
+                        number: tfCounter,
                         correctCount: correctCount,
-                        points: block.points,
-                        pointsEarned: pointsEarned
+                        pointsEarned: pointsEarned,
+                        maxPoints: block.points
                     });
                     tfCounter++;
                 }
             });
             
-            const percentage = (totalScore / maxScore * 10).toFixed(1);
+            const percentageScore = ((totalScore / maxScore) * 10).toFixed(1);
+            const totalQuestions = mcTotal + tfTotal;
+            const totalCorrectQuestions = mcCorrect + tfPerfectCount;
             
-            let detailsHtml = '<div class="result-detail">';
-            details.forEach(d => {
-                if (d.correct !== undefined) {
-                    detailsHtml += `
+            let resultHtml = `
+                <div class="score-display">
+                    <div class="score-number">${percentageScore}/10</div>
+                    <div class="score-detail">${totalScore.toFixed(1)} / ${maxScore.toFixed(1)} điểm</div>
+                    <div class="score-detail">📊 Số câu đúng: ${totalCorrectQuestions} / ${totalQuestions} câu</div>
+                </div>
+                <div class="result-stats">
+                    <strong>📈 THỐNG KÊ CHI TIẾT:</strong><br>
+                    ▸ Phần trắc nghiệm: ${mcCorrect}/${mcTotal} câu đúng → ${(mcCorrect * 0.25).toFixed(1)}/6.0 điểm<br>
+                    ▸ Phần đúng/sai: ${tfPerfectCount}/${tfTotal} câu đạt điểm tối đa (4/4 ý đúng)<br>
+                    ▸ Tổng điểm đúng/sai: ${(totalScore - mcCorrect * 0.25).toFixed(1)}/4.0 điểm
+                </div>
+                <div class="result-detail">
+            `;
+            
+            resultDetails.forEach(detail => {
+                if (detail.type === 'mc') {
+                    resultHtml += `
                         <div class="result-item">
-                            <span>${d.question}</span>
-                            <span class="${d.correct ? 'result-correct' : 'result-incorrect'}">
-                                ${d.correct ? '✓ Đúng' : '✗ Sai'} (${d.userAnswer}/${d.correctAnswer})
+                            <span>Câu ${detail.number} (Trắc nghiệm)</span>
+                            <span class="${detail.isCorrect ? 'result-correct' : 'result-incorrect'}">
+                                ${detail.isCorrect ? '✓ Đúng' : '✗ Sai'} 
+                                (Đáp án: ${detail.userAnswer}/${detail.correctAnswer}) - ${detail.points} điểm
                             </span>
                         </div>
                     `;
                 } else {
-                    detailsHtml += `
+                    const statusText = detail.correctCount === 4 ? '✓ Đạt điểm tối đa' : 
+                                      (detail.correctCount === 0 ? '✗ Sai cả 4 ý' : `⚠️ Đúng ${detail.correctCount}/4 ý`);
+                    resultHtml += `
                         <div class="result-item">
-                            <span>${d.question}</span>
-                            <span>Đúng ${d.correctCount}/4 ý → ${d.pointsEarned}/${d.points} điểm</span>
+                            <span>Câu ${detail.number} (Đúng/Sai)</span>
+                            <span class="${detail.correctCount === 4 ? 'result-correct' : detail.correctCount === 0 ? 'result-incorrect' : ''}">
+                                ${statusText} → ${detail.pointsEarned}/${detail.maxPoints} điểm
+                            </span>
                         </div>
                     `;
                 }
             });
-            detailsHtml += '</div>';
             
-            document.getElementById('resultContent').innerHTML = `
-                <div class="score-display">
-                    <div class="score-number">${percentage}/10</div>
-                    <div>${totalScore.toFixed(1)} / ${maxScore.toFixed(1)} điểm</div>
-                </div>
-                ${detailsHtml}
-            `;
+            resultHtml += `</div>`;
+            
+            document.getElementById('resultModalBody').innerHTML = resultHtml;
             document.getElementById('resultModal').classList.add('active');
-        };
+        }
         
-        window.resetExam = function() {
-            userAnswers = {};
-            renderExamForTaking(currentExamData);
-        };
-        
-        // ==================== VẤN ĐỀ 3: THÊM XỬ LÝ SECTION_HEADER VÀO SHOWEXAMRESULT ====================
+        // ==================== SHOW EXAM RESULT ====================
         function showExamResult(examData, examNotes) {
-            currentExamBlocks = examData.blocks || [];
+            currentExamData = examData;
             currentExamCode = generateExamCode();
+            remainingSeconds = examSettings.time * 60;
+            isExamSubmitted = false;
             
-            let previewHTML = `
+            let html = `
                 <div class="exam-header">
-                    <h3><i class="fas fa-landmark"></i> ${examData.title || 'ĐỀ THI LỊCH SỬ'}</h3>
-                    <div class="exam-code">Mã đề: ${currentExamCode}</div>
+                    <h3>
+                        <i class="fas fa-landmark"></i>
+                        ${escapeHtml(examData.title || 'ĐỀ THI LỊCH SỬ')}
+                    </h3>
                 </div>
                 <div class="exam-info">
-                    <p><strong>Thời gian:</strong> ${examSettings.time} phút | <strong>Độ khó:</strong> ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}</p>
-                    <p>${examData.description || ''}</p>
+                    <p><strong>Thời gian:</strong> ${examSettings.time} phút</p>
+                    <p><strong>Độ khó:</strong> ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}</p>
+                    <p>${escapeHtml(examData.description || '')}</p>
                 </div>
-                ${examNotes ? `<div class="exam-info"><strong>Ghi chú:</strong> ${examNotes}</div>` : ''}
-                <div class="preview-exam">
+                ${examNotes ? `<div class="exam-info"><strong><i class="fas fa-sticky-note"></i> Ghi chú:</strong><br>${escapeHtml(examNotes)}</div>` : ''}
+                <div class="preview-content" style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
             `;
             
-            currentExamBlocks.forEach(block => {
-                // VẤN ĐỀ 3: Thêm xử lý section_header
+            let mcCounter = 1;
+            let tfCounter = 1;
+            
+            examData.blocks.forEach((block) => {
                 if (block.type === 'section_header') {
-                    previewHTML += `
-                        <div style="margin-top:2rem; margin-bottom:1rem;">
-                            <h3 style="font-size:1.15rem; background:rgba(139,69,19,0.08);
-                                padding:0.75rem 1rem; border-radius:8px;
-                                color:var(--primary-color); margin:0 0 0.5rem 0;">
-                                ${block.title}
-                            </h3>
-                            <p style="color:var(--text-secondary); font-style:italic;
-                                margin:0; font-size:0.95rem;">${block.content}</p>
-                        </div>
-                    `;
-                } else if (block.type === 'text') {
-                    previewHTML += `
-                        <div class="exam-section">
-                            <h3 class="section-title">${block.title || 'Nội dung'}</h3>
-                            <div class="text-content">${markdownToHtml(block.content)}</div>
+                    html += `
+                        <div class="section-header">
+                            <h4>${escapeHtml(block.title)}</h4>
+                            <p>${escapeHtml(block.content)}</p>
                         </div>
                     `;
                 } else if (block.type === 'mc_question') {
-                    previewHTML += `
-                        <div class="question-item">
+                    const cleanOptions = block.options.map(opt => {
+                        return opt.replace(/^[A-D]\.\s*/i, '');
+                    });
+                    
+                    html += `
+                        <div class="question-item" style="margin-bottom: 1rem;">
                             <div class="question-header">
-                                <div class="question-text">${markdownToHtml(block.content)}</div>
+                                <div class="question-text">
+                                    <strong>Câu ${mcCounter} (Trắc nghiệm):</strong> ${markdownToHtml(block.content)}
+                                </div>
                                 <div class="question-points">${block.points || 0.25} điểm</div>
                             </div>
                             <div class="mc-options">
-                                ${block.options.map((opt, i) => `<div><strong>${String.fromCharCode(65+i)}.</strong> ${opt}</div>`).join('')}
+                                ${cleanOptions.map((opt, optIndex) => `
+                                    <div class="mc-option">
+                                        <strong>${String.fromCharCode(65 + optIndex)}.</strong> ${escapeHtml(opt)}
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
                     `;
+                    mcCounter++;
                 } else if (block.type === 'tf_question') {
-                    previewHTML += `
-                        <div class="question-item">
+                    html += `
+                        <div class="question-item" style="margin-bottom: 1rem;">
                             <div class="question-header">
-                                <div class="question-text">${markdownToHtml(block.content)}</div>
+                                <div class="question-text">
+                                    <strong>Câu ${tfCounter} (Đúng/Sai):</strong> ${markdownToHtml(block.content)}
+                                </div>
                                 <div class="question-points">${block.points || 1.0} điểm</div>
                             </div>
                             <div class="tf-statements">
-                                ${block.statements.map((stmt, i) => `<div><strong>${String.fromCharCode(97+i)}.</strong> ${stmt.text}</div>`).join('')}
+                                ${block.statements.map((stmt, stmtIndex) => `
+                                    <div class="tf-statement">
+                                        <div class="tf-statement-text">
+                                            ${escapeHtml(stmt.text)}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    tfCounter++;
+                }
+            });
+            
+            html += `
+                </div>
+                <div class="exam-actions">
+                    <button id="takeExamNowBtn" class="exam-action-btn take-exam-btn">
+                        <i class="fas fa-pen-fancy"></i> Làm bài ngay
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('examResultContainer').innerHTML = html;
+            document.getElementById('examResultContainer').style.display = 'block';
+            
+            document.getElementById('takeExamNowBtn').addEventListener('click', () => {
+                renderExamForTaking(examData);
+            });
+        }
+        
+        // ==================== BLOCKY FUNCTIONS ====================
+        function addBlockyQuestion(type) {
+            if (type === 'mc') {
+                blockyQuestions.push({
+                    id: Date.now(),
+                    type: 'mc_question',
+                    title: 'Câu trắc nghiệm',
+                    content: '',
+                    points: 0.25,
+                    options: ['', '', '', ''],
+                    correct: 0
+                });
+            } else if (type === 'tf') {
+                blockyQuestions.push({
+                    id: Date.now(),
+                    type: 'tf_question',
+                    title: 'Câu đúng/sai',
+                    content: '',
+                    points: 1.0,
+                    statements: [
+                        { text: 'a) ', correct: true },
+                        { text: 'b) ', correct: false },
+                        { text: 'c) ', correct: false },
+                        { text: 'd) ', correct: false }
+                    ]
+                });
+            }
+            renderBlockyPreview();
+        }
+        
+        function removeBlockyQuestion(id) {
+            blockyQuestions = blockyQuestions.filter(q => q.id !== id);
+            renderBlockyPreview();
+        }
+        
+        function updateBlockyQuestion(id, field, value) {
+            const question = blockyQuestions.find(q => q.id === id);
+            if (question) {
+                if (field === 'options' && question.type === 'mc_question') {
+                    try {
+                        const parsed = JSON.parse(value);
+                        if (Array.isArray(parsed)) {
+                            question.options = parsed;
+                        }
+                    } catch(e) {
+                        question.options = value.split(',').map(s => s.trim());
+                    }
+                } else if (field === 'statements' && question.type === 'tf_question') {
+                    try {
+                        const parsed = JSON.parse(value);
+                        if (Array.isArray(parsed)) {
+                            question.statements = parsed;
+                        }
+                    } catch(e) {
+                        // Giữ nguyên nếu không parse được
+                    }
+                } else if (field === 'correct') {
+                    question.correct = parseInt(value);
+                } else if (field === 'points') {
+                    question.points = parseFloat(value);
+                } else {
+                    question[field] = value;
+                }
+            }
+        }
+        
+        function updateBlockyOption(questionId, optIndex, value) {
+            const question = blockyQuestions.find(q => q.id === questionId);
+            if (question && question.type === 'mc_question') {
+                if (!question.options) question.options = ['', '', '', ''];
+                question.options[optIndex] = value;
+            }
+        }
+        
+        function updateBlockyStatement(questionId, stmtIndex, field, value) {
+            const question = blockyQuestions.find(q => q.id === questionId);
+            if (question && question.type === 'tf_question') {
+                if (!question.statements) question.statements = [];
+                if (!question.statements[stmtIndex]) {
+                    question.statements[stmtIndex] = { text: '', correct: false };
+                }
+                if (field === 'text') {
+                    question.statements[stmtIndex].text = value;
+                } else if (field === 'correct') {
+                    question.statements[stmtIndex].correct = value === 'true';
+                }
+            }
+        }
+        
+        function renderBlockyPreview() {
+            const container = document.getElementById('blockyPreview');
+            
+            if (blockyQuestions.length === 0) {
+                container.innerHTML = `
+                    <div class="blocky-empty-state">
+                        <i class="fas fa-cubes"></i>
+                        <h4>Chưa có câu hỏi nào</h4>
+                        <p>Bấm vào nút "Thêm câu trắc nghiệm" hoặc "Thêm câu đúng/sai" để bắt đầu</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            blockyQuestions.forEach((question, index) => {
+                if (question.type === 'mc_question') {
+                    html += `
+                        <div class="blocky-item">
+                            <div class="blocky-item-header">
+                                <span class="blocky-item-type">📝 Trắc nghiệm - Câu ${index + 1}</span>
+                                <button class="blocky-item-remove" onclick="removeBlockyQuestion(${question.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="blocky-item-content">
+                                <input type="text" class="placeholder-fix" value="${escapeHtml(question.content)}" 
+                                    onchange="updateBlockyQuestion(${question.id}, 'content', this.value)" 
+                                    placeholder="Nội dung câu hỏi trắc nghiệm">
+                                <div class="mt-2">
+                                    <label>Điểm: </label>
+                                    <input type="number" step="0.25" value="${question.points}" 
+                                        onchange="updateBlockyQuestion(${question.id}, 'points', parseFloat(this.value))"
+                                        style="width: 80px; display: inline-block;">
+                                    <label style="margin-left: 1rem;">Đáp án đúng: </label>
+                                    <select onchange="updateBlockyQuestion(${question.id}, 'correct', this.value)" style="width: auto; display: inline-block; padding: 0.5rem;">
+                                        <option value="0" ${question.correct === 0 ? 'selected' : ''}>A</option>
+                                        <option value="1" ${question.correct === 1 ? 'selected' : ''}>B</option>
+                                        <option value="2" ${question.correct === 2 ? 'selected' : ''}>C</option>
+                                        <option value="3" ${question.correct === 3 ? 'selected' : ''}>D</option>
+                                    </select>
+                                </div>
+                                <div class="blocky-options">
+                                    ${[0, 1, 2, 3].map(optIdx => `
+                                        <div class="blocky-option">
+                                            <strong>${String.fromCharCode(65 + optIdx)}.</strong>
+                                            <input type="text" class="placeholder-fix" value="${escapeHtml(question.options?.[optIdx] || '')}" 
+                                                onchange="updateBlockyOption(${question.id}, ${optIdx}, this.value)"
+                                                placeholder="Nội dung lựa chọn ${String.fromCharCode(65 + optIdx)}">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (question.type === 'tf_question') {
+                    html += `
+                        <div class="blocky-item">
+                            <div class="blocky-item-header">
+                                <span class="blocky-item-type">✅ Đúng/Sai - Câu ${index + 1}</span>
+                                <button class="blocky-item-remove" onclick="removeBlockyQuestion(${question.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            <div class="blocky-item-content">
+                                <input type="text" class="placeholder-fix" value="${escapeHtml(question.content)}" 
+                                    onchange="updateBlockyQuestion(${question.id}, 'content', this.value)" 
+                                    placeholder="Nội dung câu hỏi đúng/sai">
+                                <div class="mt-2">
+                                    <label>Điểm: </label>
+                                    <input type="number" step="0.25" value="${question.points}" 
+                                        onchange="updateBlockyQuestion(${question.id}, 'points', parseFloat(this.value))"
+                                        style="width: 80px; display: inline-block;">
+                                </div>
+                                <div class="blocky-options">
+                                    ${[0, 1, 2, 3].map(stmtIdx => `
+                                        <div class="blocky-option" style="flex-wrap: wrap;">
+                                            <strong>${String.fromCharCode(97 + stmtIdx)}.</strong>
+                                            <input type="text" class="placeholder-fix" value="${escapeHtml(question.statements?.[stmtIdx]?.text || '')}" 
+                                                onchange="updateBlockyStatement(${question.id}, ${stmtIdx}, 'text', this.value)"
+                                                placeholder="Nội dung ý ${String.fromCharCode(97 + stmtIdx)}" style="flex: 1;">
+                                            <select onchange="updateBlockyStatement(${question.id}, ${stmtIdx}, 'correct', this.value)" style="width: auto;">
+                                                <option value="true" ${question.statements?.[stmtIdx]?.correct === true ? 'selected' : ''}>Đúng</option>
+                                                <option value="false" ${question.statements?.[stmtIdx]?.correct === false ? 'selected' : ''}>Sai</option>
+                                            </select>
+                                        </div>
+                                    `).join('')}
+                                </div>
                             </div>
                         </div>
                     `;
                 }
             });
             
-            previewHTML += `
-                    </div>
-                    <div class="exam-actions">
-                        <button id="takeExamBtn" class="exam-action-btn take-exam-btn"><i class="fas fa-pen-fancy"></i> Thi ngay</button>
-                        <button id="previewExamBtn" class="exam-action-btn preview-btn"><i class="fas fa-eye"></i> Xem trước</button>
-                        <button id="saveExamBtn" class="exam-action-btn save-btn"><i class="fas fa-save"></i> Lưu đề</button>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('examResult').innerHTML = previewHTML;
-            
-            document.getElementById('takeExamBtn')?.addEventListener('click', () => {
-                renderExamForTaking(examData);
-            });
-            document.getElementById('previewExamBtn')?.addEventListener('click', () => {
-                const modal = document.getElementById('previewModal');
-                if (modal) {
-                    document.getElementById('previewContent').innerHTML = previewHTML;
-                    modal.classList.add('active');
-                } else {
-                    alert('Chức năng xem trước: ' + previewHTML);
-                }
-            });
-            document.getElementById('saveExamBtn')?.addEventListener('click', () => {
-                localStorage.setItem(`history_exam_${currentExamCode}`, JSON.stringify(examData));
-                alert(`Đã lưu đề thi! Mã đề: ${currentExamCode}`);
-            });
-            
-            document.getElementById('submitExamBtn')?.addEventListener('click', submitExam);
-            document.getElementById('resetExamBtn')?.addEventListener('click', resetExam);
+            container.innerHTML = html;
         }
         
-        // ==================== HÀM TẠO ĐỀ CHÍNH (ĐÃ SỬA THEO VẤN ĐỀ 2) ====================
+        function clearAllBlockyQuestions() {
+            if (confirm('Bạn có chắc chắn muốn xóa tất cả câu hỏi?')) {
+                blockyQuestions = [];
+                renderBlockyPreview();
+            }
+        }
+        
+        // ==================== GENERATE MAIN FUNCTION ====================
         async function generateExam() {
-            const progressContainer = document.getElementById('progressContainer');
-            const examResult = document.getElementById('examResult');
             const generateBtn = document.getElementById('generateExamBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressStatus = document.getElementById('progressStatus');
+            const resultContainer = document.getElementById('examResultContainer');
             
             generateBtn.disabled = true;
             generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo...';
             progressContainer.style.display = 'block';
-            examResult.style.display = 'none';
-            generationProgress = { total: 0, completed: 0, items: [] };
+            resultContainer.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressStatus.textContent = 'Đang khởi tạo...';
+            
+            examSettings.time = parseInt(document.getElementById('examTimeSlider').value);
+            examSettings.difficulty = document.getElementById('difficultySelect').value;
+            const examNotes = document.getElementById('examNotes').value;
             
             try {
-                examSettings = {
-                    time: parseInt(document.getElementById('examTimeSlider').value),
-                    difficulty: document.getElementById('difficulty').value,
-                    questionCount: parseInt(document.getElementById('questionCount').value),
-                    questionType: document.getElementById('questionType').value
-                };
-                const examNotes = document.getElementById('examNotes').value;
-                
-                if (currentCreationMode === 'text') {
-                    // VẤN ĐỀ 2: Logic mới cho mode text (tạo đề THPTQG)
-                    const scope = document.getElementById('thptTopicScope').value;
+                if (currentMode === 'thpt') {
+                    progressStatus.textContent = 'Đang tạo đề thi THPTQG...';
+                    progressFill.style.width = '30%';
+                    
+                    const scope = document.getElementById('thptScope').value;
                     let topicDescription = '';
                     
                     if (scope === 'custom') {
-                        const customTopic = document.getElementById('inputText').value.trim();
-                        if (!customTopic) throw new Error('Vui lòng nhập sự kiện hoặc giai đoạn lịch sử!');
-                        topicDescription = `Chủ đề cụ thể người dùng yêu cầu: ${customTopic}`;
+                        const customTopic = document.getElementById('thptCustomTopic').value.trim();
+                        if (!customTopic) {
+                            throw new Error('Vui lòng nhập sự kiện hoặc giai đoạn lịch sử!');
+                        }
+                        topicDescription = `Chủ đề cụ thể: ${customTopic}`;
                     } else {
-                        // Khi chọn "full", mô tả toàn bộ chương trình để AI hiểu phạm vi ra đề
-                        topicDescription = `Toàn bộ nội dung Lịch sử THPTQG: Lịch sử Việt Nam hiện đại
-                        (Cách mạng tháng Tám 1945, kháng chiến chống Pháp 1945-1954,
-                        kháng chiến chống Mỹ 1954-1975, Đổi mới từ 1986) và Lịch sử thế giới
-                        (Liên Hợp Quốc, ASEAN, Chiến tranh Lạnh, các sự kiện quốc tế quan trọng).`;
+                        topicDescription = `Toàn bộ chương trình Lịch sử THPTQG bao gồm:
+                        - Lịch sử Việt Nam hiện đại: Cách mạng tháng Tám 1945, kháng chiến chống Pháp 1945-1954, kháng chiến chống Mỹ 1954-1975, công cuộc Đổi mới từ 1986
+                        - Lịch sử thế giới: Liên Hợp Quốc, ASEAN, Chiến tranh Lạnh, các sự kiện quốc tế quan trọng`;
                     }
                     
-                    addProgressItem('Phân tích yêu cầu đề thi THPTQG');
-                    addProgressItem('Tạo 24 câu trắc nghiệm - Phần I');
-                    addProgressItem('Tạo 4 câu đúng/sai - Phần II');
+                    progressFill.style.width = '60%';
+                    progressStatus.textContent = 'Đang gọi AI tạo đề...';
                     
-                    completeProgressItem(0);
                     const examData = await generateTHPTExam(topicDescription);
-                    completeProgressItem(1);
-                    completeProgressItem(2);
+                    
+                    progressFill.style.width = '100%';
+                    progressStatus.textContent = 'Hoàn thành!';
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                    }, 1000);
+                    
                     showExamResult(examData, examNotes);
                     
-                } else if (currentCreationMode === 'ai') {
-                    const prompt = document.getElementById('aiPrompt').value.trim();
-                    if (!prompt) throw new Error('Vui lòng nhập yêu cầu!');
+                } else if (currentMode === 'ai') {
+                    const aiPrompt = document.getElementById('aiPrompt').value.trim();
+                    if (!aiPrompt) {
+                        throw new Error('Vui lòng nhập yêu cầu tạo đề thi!');
+                    }
                     
-                    addProgressItem('Phân tích yêu cầu');
-                    addProgressItem('Tìm kiếm nội dung');
-                    addProgressItem('Tạo đề thi');
+                    progressStatus.textContent = 'Đang phân tích yêu cầu...';
+                    progressFill.style.width = '30%';
                     
-                    completeProgressItem(0);
-                    markAsVerification(1);
-                    await new Promise(r => setTimeout(r, 500));
-                    completeProgressItem(1);
-                    const examData = await generateExamFromAIPrompt(prompt);
-                    completeProgressItem(2);
+                    progressStatus.textContent = 'Đang gọi AI tạo đề...';
+                    progressFill.style.width = '60%';
+                    
+                    const examData = await generateAIExam(aiPrompt);
+                    
+                    progressFill.style.width = '100%';
+                    progressStatus.textContent = 'Hoàn thành!';
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                    }, 1000);
+                    
                     showExamResult(examData, examNotes);
                     
-                } else if (currentCreationMode === 'blocky') {
-                    if (blockyBlocks.length === 0) throw new Error('Vui lòng thêm nội dung!');
+                } else if (currentMode === 'blocky') {
+                    if (blockyQuestions.length === 0) {
+                        throw new Error('Vui lòng thêm câu hỏi trước khi tạo đề!');
+                    }
+                    
+                    progressStatus.textContent = 'Đang tạo đề từ Blocky...';
+                    progressFill.style.width = '50%';
+                    
                     const examData = {
-                        title: "ĐỀ THI LỊCH SỬ",
-                        description: "Đề thi tạo bằng Blocky",
-                        blocks: blockyBlocks.map(b => ({
-                            type: b.type,
-                            title: b.title,
-                            content: b.content,
-                            points: b.points || (b.type === 'mc_question' ? 0.25 : b.type === 'tf_question' ? 1.0 : 0),
-                            options: b.options,
-                            correct: b.correct,
-                            statements: b.statements
-                        }))
+                        title: "ĐỀ THI LỊCH SỬ (Tạo bằng Blocky)",
+                        description: `Đề thi được tạo thủ công với ${blockyQuestions.length} câu hỏi. Thời gian làm bài: ${examSettings.time} phút.`,
+                        workInfo: {
+                            title: "Đề thi tự tạo",
+                            author: "Người dùng",
+                            genre: "Trắc nghiệm"
+                        },
+                        blocks: blockyQuestions.map(q => {
+                            const { id, ...blockWithoutId } = q;
+                            return blockWithoutId;
+                        })
                     };
+                    
+                    progressFill.style.width = '100%';
+                    progressStatus.textContent = 'Hoàn thành!';
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                    }, 1000);
+                    
                     showExamResult(examData, examNotes);
                 }
                 
-                examResult.style.display = 'block';
             } catch (error) {
-                examResult.innerHTML = `<div class="exam-info" style="background:rgba(239,68,68,0.1)"><h3 style="color:#ef4444">Lỗi</h3><p>${error.message}</p></div>`;
-                examResult.style.display = 'block';
+                console.error('Lỗi:', error);
+                progressContainer.style.display = 'none';
+                resultContainer.style.display = 'block';
+                resultContainer.innerHTML = `
+                    <div class="exam-info" style="background: rgba(198, 40, 40, 0.1); border-left-color: var(--error-color);">
+                        <h4 style="color: var(--error-color);">
+                            <i class="fas fa-exclamation-triangle"></i> Lỗi tạo đề thi
+                        </h4>
+                        <p>${escapeHtml(error.message)}</p>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Vui lòng thử lại hoặc kiểm tra kết nối mạng.</p>
+                    </div>
+                `;
             } finally {
                 generateBtn.disabled = false;
                 generateBtn.innerHTML = '<i class="fas fa-file-alt"></i> Tạo Đề Thi';
             }
         }
         
-        // Blocky functions
-        function addBlockyBlock(type) {
-            let block = { id: Date.now(), type, title: type === 'text' ? 'Nội dung mới' : type === 'mc_question' ? 'Câu trắc nghiệm' : 'Câu đúng/sai', content: '' };
-            if (type === 'mc_question') {
-                block.options = ['A. ...', 'B. ...', 'C. ...', 'D. ...'];
-                block.correct = 0;
-                block.points = 0.25;
-            } else if (type === 'tf_question') {
-                block.statements = [{ text: 'Nội dung ý a', correct: true }, { text: 'Nội dung ý b', correct: false }];
-                block.points = 1.0;
-            } else {
-                block.points = 0;
-            }
-            blockyBlocks.push(block);
-            renderBlockyBlocks();
-        }
-        
-        function removeBlockyBlock(id) {
-            blockyBlocks = blockyBlocks.filter(b => b.id !== id);
-            renderBlockyBlocks();
-        }
-        
-        function renderBlockyBlocks() {
-            const container = document.getElementById('blockyPreview');
-            if (blockyBlocks.length === 0) {
-                container.innerHTML = `<div class="blocky-empty-state"><i class="fas fa-cubes"></i><h4>Chưa có nội dung</h4><p>Bấm "Thêm văn bản" hoặc "Thêm câu hỏi"</p></div>`;
-                return;
-            }
+        // ==================== SWITCH MODE ====================
+        function switchMode(mode) {
+            currentMode = mode;
             
-            let html = '';
-            blockyBlocks.forEach((block, idx) => {
-                html += `
-                    <div class="blocky-block" data-id="${block.id}">
-                        <div class="blocky-block-header">
-                            <div class="blocky-block-title"><i class="fas fa-${block.type === 'text' ? 'paragraph' : 'question-circle'}"></i> ${block.title}</div>
-                            <div><button class="blocky-block-btn" onclick="removeBlockyBlock(${block.id})"><i class="fas fa-trash"></i></button></div>
-                        </div>
-                        <div><input type="text" value="${block.title}" onchange="updateBlockyBlock(${block.id}, 'title', this.value)" style="width:100%; margin-bottom:10px; padding:5px;"></div>
-                        <textarea rows="3" placeholder="Nội dung..." onchange="updateBlockyBlock(${block.id}, 'content', this.value)">${block.content || ''}</textarea>
-                `;
-                if (block.type === 'mc_question') {
-                    html += `<div><label>Điểm: <input type="number" step="0.25" value="${block.points}" onchange="updateBlockyBlock(${block.id}, 'points', parseFloat(this.value))"></label></div>`;
-                } else if (block.type === 'tf_question') {
-                    html += `<div><label>Điểm: <input type="number" step="0.5" value="${block.points}" onchange="updateBlockyBlock(${block.id}, 'points', parseFloat(this.value))"></label></div>`;
-                }
-                html += `</div>`;
-            });
-            container.innerHTML = html;
-        }
-        
-        function updateBlockyBlock(id, field, value) {
-            const block = blockyBlocks.find(b => b.id === id);
-            if (block) block[field] = value;
-        }
-        
-        function clearBlockyBlocks() {
-            if (confirm('Xóa tất cả?')) { blockyBlocks = []; renderBlockyBlocks(); }
-        }
-        
-        function switchCreationMode(mode) {
-            currentCreationMode = mode;
-            document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
-            document.querySelectorAll('.mode-content').forEach(c => c.classList.toggle('active', c.id === `mode-${mode}`));
-            
-            const container = document.getElementById('actionButtonsContainer');
-            if (mode === 'text') {
-                container.innerHTML = `<div class="left-buttons"><button id="generateExamBtn" class="generate-btn"><i class="fas fa-file-alt"></i> Tạo Đề Thi</button><button id="generateRandomExamBtn" class="random-btn"><i class="fas fa-dice"></i> Đề Ngẫu Nhiên</button></div><div class="right-buttons"><button id="settingsBtn" class="settings-btn"><i class="fas fa-cog"></i> Cài đặt</button></div>`;
-            } else {
-                container.innerHTML = `<div><button id="generateExamBtn" class="generate-btn"><i class="fas fa-${mode === 'ai' ? 'robot' : 'cubes'}"></i> Tạo Đề Thi</button><button id="settingsBtn" class="settings-btn"><i class="fas fa-cog"></i> Cài đặt</button></div>`;
-            }
-            document.getElementById('generateExamBtn')?.addEventListener('click', generateExam);
-            document.getElementById('settingsBtn')?.addEventListener('click', () => document.getElementById('settingsPanel').classList.toggle('active'));
-            if (mode === 'text') document.getElementById('generateRandomExamBtn')?.addEventListener('click', generateRandomExam);
-        }
-        
-        async function generateRandomExam() {
-            const randomText = "Chiến dịch Điện Biên Phủ diễn ra từ ngày 13 tháng 3 đến ngày 7 tháng 5 năm 1954, là đỉnh cao của cuộc kháng chiến chống Pháp. Với chiến thắng này, thực dân Pháp phải ký Hiệp định Geneva, công nhận độc lập của Việt Nam.";
-            document.getElementById('inputText').value = randomText;
-            await generateExam();
-        }
-        
-        function setupExamSlider() {
-            const slider = document.getElementById('examTimeSlider');
-            const val = document.getElementById('examTimeValue');
-            slider.addEventListener('input', () => val.textContent = formatDuration(slider.value));
-            document.querySelectorAll('.duration-btn').forEach(btn => {
-                btn.addEventListener('click', () => { slider.value = btn.dataset.value; val.textContent = formatDuration(btn.dataset.value); });
-            });
-        }
-        
-        function setupWordCounter() {
-            const ta = document.getElementById('inputText');
-            const wc = document.getElementById('wordCount');
-            if (ta && wc) {
-                ta.addEventListener('input', () => { wc.textContent = `${countWords(ta.value)} từ`; });
-            }
-        }
-        
-        function setupModal() {
-            const modal = document.getElementById('resultModal');
-            document.querySelectorAll('.close-modal, #closeResultBtn').forEach(btn => {
-                btn.addEventListener('click', () => modal.classList.remove('active'));
-            });
-            modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('active'); });
-            
-            const previewModal = document.getElementById('previewModal');
-            if (previewModal) {
-                document.querySelectorAll('#closePreviewBtn, .close-modal').forEach(btn => {
-                    btn.addEventListener('click', () => previewModal.classList.remove('active'));
-                });
-            }
-        }
-        
-        // ==================== VẤN ĐỀ 2: LẮNG NGHE DROPDOWN THAY ĐỔI ====================
-        function initTopicScopeListener() {
-            const scopeSelect = document.getElementById('thptTopicScope');
-            if (scopeSelect) {
-                scopeSelect.addEventListener('change', function() {
-                    const isCustom = this.value === 'custom';
-                    const customArea = document.getElementById('customTopicArea');
-                    const fullNote = document.getElementById('fullTopicNote');
-                    if (customArea) customArea.style.display = isCustom ? 'block' : 'none';
-                    if (fullNote) fullNote.style.display = isCustom ? 'none' : 'block';
-                });
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.mode-tab').forEach(tab => {
-                tab.addEventListener('click', () => switchCreationMode(tab.dataset.mode));
+                if (tab.dataset.mode === mode) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
             });
             
-            window.addBlockyBlock = addBlockyBlock;
-            window.removeBlockyBlock = removeBlockyBlock;
-            window.updateBlockyBlock = updateBlockyBlock;
-            window.clearBlockyBlocks = clearBlockyBlocks;
+            document.querySelectorAll('.mode-content').forEach(content => {
+                if (content.id === `mode-${mode}-content`) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+        
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mode switching
+            document.querySelectorAll('.mode-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchMode(tab.dataset.mode));
+            });
             
-            document.getElementById('addTextBlockBtn')?.addEventListener('click', () => addBlockyBlock('text'));
-            document.getElementById('addQuestionBlockBtn')?.addEventListener('click', () => addBlockyBlock('mc_question'));
-            document.getElementById('clearBlocksBtn')?.addEventListener('click', clearBlockyBlocks);
+            // Scope switching for THPT mode
+            const thptScope = document.getElementById('thptScope');
+            const thptCustomArea = document.getElementById('thptCustomArea');
+            const thptFullNote = document.getElementById('thptFullNote');
             
-            setupExamSlider();
-            setupWordCounter();
-            setupModal();
-            initTopicScopeListener(); // VẤN ĐỀ 2: Khởi tạo listener cho dropdown
-            renderBlockyBlocks();
+            if (thptScope) {
+                thptScope.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        thptCustomArea.style.display = 'block';
+                        thptFullNote.style.display = 'none';
+                    } else {
+                        thptCustomArea.style.display = 'none';
+                        thptFullNote.style.display = 'block';
+                    }
+                });
+            }
+            
+            // Time slider
+            const timeSlider = document.getElementById('examTimeSlider');
+            const timeValue = document.getElementById('examTimeValue');
+            if (timeSlider && timeValue) {
+                timeSlider.addEventListener('input', function() {
+                    timeValue.textContent = this.value;
+                });
+                
+                document.querySelectorAll('[data-time]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const time = parseInt(this.dataset.time);
+                        timeSlider.value = time;
+                        timeValue.textContent = time;
+                    });
+                });
+            }
+            
+            // Settings panel toggle
+            const settingsBtn = document.getElementById('openSettingsBtn');
+            const settingsPanel = document.getElementById('settingsPanel');
+            if (settingsBtn && settingsPanel) {
+                settingsBtn.addEventListener('click', function() {
+                    settingsPanel.classList.toggle('active');
+                });
+            }
+            
+            // Generate button
+            const generateBtn = document.getElementById('generateExamBtn');
+            if (generateBtn) {
+                generateBtn.addEventListener('click', generateExam);
+            }
+            
+            // Blocky buttons
+            const addMCBtn = document.getElementById('addMCBlockBtn');
+            const addTFBtn = document.getElementById('addTFBlockBtn');
+            const clearAllBtn = document.getElementById('clearAllBlocksBtn');
+            
+            if (addMCBtn) {
+                addMCBtn.addEventListener('click', () => addBlockyQuestion('mc'));
+            }
+            if (addTFBtn) {
+                addTFBtn.addEventListener('click', () => addBlockyQuestion('tf'));
+            }
+            if (clearAllBtn) {
+                clearAllBtn.addEventListener('click', clearAllBlockyQuestions);
+            }
+            
+            // Modal close buttons
+            const closeModalBtns = document.querySelectorAll('.close-modal, #closeResultModalBtn, #closeResultFooterBtn');
+            const resultModal = document.getElementById('resultModal');
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    resultModal.classList.remove('active');
+                });
+            });
+            
+            resultModal.addEventListener('click', (e) => {
+                if (e.target === resultModal) {
+                    resultModal.classList.remove('active');
+                }
+            });
+            
+            // Expose functions to global scope
+            window.selectMCOption = selectMCOption;
+            window.selectTFAnswer = selectTFAnswer;
+            window.removeBlockyQuestion = removeBlockyQuestion;
+            window.updateBlockyQuestion = updateBlockyQuestion;
+            window.updateBlockyOption = updateBlockyOption;
+            window.updateBlockyStatement = updateBlockyStatement;
+            
+            // Initialize blocky preview
+            renderBlockyPreview();
         });
     </script>
-    
-    <!-- Preview Modal -->
-    <div id="previewModal" class="modal">
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <h3><i class="fas fa-eye"></i> Xem trước đề thi</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body" id="previewContent"></div>
-            <div class="modal-footer">
-                <button class="modal-btn" id="printPreviewBtn"><i class="fas fa-print"></i> In</button>
-                <button class="modal-btn secondary-btn" id="closePreviewBtn">Đóng</button>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
