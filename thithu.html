@@ -719,6 +719,18 @@
             line-height: 1.4;
         }
 
+        /* Disabled state for submitted exam */
+        .exam-submitted .mc-option,
+        .exam-submitted .tf-btn {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .exam-submitted .mc-option:hover {
+            background: transparent;
+            border-color: transparent;
+        }
+
         /* True/False Styles */
         .tf-statements {
             margin-top: 1rem;
@@ -1203,16 +1215,16 @@
                                 Thời gian làm bài
                             </h4>
                             <div class="time-slider-container">
-                                <input type="range" id="examTimeSlider" min="30" max="120" step="5" value="50">
+                                <input type="range" id="examTimeSlider" min="30" max="120" step="5" value="45">
                                 <div class="time-value">
-                                    <span id="examTimeValue">50</span> phút
+                                    <span id="examTimeValue">45</span> phút
                                 </div>
                             </div>
                             <div class="mt-2">
-                                <button type="button" class="blocky-btn" data-time="45" style="padding: 0.3rem 0.8rem;">45 phút</button>
-                                <button type="button" class="blocky-btn" data-time="50" style="padding: 0.3rem 0.8rem;">50 phút</button>
-                                <button type="button" class="blocky-btn" data-time="60" style="padding: 0.3rem 0.8rem;">60 phút</button>
-                                <button type="button" class="blocky-btn" data-time="90" style="padding: 0.3rem 0.8rem;">90 phút</button>
+                                <button type="button" class="blocky-btn preset-time-btn" data-time="45" style="padding: 0.3rem 0.8rem;">45 phút</button>
+                                <button type="button" class="blocky-btn preset-time-btn" data-time="50" style="padding: 0.3rem 0.8rem;">50 phút</button>
+                                <button type="button" class="blocky-btn preset-time-btn" data-time="60" style="padding: 0.3rem 0.8rem;">60 phút</button>
+                                <button type="button" class="blocky-btn preset-time-btn" data-time="90" style="padding: 0.3rem 0.8rem;">90 phút</button>
                             </div>
                         </div>
                         <div class="settings-card">
@@ -1465,6 +1477,10 @@ YÊU CẦU: ${userPrompt}
 CÀI ĐẶT:
 - Độ khó: ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}
 
+YÊU CẦU BẮT BUỘC VỀ CẤU TRÚC:
+- Mỗi câu hỏi đúng/sai PHẢI có ĐÚNG 4 ý a, b, c, d
+- Định dạng câu đúng/sai: statements: [{"text": "a) ...", "correct": true}, {"text": "b) ...", "correct": false}, {"text": "c) ...", "correct": true}, {"text": "d) ...", "correct": false}]
+
 YÊU CẦU ĐỊNH DẠNG JSON:
 {
     "title": "Tiêu đề đề thi",
@@ -1632,7 +1648,9 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         
         // ==================== SELECT ANSWER FUNCTIONS ====================
         window.selectMCOption = function(blockIndex, optionIndex) {
-            if (isExamSubmitted) return;
+            if (isExamSubmitted) {
+                return;
+            }
             userAnswers[`mc_${blockIndex}`] = optionIndex;
             const radios = document.querySelectorAll(`input[name="mc_${blockIndex}"]`);
             radios.forEach((radio, idx) => {
@@ -1641,7 +1659,9 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         };
         
         window.selectTFAnswer = function(blockIndex, statementIndex, isTrue, btnElement) {
-            if (isExamSubmitted) return;
+            if (isExamSubmitted) {
+                return;
+            }
             const answerKey = `tf_${blockIndex}_${statementIndex}`;
             userAnswers[answerKey] = isTrue;
             
@@ -1666,17 +1686,30 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         };
         
         function resetExamAnswers() {
-            if (isExamSubmitted) return;
+            if (examTimerInterval) {
+                clearInterval(examTimerInterval);
+                examTimerInterval = null;
+            }
+            
+            isExamActive = true;
+            isExamSubmitted = false;
             userAnswers = {};
+            
             if (currentExamData) {
-                remainingSeconds = examSettings.time * 60;
+                if (currentMode === 'thpt') {
+                    remainingSeconds = 50 * 60;
+                } else {
+                    remainingSeconds = examSettings.time * 60;
+                }
                 renderExamForTaking(currentExamData);
             }
         }
         
         // ==================== SUBMIT EXAM ====================
         function submitExam() {
-            if (isExamSubmitted) return;
+            if (isExamSubmitted) {
+                return;
+            }
             
             if (examTimerInterval) {
                 clearInterval(examTimerInterval);
@@ -1684,6 +1717,22 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             }
             isExamActive = false;
             isExamSubmitted = true;
+            
+            const examContainer = document.getElementById('examResultContainer');
+            if (examContainer) {
+                examContainer.classList.add('exam-submitted');
+            }
+            
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => {
+                radio.disabled = true;
+            });
+            
+            const allTfBtns = document.querySelectorAll('.tf-btn');
+            allTfBtns.forEach(btn => {
+                btn.style.pointerEvents = 'none';
+                btn.style.opacity = '0.7';
+            });
             
             if (!currentExamData || !currentExamData.blocks) {
                 console.error('Không có dữ liệu đề thi');
@@ -1806,7 +1855,13 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         function showExamResult(examData, examNotes) {
             currentExamData = examData;
             currentExamCode = generateExamCode();
-            remainingSeconds = examSettings.time * 60;
+            
+            if (currentMode === 'thpt') {
+                remainingSeconds = 50 * 60;
+            } else {
+                remainingSeconds = examSettings.time * 60;
+            }
+            
             isExamSubmitted = false;
             
             let html = `
@@ -1817,7 +1872,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                     </h3>
                 </div>
                 <div class="exam-info">
-                    <p><strong>Thời gian:</strong> ${examSettings.time} phút</p>
+                    <p><strong>Thời gian:</strong> ${currentMode === 'thpt' ? '50' : examSettings.time} phút</p>
                     <p><strong>Độ khó:</strong> ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}</p>
                     <p>${escapeHtml(examData.description || '')}</p>
                 </div>
@@ -1896,6 +1951,11 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             document.getElementById('examResultContainer').style.display = 'block';
             
             document.getElementById('takeExamNowBtn').addEventListener('click', () => {
+                isExamSubmitted = false;
+                const examContainer = document.getElementById('examResultContainer');
+                if (examContainer) {
+                    examContainer.classList.remove('exam-submitted');
+                }
                 renderExamForTaking(examData);
             });
         }
@@ -2093,6 +2153,42 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             }
         }
         
+        // ==================== UPDATE TIME SETTINGS BASED ON MODE ====================
+        function updateTimeSettingsBasedOnMode() {
+            const timeSlider = document.getElementById('examTimeSlider');
+            const timeValue = document.getElementById('examTimeValue');
+            const timeCard = document.querySelector('.settings-card:first-child');
+            
+            if (currentMode === 'thpt') {
+                if (timeSlider) {
+                    timeSlider.disabled = true;
+                    timeSlider.style.opacity = '0.5';
+                }
+                if (timeValue) {
+                    timeValue.textContent = '50';
+                }
+                if (timeCard) {
+                    const note = timeCard.querySelector('.mode-time-note') || document.createElement('div');
+                    note.className = 'info-note mt-2 mode-time-note';
+                    note.style.fontSize = '0.8rem';
+                    note.style.marginTop = '0.5rem';
+                    note.innerHTML = '<i class="fas fa-lock"></i> Đề THPTQG chỉ có thời gian cố định 50 phút';
+                    if (!timeCard.querySelector('.mode-time-note')) {
+                        timeCard.appendChild(note);
+                    }
+                }
+            } else {
+                if (timeSlider) {
+                    timeSlider.disabled = false;
+                    timeSlider.style.opacity = '1';
+                }
+                const note = timeCard?.querySelector('.mode-time-note');
+                if (note) {
+                    note.remove();
+                }
+            }
+        }
+        
         // ==================== GENERATE MAIN FUNCTION ====================
         async function generateExam() {
             const generateBtn = document.getElementById('generateExamBtn');
@@ -2108,7 +2204,12 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             progressFill.style.width = '0%';
             progressStatus.textContent = 'Đang khởi tạo...';
             
-            examSettings.time = parseInt(document.getElementById('examTimeSlider').value);
+            const timeSlider = document.getElementById('examTimeSlider');
+            if (currentMode === 'thpt') {
+                examSettings.time = 50;
+            } else {
+                examSettings.time = parseInt(timeSlider.value);
+            }
             examSettings.difficulty = document.getElementById('difficultySelect').value;
             const examNotes = document.getElementById('examNotes').value;
             
@@ -2236,16 +2337,16 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                     content.classList.remove('active');
                 }
             });
+            
+            updateTimeSettingsBasedOnMode();
         }
         
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
-            // Mode switching
             document.querySelectorAll('.mode-tab').forEach(tab => {
                 tab.addEventListener('click', () => switchMode(tab.dataset.mode));
             });
             
-            // Scope switching for THPT mode
             const thptScope = document.getElementById('thptScope');
             const thptCustomArea = document.getElementById('thptCustomArea');
             const thptFullNote = document.getElementById('thptFullNote');
@@ -2262,24 +2363,26 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 });
             }
             
-            // Time slider
             const timeSlider = document.getElementById('examTimeSlider');
             const timeValue = document.getElementById('examTimeValue');
             if (timeSlider && timeValue) {
                 timeSlider.addEventListener('input', function() {
-                    timeValue.textContent = this.value;
+                    if (currentMode !== 'thpt') {
+                        timeValue.textContent = this.value;
+                    }
                 });
                 
-                document.querySelectorAll('[data-time]').forEach(btn => {
+                document.querySelectorAll('.preset-time-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const time = parseInt(this.dataset.time);
-                        timeSlider.value = time;
-                        timeValue.textContent = time;
+                        if (currentMode !== 'thpt') {
+                            const time = parseInt(this.dataset.time);
+                            timeSlider.value = time;
+                            timeValue.textContent = time;
+                        }
                     });
                 });
             }
             
-            // Settings panel toggle
             const settingsBtn = document.getElementById('openSettingsBtn');
             const settingsPanel = document.getElementById('settingsPanel');
             if (settingsBtn && settingsPanel) {
@@ -2288,13 +2391,11 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 });
             }
             
-            // Generate button
             const generateBtn = document.getElementById('generateExamBtn');
             if (generateBtn) {
                 generateBtn.addEventListener('click', generateExam);
             }
             
-            // Blocky buttons
             const addMCBtn = document.getElementById('addMCBlockBtn');
             const addTFBtn = document.getElementById('addTFBlockBtn');
             const clearAllBtn = document.getElementById('clearAllBlocksBtn');
@@ -2309,7 +2410,6 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 clearAllBtn.addEventListener('click', clearAllBlockyQuestions);
             }
             
-            // Modal close buttons
             const closeModalBtns = document.querySelectorAll('.close-modal, #closeResultModalBtn, #closeResultFooterBtn');
             const resultModal = document.getElementById('resultModal');
             closeModalBtns.forEach(btn => {
@@ -2324,7 +2424,6 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 }
             });
             
-            // Expose functions to global scope
             window.selectMCOption = selectMCOption;
             window.selectTFAnswer = selectTFAnswer;
             window.removeBlockyQuestion = removeBlockyQuestion;
@@ -2332,8 +2431,8 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             window.updateBlockyOption = updateBlockyOption;
             window.updateBlockyStatement = updateBlockyStatement;
             
-            // Initialize blocky preview
             renderBlockyPreview();
+            updateTimeSettingsBasedOnMode();
         });
     </script>
 </body>
