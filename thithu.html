@@ -2343,10 +2343,12 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
+            // Mode switching
             document.querySelectorAll('.mode-tab').forEach(tab => {
                 tab.addEventListener('click', () => switchMode(tab.dataset.mode));
             });
             
+            // Scope switching for THPT mode
             const thptScope = document.getElementById('thptScope');
             const thptCustomArea = document.getElementById('thptCustomArea');
             const thptFullNote = document.getElementById('thptFullNote');
@@ -2363,6 +2365,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 });
             }
             
+            // Time slider
             const timeSlider = document.getElementById('examTimeSlider');
             const timeValue = document.getElementById('examTimeValue');
             if (timeSlider && timeValue) {
@@ -2383,6 +2386,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 });
             }
             
+            // Settings panel toggle
             const settingsBtn = document.getElementById('openSettingsBtn');
             const settingsPanel = document.getElementById('settingsPanel');
             if (settingsBtn && settingsPanel) {
@@ -2391,11 +2395,13 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 });
             }
             
+            // Generate button
             const generateBtn = document.getElementById('generateExamBtn');
             if (generateBtn) {
                 generateBtn.addEventListener('click', generateExam);
             }
             
+            // Blocky buttons
             const addMCBtn = document.getElementById('addMCBlockBtn');
             const addTFBtn = document.getElementById('addTFBlockBtn');
             const clearAllBtn = document.getElementById('clearAllBlocksBtn');
@@ -2410,6 +2416,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 clearAllBtn.addEventListener('click', clearAllBlockyQuestions);
             }
             
+            // Modal close buttons
             const closeModalBtns = document.querySelectorAll('.close-modal, #closeResultModalBtn, #closeResultFooterBtn');
             const resultModal = document.getElementById('resultModal');
             closeModalBtns.forEach(btn => {
@@ -2424,6 +2431,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 }
             });
             
+            // Expose functions to global scope
             window.selectMCOption = selectMCOption;
             window.selectTFAnswer = selectTFAnswer;
             window.removeBlockyQuestion = removeBlockyQuestion;
@@ -2431,6 +2439,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             window.updateBlockyOption = updateBlockyOption;
             window.updateBlockyStatement = updateBlockyStatement;
             
+            // Initialize blocky preview
             renderBlockyPreview();
             updateTimeSettingsBasedOnMode();
         });
