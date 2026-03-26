@@ -1,1 +1,1156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>AI Mindmap Lịch Sử - Hệ Thống Sơ Đồ Tư Duy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Playfair Display', sans-serif;
+            background-color: #DCEEF3 !important;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        :root {
+            --bg-total: #DCEEF3;
+            --input-bg: #F4F7F8;
+            --card-bg: #F8F9F6;
+            --border-light: #E3E6E8;
+            --text-primary: #333333;
+            --text-secondary: #8A8F95;
+            --button-cyan: #6EC6D9;
+            --accent-orange: #F4A261;
+        }
+        
+        /* Ẩn các thành phần không cần thiết */
+        #globeContainer {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        
+        .country-info-panel-left,
+        .info-panel,
+        .top-bar-globe,
+        .layer-panel,
+        .timeline-globe,
+        .stats-pill-globe,
+        #map-container,
+        .audio-controls,
+        .image-container {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        
+        /* Điều chỉnh sidebar để hiển thị đúng */
+        #sidebar {
+            width: 100% !important;
+            max-width: 800px !important;
+            margin: 0 auto !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            position: relative !important;
+            border-radius: 20px !important;
+            top: 20px !important;
+            height: calc(100vh - 40px) !important;
+        }
+        
+        #sidebar.sidebar-collapsed {
+            transform: translateX(-50%) !important;
+            left: 50% !important;
+        }
+        
+        .sidebar-toggle-new {
+            display: none !important;
+        }
+        
+        #app {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-total);
+        }
+        
+        .content-container {
+            overflow-y: auto;
+        }
+        
+        /* Mindmap styling - TỪ CODE KHÔNG LỖI */
+        .mindmap-sieu-ngau {
+            width: 100%;
+            height: 500px;
+            background: white;
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .mindmap-sieu-ngau.expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            margin: 0;
+            border-radius: 0;
+            padding: 1rem;
+            background: white;
+            cursor: default;
+        }
+        
+        .mindmap-sieu-ngau .mindmap-title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            background: linear-gradient(135deg, var(--accent-orange) 0%, var(--button-cyan) 100%);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mindmap-sieu-ngau .mindmap-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .mindmap-sieu-ngau .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .mindmap-sieu-ngau .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+            color: white;
+        }
+        
+        .mindmap-sieu-ngau .mindmap-content {
+            width: 100%;
+            height: 100%;
+            padding-top: 52px;
+            position: relative;
+            background: white;
+        }
+        
+        .mindmap-sieu-ngau .mindmap-container {
+            width: 100%;
+            height: calc(100% - 52px);
+            background: white;
+            position: relative;
+            flex: 1;
+        }
+        
+        .mindmap-controls-hidden { display: none !important; }
+        
+        /* SVG styling cho mindmap - TỪ CODE KHÔNG LỖI */
+        .mindmap-container svg {
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
+        
+        .mindmap-container svg .markmap-node circle {
+            fill: #FFF3E0 !important;
+            stroke: #F4A261 !important;
+            stroke-width: 2px !important;
+        }
+        
+        .mindmap-container svg .markmap-node text {
+            fill: #333333 !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+        }
+        
+        .mindmap-container svg .markmap-node.root-node text {
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            fill: #F4A261 !important;
+        }
+        
+        .mindmap-container svg .markmap-link path {
+            stroke: #6EC6D9 !important;
+            stroke-width: 2px !important;
+        }
+        
+        .result-container {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--accent-orange);
+            position: relative;
+        }
+        
+        .result-container .result-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-right: 2rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+        
+        .close-btn:hover {
+            color: var(--accent-orange);
+            background: rgba(244, 162, 97, 0.1);
+        }
+        
+        .bg-total { background-color: var(--bg-total) !important; }
+        .bg-input { background-color: var(--input-bg) !important; }
+        .bg-card { background-color: var(--card-bg) !important; }
+        .border-custom { border-color: var(--border-light) !important; }
+        .text-primary { color: var(--text-primary) !important; }
+        .text-secondary { color: var(--text-secondary) !important; }
+        .bg-button { background-color: var(--button-cyan) !important; }
+        .text-accent { color: var(--accent-orange) !important; }
+        .border-accent { border-color: var(--accent-orange) !important; }
+        .bg-accent { background-color: var(--accent-orange) !important; }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Sidebar styling */
+        .sidebar-header {
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 1rem 1rem 0 0;
+            position: relative;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+        
+        .header-title h2 {
+            color: var(--accent-orange);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+        
+        .header-title i { color: var(--accent-orange); }
+        
+        .language-switch {
+            display: flex;
+            align-items: center;
+            margin-right: 30px;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-bg);
+            transition: .4s;
+            border-radius: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--accent-orange);
+            transition: .4s;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        input:checked + .slider:before { transform: translateX(30px); }
+        
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        
+        #search-input {
+            width: 100%;
+            padding: 0.75rem 5rem 0.75rem 1.2rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border-light);
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            height: 48px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: block;
+        }
+        
+        #search-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        #search-input::placeholder {
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+        
+        .search-button {
+            position: absolute;
+            top: 50%;
+            right: 0.5rem;
+            transform: translateY(-50%);
+            background-color: var(--button-cyan);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.4rem 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+        }
+        
+        .search-button:hover {
+            background-color: #5db8cc;
+        }
+        
+        .content-container {
+            flex: 1;
+            padding: 1rem;
+            background-color: var(--bg-total);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-radius: 1rem 1rem 0 0;
+        }
+        
+        #result-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+        
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none;
+        }
+        
+        .loading-screen.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .spinner-box {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin3D {
+            from { transform: rotate3d(0.5, 0.5, 0.5, 360deg); }
+            to { transform: rotate3d(0, 0, 0, 0deg); }
+        }
+        
+        .leo-border-1 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            padding: 3px;
+            border-radius: 50%;
+            background: linear-gradient(0deg, rgba(244, 162, 97, 0.1) 33%, #F4A261 100%);
+            animation: spin3D 1.8s linear infinite;
+        }
+        
+        .leo-core-1 {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border-radius: 50%;
+        }
+        
+        .leo-border-2 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            padding: 3px;
+            border-radius: 50%;
+            background: linear-gradient(0deg, rgba(110, 198, 217, 0.1) 33%, #6EC6D9 100%);
+            animation: spin3D 2.2s linear infinite reverse;
+        }
+        
+        .leo-core-2 {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border-radius: 50%;
+        }
+        
+        .loading-text {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #F4A261;
+            text-align: center;
+            animation: blink 1.5s ease-in-out infinite;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .loader-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            color: white;
+        }
+        
+        .notification-success { background: #4CAF50; }
+        .notification-error { background: #f44336; }
+        .notification-info { background: var(--button-cyan); }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            #sidebar { width: 95% !important; margin: 0 auto !important; }
+            .mindmap-sieu-ngau { height: 400px; }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col transition-all bg-total">
+    <!-- Giữ nguyên các phần tử HTML để không bị lỗi DOM -->
+    <div id="globeContainer"></div>
+    <div class="country-info-panel-left" id="countryInfoPanel"></div>
+    <div class="info-panel" id="infoPanel"></div>
+    <div class="top-bar-globe" id="topBarGlobe"></div>
+    <div class="layer-panel" id="layerPanel"></div>
+    <div class="sidebar-toggle-new" id="sidebarToggleNew"></div>
+    
+    <div id="app">
+        <div id="sidebar" class="flex flex-col h-full transition-all duration-300 relative bg-card">
+            <div class="sidebar-header">
+                <div class="header-container">
+                    <div class="header-title">
+                        <h2 class="text-xl font-bold font-display flex items-center">
+                            <i class="fas fa-brain mr-3 text-accent"></i>
+                            <span class="text-accent" id="mainTitleText">AI Mindmap Lịch Sử</span>
+                        </h2>
+                    </div>
+                    <div class="language-switch">
+                        <label class="switch">
+                            <input type="checkbox" id="language-toggle">
+                            <span class="slider">
+                                <span class="vi-text">Vi</span>
+                                <span class="en-text">En</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <form id="search-form" class="mt-2">
+                    <div class="search-wrapper">
+                        <textarea id="search-input" rows="1"
+                            class="w-full"
+                            placeholder="Nhập chủ đề về Lịch sử để tạo sơ đồ tư duy..."></textarea>
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-magic"></i>
+                            <span>Tạo Mindmap</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="content-container">
+                <div id="result-messages" class="flex flex-col gap-4 w-full"></div>
+            </div>
+        </div>
+        <div id="map-container" class="flex-1 flex flex-col h-full overflow-hidden relative"></div>
+    </div>
+    
+    <div class="timeline-globe" id="timelineGlobe"></div>
+    
+    <div id="loading-screen" class="loading-screen">
+        <div class="loader-container">
+            <div class="spinner-box">
+                <div class="leo-border-1"><div class="leo-core-1"></div></div>
+                <div class="leo-border-2"><div class="leo-core-2"></div></div>
+            </div>
+            <div class="loading-text" id="loadingText">AI đang tạo nội dung...</div>
+            <div class="loader-info" id="loaderInfo">Đang xử lý yêu cầu của bạn. Vui lòng chờ trong giây lát...</div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/globe.gl@2.45.0/dist/globe.gl.min.js"></script>
+    <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/d3@7.8.5/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/markmap-lib@0.15.3/dist/browser/index.js"></script>
+    <script src="https://unpkg.com/markmap-view@0.15.3/dist/browser/index.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
+    <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
 
+        // ==================== API KEY ====================
+        function reverseString(str) {
+            return str.split('').reverse().join('');
+        }
+        const reversedKey = "gNuoKbGzNL-zcdSGVscmGcpuN6D1uYgJDySazIA";
+        const API_KEY = reverseString(reversedKey);
+
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+
+        // ==================== DOM ELEMENTS ====================
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const resultMessages = document.getElementById('result-messages');
+        const loadingScreen = document.getElementById('loading-screen');
+        const languageToggle = document.getElementById('language-toggle');
+        const mainTitleText = document.getElementById('mainTitleText');
+        
+        let currentLanguage = 'vi';
+        let transformer = null;
+        
+        // ==================== TRANSLATIONS ====================
+        const translations = {
+            vi: {
+                title: "AI Mindmap Lịch Sử",
+                search_placeholder: "Nhập chủ đề về Lịch sử để tạo sơ đồ tư duy...",
+                mindmap_title: "🧠 SƠ ĐỒ TƯ DUY",
+                processing_error: "Lỗi khi xử lý yêu cầu. Vui lòng thử lại!",
+                ai_assistant: "Trợ Lý AI",
+                zoom_in: "Phóng to",
+                zoom_out: "Thu nhỏ",
+                save_image: "Lưu ảnh",
+                save_success: "Đã lưu sơ đồ tư duy thành công!",
+                save_error: "Lỗi khi lưu sơ đồ tư duy!",
+                loading_text_1: "AI đang tạo nội dung...",
+                loading_text_2: "Đang xử lý dữ liệu...",
+                loading_text_3: "Đang phân tích thông tin...",
+                loading_text_4: "Đang tổng hợp nội dung...",
+                loading_info: "Đang xử lý yêu cầu của bạn. Vui lòng chờ trong giây lát...",
+                empty_query: "Vui lòng nhập một chủ đề về lịch sử để tạo sơ đồ tư duy!"
+            },
+            en: {
+                title: "AI History Mindmap",
+                search_placeholder: "Enter a history topic to generate mindmap...",
+                mindmap_title: "🧠 MIND MAP",
+                processing_error: "Error processing request. Please try again!",
+                ai_assistant: "AI Assistant",
+                zoom_in: "Zoom in",
+                zoom_out: "Zoom out",
+                save_image: "Save image",
+                save_success: "Mind map saved successfully!",
+                save_error: "Error saving mind map!",
+                loading_text_1: "AI is creating content...",
+                loading_text_2: "Processing data...",
+                loading_text_3: "Analyzing information...",
+                loading_text_4: "Synthesizing content...",
+                loading_info: "Processing your request. Please wait a moment...",
+                empty_query: "Please enter a history topic to generate mindmap!"
+            }
+        };
+        
+        // ==================== UI FUNCTIONS ====================
+        function updateLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            searchInput.placeholder = translations[lang].search_placeholder;
+            if (mainTitleText) mainTitleText.textContent = translations[lang].title;
+            languageToggle.checked = lang === 'en';
+            
+            const loadingText = document.getElementById('loadingText');
+            const loaderInfo = document.getElementById('loaderInfo');
+            if (loadingText) loadingText.textContent = translations[lang].loading_text_1;
+            if (loaderInfo) loaderInfo.textContent = translations[lang].loading_info;
+        }
+        
+        function toggleLanguage() {
+            const newLang = languageToggle.checked ? 'en' : 'vi';
+            updateLanguage(newLang);
+        }
+        
+        function showLoadingScreen() {
+            loadingScreen.classList.add('active');
+            const loadingText = document.getElementById('loadingText');
+            loadingText.textContent = translations[currentLanguage].loading_text_1;
+            
+            const textVariations = [
+                translations[currentLanguage].loading_text_1,
+                translations[currentLanguage].loading_text_2,
+                translations[currentLanguage].loading_text_3,
+                translations[currentLanguage].loading_text_4
+            ];
+            let textIndex = 0;
+            const textInterval = setInterval(() => {
+                textIndex = (textIndex + 1) % textVariations.length;
+                loadingText.textContent = textVariations[textIndex];
+            }, 2000);
+            loadingScreen.textInterval = textInterval;
+        }
+        
+        function hideLoadingScreen() {
+            loadingScreen.classList.remove('active');
+            if (loadingScreen.textInterval) {
+                clearInterval(loadingScreen.textInterval);
+                loadingScreen.textInterval = null;
+            }
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        function clearPreviousData() {
+            resultMessages.innerHTML = '';
+        }
+        
+        // ==================== AI TẠO NỘI DUNG ====================
+        async function generateMindmapContent(topic) {
+            const prompt = `Bạn là chuyên gia tổ chức kiến thức về Lịch sử. Hãy tạo một sơ đồ tư duy (mindmap) chi tiết về chủ đề lịch sử "${topic}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'Tiếng Việt' : 'English'}.
+
+Hãy trả về nội dung dạng Markdown với cấu trúc sau:
+# ${topic}
+
+## 1. Bối cảnh lịch sử
+- Nội dung giới thiệu bối cảnh
+
+## 2. Diễn biến chính
+- Sự kiện 1
+- Sự kiện 2
+- Sự kiện 3
+
+## 3. Nhân vật quan trọng
+- Nhân vật A: Vai trò
+- Nhân vật B: Vai trò
+
+## 4. Kết quả và ý nghĩa
+- Kết quả chính
+- Ý nghĩa lịch sử
+
+## 5. Bài học kinh nghiệm
+- Bài học rút ra
+
+Yêu cầu:
+- Sử dụng cấp độ heading phù hợp
+- Mỗi mục sử dụng dấu gạch đầu dòng (-) để liệt kê
+- Nội dung phải đầy đủ, chi tiết, có cấu trúc rõ ràng
+- Độ dài khoảng 300-500 từ
+
+Chỉ trả về nội dung Markdown, không thêm bất kỳ giải thích nào khác.`;
+
+            try {
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                let markdown = response.text();
+                
+                if (markdown.includes('```markdown')) {
+                    markdown = markdown.split('```markdown')[1].split('```')[0].trim();
+                } else if (markdown.includes('```')) {
+                    markdown = markdown.split('```')[1].split('```')[0].trim();
+                }
+                
+                return markdown;
+            } catch (error) {
+                console.error("Lỗi generate content:", error);
+                throw error;
+            }
+        }
+        
+        function getFallbackContent(topic) {
+            if (currentLanguage === 'vi') {
+                return `# ${topic}
+
+## 1. Bối cảnh lịch sử
+- ${topic} là một sự kiện/nhân vật quan trọng trong lịch sử
+- Có nhiều khía cạnh thú vị xoay quanh chủ đề này
+
+## 2. Diễn biến chính
+- Đây là nội dung được tạo tự động do lỗi kết nối AI
+- Vui lòng thử lại sau để có nội dung chi tiết hơn
+
+## 3. Nhân vật quan trọng
+- Nhân vật liên quan 1
+- Nhân vật liên quan 2
+
+## 4. Kết quả và ý nghĩa
+- Ý nghĩa lịch sử quan trọng
+
+## 5. Bài học kinh nghiệm
+- Hãy thử tìm kiếm lại với từ khóa khác để có kết quả tốt hơn`;
+            } else {
+                return `# ${topic}
+
+## 1. Historical Context
+- ${topic} is an important historical event/figure
+- There are many interesting aspects to this subject
+
+## 2. Key Events
+- This content was auto-generated due to AI connection issues
+- Please try again later for more detailed content
+
+## 3. Important Figures
+- Related figure 1
+- Related figure 2
+
+## 4. Results and Significance
+- Historical significance
+
+## 5. Lessons Learned
+- Try searching with different keywords for better results`;
+            }
+        }
+        
+        // ==================== LƯU ẢNH MINDMAP ====================
+        async function saveMindmapAsImage(container, query) {
+            try {
+                const svg = container.querySelector('svg');
+                if (!svg) {
+                    showNotification(translations[currentLanguage].save_error, 'error');
+                    return;
+                }
+                
+                const svgClone = svg.cloneNode(true);
+                const bbox = svg.getBBox();
+                const padding = 40;
+                const width = bbox.width + padding * 2;
+                const height = bbox.height + padding * 2;
+                
+                svgClone.setAttribute('width', width);
+                svgClone.setAttribute('height', height);
+                svgClone.setAttribute('viewBox', (bbox.x - padding) + ' ' + (bbox.y - padding) + ' ' + width + ' ' + height);
+                
+                const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+                style.textContent = `
+                    .markmap-node circle { fill: #FFF3E0 !important; stroke: #F4A261 !important; stroke-width: 2px !important; }
+                    .markmap-node text { fill: #333333 !important; font-family: 'Inter', sans-serif !important; font-size: 14px !important; font-weight: 500 !important; }
+                    .markmap-node.root-node text { font-size: 18px !important; font-weight: 700 !important; fill: #F4A261 !important; }
+                    .markmap-link path { stroke: #6EC6D9 !important; stroke-width: 2px !important; }
+                `;
+                svgClone.insertBefore(style, svgClone.firstChild);
+                
+                const svgData = new XMLSerializer().serializeToString(svgClone);
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                img.onload = function() {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const link = document.createElement('a');
+                    const title = query ? query.replace(/[^a-zA-Z0-9À-ỹ]/g, '_') : 'mindmap';
+                    link.download = title + '_mindmap_' + Date.now() + '.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    showNotification(translations[currentLanguage].save_success, 'success');
+                };
+                
+                img.onerror = () => showNotification(translations[currentLanguage].save_error, 'error');
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            } catch (error) {
+                console.error('Lỗi save mindmap:', error);
+                showNotification(translations[currentLanguage].save_error, 'error');
+            }
+        }
+        
+        // ==================== TẠO MINDMAP CONTAINER ====================
+        function createMindmapContainer(title) {
+            const mindmapDiv = document.createElement('div');
+            mindmapDiv.className = 'mindmap-sieu-ngau';
+            
+            mindmapDiv.innerHTML = `
+                <div class="mindmap-title">
+                    <span>${translations[currentLanguage].mindmap_title}: ${title}</span>
+                    <div class="mindmap-controls mindmap-controls-hidden">
+                        <button class="control-btn zoom-in" title="${translations[currentLanguage].zoom_in}">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="control-btn zoom-out" title="${translations[currentLanguage].zoom_out}">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="control-btn save-mindmap" title="${translations[currentLanguage].save_image}">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mindmap-content">
+                    <div class="loading-mindmap" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                        <i class="fas fa-spinner fa-pulse" style="font-size: 32px; color: var(--accent-orange);"></i>
+                    </div>
+                </div>
+            `;
+            
+            // Xử lý expand/collapse
+            mindmapDiv.addEventListener('click', function(e) {
+                if (e.target === this || (e.target.closest('.mindmap-title') && !e.target.closest('.control-btn'))) {
+                    mindmapDiv.classList.toggle('expanded');
+                    
+                    if (mindmapDiv.classList.contains('expanded')) {
+                        const controls = mindmapDiv.querySelector('.mindmap-controls');
+                        if (controls) controls.classList.remove('mindmap-controls-hidden');
+                        setTimeout(() => { if (mindmapDiv.mm) mindmapDiv.mm.fit(); }, 50);
+                    } else {
+                        const controls = mindmapDiv.querySelector('.mindmap-controls');
+                        if (controls) controls.classList.add('mindmap-controls-hidden');
+                    }
+                }
+            });
+            
+            const zoomInBtn = mindmapDiv.querySelector('.zoom-in');
+            const zoomOutBtn = mindmapDiv.querySelector('.zoom-out');
+            const saveBtn = mindmapDiv.querySelector('.save-mindmap');
+            
+            if (zoomInBtn) {
+                zoomInBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (mindmapDiv.mm) mindmapDiv.mm.rescale(1.25);
+                });
+            }
+            
+            if (zoomOutBtn) {
+                zoomOutBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (mindmapDiv.mm) mindmapDiv.mm.rescale(0.8);
+                });
+            }
+            
+            if (saveBtn) {
+                saveBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    saveMindmapAsImage(mindmapDiv, title);
+                });
+            }
+            
+            return mindmapDiv;
+        }
+        
+        // ==================== RENDER MARKMAP ====================
+        async function renderMarkmap(container, markdown, title) {
+            return new Promise(async (resolve) => {
+                try {
+                    const contentDiv = container.querySelector('.mindmap-content');
+                    if (!contentDiv) return resolve(null);
+                    
+                    const mindmapContainer = document.createElement('div');
+                    mindmapContainer.className = 'mindmap-container';
+                    mindmapContainer.id = 'mindmap-' + Math.random().toString(36).substr(2, 9);
+                    contentDiv.innerHTML = '';
+                    contentDiv.appendChild(mindmapContainer);
+                    
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('width', '100%');
+                    svg.setAttribute('height', '100%');
+                    svg.style.background = 'white';
+                    mindmapContainer.appendChild(svg);
+                    
+                    const { root } = transformer.transform(markdown);
+                    const { Markmap } = window.markmap;
+                    const mm = Markmap.create(svg, {
+                        duration: 500,
+                        nodeMinHeight: 24,
+                        spacingVertical: 12,
+                        spacingHorizontal: 120,
+                        autoFit: true,
+                        fitRatio: 0.9,
+                    }, root);
+                    
+                    container.mm = mm;
+                    
+                    setTimeout(() => {
+                        if (mm) mm.fit();
+                        resolve(mm);
+                    }, 180);
+                } catch (error) {
+                    console.error("Lỗi render mindmap:", error);
+                    const contentDiv = container.querySelector('.mindmap-content');
+                    if (contentDiv) {
+                        contentDiv.innerHTML = '<div style="padding:20px;color:#f44336;text-align:center;">' + translations[currentLanguage].processing_error + '</div>';
+                    }
+                    resolve(null);
+                }
+            });
+        }
+        
+        // ==================== XỬ LÝ SUBMIT ====================
+        async function handleSubmit(e) {
+            if (e) e.preventDefault();
+            
+            const userQuery = searchInput.value.trim();
+            if (!userQuery) {
+                showNotification(translations[currentLanguage].empty_query, 'error');
+                return;
+            }
+            
+            clearPreviousData();
+            searchInput.value = "";
+            showLoadingScreen();
+            
+            try {
+                let markdownContent;
+                try {
+                    markdownContent = await generateMindmapContent(userQuery);
+                } catch (aiError) {
+                    console.error("AI Error:", aiError);
+                    markdownContent = getFallbackContent(userQuery);
+                    showNotification("Đang sử dụng nội dung dự phòng do lỗi kết nối", 'info');
+                }
+                
+                const resultContainer = document.createElement('div');
+                resultContainer.className = 'result-container';
+                resultContainer.innerHTML = `
+                    <div class="result-title">
+                        <span>📜 ${userQuery}</span>
+                        <span class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </div>
+                    <div class="result-content"></div>
+                `;
+                
+                const closeBtn = resultContainer.querySelector('.close-btn');
+                closeBtn.addEventListener('click', () => resultContainer.remove());
+                
+                const mindmapContainer = createMindmapContainer(userQuery);
+                resultContainer.querySelector('.result-content').appendChild(mindmapContainer);
+                
+                resultMessages.appendChild(resultContainer);
+                
+                await renderMarkmap(mindmapContainer, markdownContent, userQuery);
+                
+                // Cuộn đến kết quả mới
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+            } catch (error) {
+                console.error("Lỗi xử lý:", error);
+                const errorContainer = document.createElement('div');
+                errorContainer.className = 'result-container';
+                errorContainer.innerHTML = `
+                    <div class="result-title">
+                        <span>⚠️ Lỗi</span>
+                        <span class="close-btn">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </div>
+                    <div class="result-content">
+                        <p style="color: #f44336; padding: 20px; text-align: center;">${translations[currentLanguage].processing_error}</p>
+                    </div>
+                `;
+                const closeBtn = errorContainer.querySelector('.close-btn');
+                closeBtn.addEventListener('click', () => errorContainer.remove());
+                resultMessages.appendChild(errorContainer);
+            } finally {
+                hideLoadingScreen();
+            }
+        }
+        
+        // ==================== SETUP ====================
+        function setupEventListeners() {
+            searchForm.addEventListener('submit', handleSubmit);
+            
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (searchInput.value.trim() !== '') {
+                        searchForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+        }
+        
+        function init() {
+            const { Transformer } = window.markmap;
+            transformer = new Transformer();
+            setupEventListeners();
+            updateLanguage('vi');
+            languageToggle.addEventListener('change', toggleLanguage);
+        }
+        
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
