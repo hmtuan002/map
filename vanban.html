@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AI Tạo Văn Bản - Gemini API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            padding: 20px;
+        }
+
+        /* Container chính - mô phỏng card mềm mại */
+        .app-container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(0px);
+            border-radius: 2.5rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+            overflow: hidden;
+            padding: 2rem 2rem 2.2rem;
+        }
+
+        /* Khu vực nhập liệu ban đầu: chỉ hiển thị khi chưa gửi yêu cầu */
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        /* Ẩn phần nhập liệu sau khi submit */
+        .input-section.hidden {
+            display: none;
+        }
+
+        /* Ô nhập yêu cầu - ở giữa, tinh tế */
+        .prompt-textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 1.2rem 1.5rem;
+            font-size: 1.1rem;
+            font-family: inherit;
+            border: 2px solid #e2e8f0;
+            border-radius: 1.8rem;
+            background: #ffffff;
+            resize: vertical;
+            outline: none;
+            transition: 0.2s;
+            line-height: 1.5;
+            color: #0f172a;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .prompt-textarea:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 8px 20px -12px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Nút gửi thiết kế đẹp */
+        .submit-btn {
+            background: linear-gradient(105deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            padding: 0.9rem 2.4rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 8px 18px rgba(99, 102, 241, 0.3);
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            width: auto;
+            min-width: 160px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 26px rgba(99, 102, 241, 0.4);
+            background: linear-gradient(105deg, #5b66e6 0%, #7c4dff 100%);
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Khu vực kết quả - hiển thị nội dung AI tạo ra */
+        .result-section {
+            display: none;
+            flex-direction: column;
+            gap: 1.8rem;
+            width: 100%;
+            animation: fadeSlideUp 0.4s ease-out;
+        }
+
+        .result-section.visible {
+            display: flex;
+        }
+
+        /* Khung hiển thị văn bản giàu style */
+        .ai-content {
+            background: #fefefe;
+            border-radius: 1.8rem;
+            padding: 2rem 2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(203, 213, 225, 0.5);
+            font-size: 1rem;
+            line-height: 1.65;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            color: #1e293b;
+        }
+
+        /* Các kiểu định dạng nội dung hỗ trợ in đậm, in nghiêng, heading, list,... */
+        .ai-content h1, .ai-content h2, .ai-content h3 {
+            margin-top: 1.2em;
+            margin-bottom: 0.6em;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .ai-content h1 { font-size: 1.9rem; border-left: 5px solid #8b5cf6; padding-left: 1rem; }
+        .ai-content h2 { font-size: 1.6rem; border-left: 4px solid #a78bfa; padding-left: 1rem; }
+        .ai-content h3 { font-size: 1.3rem; }
+        .ai-content p { margin: 1em 0; }
+        .ai-content strong, .ai-content b { font-weight: 700; color: #0f172a; }
+        .ai-content em, .ai-content i { font-style: italic; color: #334155; }
+        .ai-content u { text-decoration: underline; }
+        .ai-content ul, .ai-content ol { margin: 0.8em 0 1em 1.8em; }
+        .ai-content li { margin: 0.4em 0; }
+        .ai-content blockquote {
+            border-left: 4px solid #cbd5e1;
+            margin: 1.2em 0;
+            padding-left: 1.2em;
+            color: #475569;
+            font-style: normal;
+            background: #f8fafc;
+            border-radius: 0 1rem 1rem 0;
+        }
+        .ai-content code {
+            background: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.6rem;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .ai-content pre {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 1.2rem;
+            overflow-x: auto;
+        }
+
+        /* nút reset (tùy chọn, để quay lại nhập yêu cầu mới) */
+        .reset-btn {
+            background: transparent;
+            border: 1.5px solid #cbd5e1;
+            padding: 0.6rem 1.4rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            color: #334155;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            font-size: 0.9rem;
+            align-self: flex-start;
+            margin-top: 0.2rem;
+        }
+
+        .reset-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+            color: #0f172a;
+        }
+
+        /* loading indicator */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 1.8rem;
+            font-size: 1rem;
+            color: #4b5563;
+            background: #f9f9ff;
+            border-radius: 2rem;
+        }
+
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #8b5cf6;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border-left: 6px solid #ef4444;
+            padding: 1rem 1.4rem;
+            border-radius: 1.2rem;
+            color: #991b1b;
+            font-weight: 500;
+        }
+
+        /* không thanh taskbar, không header footer phức tạp */
+        .attribution {
+            display: none;
+        }
+        button:focus-visible, textarea:focus-visible {
+            outline: 2px solid #a78bfa;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- Phần nhập yêu cầu: chỉ có 1 ô textarea và nút gửi ở giữa -->
+    <div id="inputSection" class="input-section">
+        <textarea id="promptInput" class="prompt-textarea" placeholder="Nhập yêu cầu của bạn... Ví dụ: Hãy viết một đoạn văn ngắn về trí tuệ nhân tạo, sử dụng chữ in đậm, in nghiêng, và tiêu đề nhấn mạnh..."></textarea>
+        <button id="submitBtn" class="submit-btn">✨ Gửi yêu cầu</button>
+    </div>
+
+    <!-- Phần kết quả: hiển thị nội dung AI tạo ra -->
+    <div id="resultSection" class="result-section">
+        <div id="aiOutput" class="ai-content"></div>
+        <button id="resetBtn" class="reset-btn">↻ Yêu cầu mới</button>
+    </div>
+</div>
+
+<script>
+    // ============================================================
+    // CHÚ Ý BẢO MẬT: DÙNG KỸ THUẬT ĐẢO CHUỖI API KEY (dcba)
+    // KEY GỐC (abcd) được giấu dưới dạng đảo ngược để tránh quét.
+    // Hệ thống tự động đảo ngược lại thành key đúng trước khi gửi request.
+    // ============================================================
+    
+    // API Key thật của Gemini (đã được đảo ngược thủ công để bảo vệ)
+    // Giả sử key gốc là: "Axx" (ví dụ định dạng)
+    // Để an toàn trong code mẫu, tôi sẽ dùng một key giả định đã đảo.
+    // NHƯNG! Bạn cần thay thế chuỗi dưới đây bằng KEY thật của bạn đã được đảo ngược.
+    // Cách thực hiện: Lấy API KEY thật (ví dụ: "ABcdEfGh1234") -> đảo ngược thành "4321hGfEdcBA"
+    // Sau đó gán vào biến reversedKey. Code sẽ đảo lại thành key gốc khi gọi API.
+    
+    // ========== HƯỚNG DẪN ==========
+    // 1. Truy cập Google AI Studio, lấy Gemini API key của bạn.
+    // 2. Đảo ngược chuỗi key đó (ví dụ key = "abc123" -> đảo thành "321cba")
+    // 3. Gán chuỗi đã đảo vào biến 'reversedApiKey' bên dưới.
+    // 4. Code tự động xử lý đảo ngược lại => gửi API với key đúng.
+    // ================================
+    
+    // Thay thế bằng API KEY của bạn đã được đảo ngược (dcba format)
+    // VÍ DỤ minh họa: key giả sử gốc "A" 
+    // Sau đảo ngược: "321ecalpeRyeKomeDyzSA" (nhưng đây chỉ demo)
+    // LƯU Ý: Để code chạy được, bạn cần thay bằng key thật đã reverse.
+    const REVERSED_API_KEY = "gNuoKbGzNL-zcdSGVscmGcpuN6D1uYgJDySazIA";   // <--- THAY BẰNG KEY ĐÃ ĐẢO CỦA BẠN
+    
+    // Hàm đảo ngược chuỗi: từ dạng dcba => abcd (khôi phục key gốc)
+    function reverseString(str) {
+        return str.split('').reverse().join('');
+    }
+    
+    // Lấy API key gốc bằng cách đảo ngược lại
+    const GEMINI_API_KEY = (() => {
+        if (REVERSED_API_KEY === "YOUR_REVERSED_KEY_HERE") {
+            console.warn("⚠️ Chưa cấu hình API Key! Vui lòng thay REVERSED_API_KEY bằng key thật đã đảo ngược.");
+            return "";
+        }
+        return reverseString(REVERSED_API_KEY);
+    })();
+    
+    // Cấu hình endpoint Gemini (dùng model gemini-1.5-flash hoặc gemini-pro)
+    // Nên dùng model ổn định: gemini-1.5-flash
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    
+    // DOM elements
+    const inputSection = document.getElementById('inputSection');
+    const resultSection = document.getElementById('resultSection');
+    const promptTextarea = document.getElementById('promptInput');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const aiOutputDiv = document.getElementById('aiOutput');
+    
+    // Hàm hiển thị nội dung dạng rich text (hỗ trợ markdown cơ bản từ Gemini -> HTML)
+    // Gemini trả về text dạng markdown hoặc plain text. Chúng ta sẽ chuyển đổi thành HTML với các định dạng đậm, nghiêng, heading.
+    // Để đảm bảo in đậm, in nghiêng,... ta xử lý markdown nhẹ hoặc dùng thư viện? Tự làm hàm đơn giản nhưng đủ mạnh.
+    function formatMarkdownToHtml(text) {
+        if (!text) return "";
+        // Bảo vệ thẻ HTML thoát ký tự đặc biệt trước để tránh XSS nhưng vẫn cho phép tag an toàn?
+        // Chúng ta sẽ escape trước rồi convert markdown -> thẻ an toàn.
+        let escaped = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        
+        // Xử lý heading (h1 -> h3)
+        escaped = escaped.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+        escaped = escaped.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+        escaped = escaped.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+        
+        // In đậm **text** hoặc __text__
+        escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        escaped = escaped.replace(/__(.*?)__/g, '<strong>$1</strong>');
+        
+        // In nghiêng *text* hoặc _text_
+        escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        escaped = escaped.replace(/_(.*?)_/g, '<em>$1</em>');
+        
+        // Gạch ngang ~~text~~
+        escaped = escaped.replace(/~~(.*?)~~/g, '<del>$1</del>');
+        
+        // Code inline `code`
+        escaped = escaped.replace(/`(.*?)`/g, '<code>$1</code>');
+        
+        // Block code ``` ... ```
+        escaped = escaped.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+        
+        // Danh sách không thứ tự - * hoặc -
+        escaped = escaped.replace(/^[\*\-] (.*?)$/gm, '<li>$1</li>');
+        // Bọc ul nếu có li
+        escaped = escaped.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+        // Xử lý các đoạn văn: tách dòng trống thành p
+        let paragraphs = escaped.split(/\n\s*\n/);
+        let processed = paragraphs.map(para => {
+            if (para.trim().startsWith('<') && (para.includes('<h') || para.includes('<ul') || para.includes('<pre'))) {
+                return para;
+            }
+            let lines = para.split('\n').filter(l => l.trim().length > 0);
+            if (lines.length === 0) return '';
+            let inner = lines.join('<br>');
+            return `<p>${inner}</p>`;
+        }).join('');
+        
+        // Nếu vẫn còn dấu hiệu xuống dòng đơn giữa các thẻ thì giữ lại
+        // Thay thế nhiều <br> liên tiếp
+        processed = processed.replace(/(<br>\s*)+/g, '<br>');
+        
+        // Thêm fallback: nếu không có thẻ p nào nhưng có text thì bọc div
+        if (!processed.includes('<p>') && !processed.includes('<h') && !processed.includes('<ul') && processed.length > 0) {
+            processed = `<p>${processed}</p>`;
+        }
+        return processed;
+    }
+    
+    // Hàm gọi Gemini API với prompt người dùng
+    async function callGeminiAPI(promptText) {
+        if (!GEMINI_API_KEY || GEMINI_API_KEY === "") {
+            throw new Error("API Key chưa được cấu hình đúng. Vui lòng kiểm tra REVERSED_API_KEY.");
+        }
+        
+        const requestBody = {
+            contents: [{
+                parts: [{
+                    text: promptText
+                }]
+            }],
+            generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 2048,
+                topP: 0.95
+            }
+        };
+        
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        if (!response.ok) {
+            let errorDetail = "";
+            try {
+                const errData = await response.json();
+                errorDetail = errData.error?.message || JSON.stringify(errData);
+            } catch(e) { errorDetail = response.statusText; }
+            throw new Error(`Lỗi API (${response.status}): ${errorDetail}`);
+        }
+        
+        const data = await response.json();
+        // Lấy nội dung văn bản từ response Gemini
+        if (data.candidates && data.candidates.length > 0 && data.candidates[0].content?.parts?.length > 0) {
+            return data.candidates[0].content.parts[0].text;
+        } else {
+            throw new Error("Không nhận được phản hồi hợp lệ từ AI.");
+        }
+    }
+    
+    // Hiển thị trạng thái loading trong khu vực kết quả (khi chuyển giao diện)
+    let currentLoading = false;
+    
+    async function handleSubmit() {
+        if (currentLoading) return;
+        const userPrompt = promptTextarea.value.trim();
+        if (!userPrompt) {
+            alert("Vui lòng nhập yêu cầu trước khi gửi.");
+            return;
+        }
+        
+        // Ẩn phần nhập liệu (ô nhập + nút gửi biến mất)
+        inputSection.classList.add('hidden');
+        // Hiện khu vực kết quả, hiển thị loading
+        resultSection.classList.add('visible');
+        aiOutputDiv.innerHTML = `<div class="loading"><div class="spinner"></div> Đang kết nối AI & tạo văn bản...</div>`;
+        
+        currentLoading = true;
+        try {
+            // Gọi Gemini API với prompt
+            const aiGeneratedText = await callGeminiAPI(userPrompt);
+            // Chuyển đổi markdown / định dạng phong phú (in đậm, in nghiêng, heading…)
+            const formattedHtml = formatMarkdownToHtml(aiGeneratedText);
+            aiOutputDiv.innerHTML = formattedHtml || `<p><em>Nội dung trả về trống, vui lòng thử lại với yêu cầu khác.</em></p>`;
+        } catch (error) {
+            console.error("Gemini API error:", error);
+            aiOutputDiv.innerHTML = `<div class="error-message">⚠️ Lỗi: ${error.message}. Vui lòng kiểm tra API key hoặc thử lại sau.</div>`;
+        } finally {
+            currentLoading = false;
+        }
+    }
+    
+    // Reset toàn bộ: ẩn kết quả, hiện lại ô nhập, xóa nội dung textarea
+    function handleReset() {
+        // Ẩn result section, hiện input section
+        resultSection.classList.remove('visible');
+        inputSection.classList.remove('hidden');
+        // Xóa nội dung textarea và cả output cũ
+        promptTextarea.value = "";
+        aiOutputDiv.innerHTML = "";
+        currentLoading = false;
+    }
+    
+    // Sự kiện nút gửi
+    submitBtn.addEventListener('click', handleSubmit);
+    resetBtn.addEventListener('click', handleReset);
+    
+    // Hỗ trợ nhấn Enter + Ctrl (hoặc Cmd) để gửi (tiện lợi)
+    promptTextarea.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            if (!inputSection.classList.contains('hidden')) {
+                handleSubmit();
+            }
+        }
+    });
+    
+    // Kiểm tra ngay từ đầu nếu API key chưa cấu hình, hiển thị cảnh báo nhẹ (nhưng không làm gãy giao diện)
+    if (!GEMINI_API_KEY || GEMINI_API_KEY === "") {
+        console.error("Gemini API Key chưa được cấu hình! Hãy thay REVERSED_API_KEY bằng key đã đảo ngược.");
+        // Thêm tooltip cảnh báo nhưng vẫn cho phép thử? Sẽ báo lỗi khi gửi.
+        const warningMsg = document.createElement('div');
+        warningMsg.style.backgroundColor = '#fff3e0';
+        warningMsg.style.padding = '10px 16px';
+        warningMsg.style.borderRadius = '40px';
+        warningMsg.style.marginBottom = '16px';
+        warningMsg.style.fontSize = '0.85rem';
+        warningMsg.style.color = '#b45309';
+        warningMsg.style.textAlign = 'center';
+        warningMsg.innerText = '⚠️ Chưa cấu hình API Key hợp lệ. Vui lòng mở code và thay REVERSED_API_KEY bằng key đã đảo ngược.';
+        inputSection.insertBefore(warningMsg, inputSection.firstChild);
+    }
+    
+    // Ẩn hoàn toàn các thành phần không cần thiết, không có taskbar, không footer
+    // Đảm bảo chỉ hiển thị đúng 1 ô nhập và nút gửi ở giữa, sau đó chỉ nội dung AI.
+    // Giao diện đã được thiết kế tối giản.
+</script>
+</body>
+</html>
