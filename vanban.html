@@ -319,9 +319,13 @@
     // Để đảm bảo in đậm, in nghiêng,... ta xử lý markdown nhẹ hoặc dùng thư viện? Tự làm hàm đơn giản nhưng đủ mạnh.
     function formatMarkdownToHtml(text) {
         if (!text) return "";
+        
+        // Bước 1: Xử lý bỏ các dòng chỉ chứa "---"
+        let processedText = text.split('\n').filter(line => line.trim() !== '---').join('\n');
+        
         // Bảo vệ thẻ HTML thoát ký tự đặc biệt trước để tránh XSS nhưng vẫn cho phép tag an toàn?
         // Chúng ta sẽ escape trước rồi convert markdown -> thẻ an toàn.
-        let escaped = text
+        let escaped = processedText
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
@@ -350,12 +354,17 @@
         
         // Danh sách không thứ tự - * hoặc -
         escaped = escaped.replace(/^[\*\-] (.*?)$/gm, '<li>$1</li>');
-        // Bọc ul nếu có li
-        escaped = escaped.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+        // Bọc ul nếu có li (cải thiện một chút để bắt nhiều li)
+        if (escaped.includes('<li>')) {
+            // Tìm các khối li liên tiếp và bọc ul
+            escaped = escaped.replace(/(<li>.*?<\/li>\n?)+/g, '<ul>$&</ul>');
+        }
+        
         // Xử lý các đoạn văn: tách dòng trống thành p
         let paragraphs = escaped.split(/\n\s*\n/);
         let processed = paragraphs.map(para => {
-            if (para.trim().startsWith('<') && (para.includes('<h') || para.includes('<ul') || para.includes('<pre'))) {
+            // Nếu đoạn văn đã có thẻ HTML khối thì giữ nguyên
+            if (para.trim().startsWith('<') && (para.includes('<h') || para.includes('<ul') || para.includes('<pre') || para.includes('<blockquote'))) {
                 return para;
             }
             let lines = para.split('\n').filter(l => l.trim().length > 0);
@@ -364,11 +373,10 @@
             return `<p>${inner}</p>`;
         }).join('');
         
-        // Nếu vẫn còn dấu hiệu xuống dòng đơn giữa các thẻ thì giữ lại
         // Thay thế nhiều <br> liên tiếp
         processed = processed.replace(/(<br>\s*)+/g, '<br>');
         
-        // Thêm fallback: nếu không có thẻ p nào nhưng có text thì bọc div
+        // Thêm fallback: nếu không có thẻ p nào nhưng có text thì bọc p
         if (!processed.includes('<p>') && !processed.includes('<h') && !processed.includes('<ul') && processed.length > 0) {
             processed = `<p>${processed}</p>`;
         }
@@ -376,15 +384,21 @@
     }
     
     // Hàm gọi Gemini API với prompt người dùng
-    async function callGeminiAPI(promptText) {
+    async function callGeminiAPI(userPrompt) {
         if (!GEMINI_API_KEY || GEMINI_API_KEY === "") {
             throw new Error("API Key chưa được cấu hình đúng. Vui lòng kiểm tra REVERSED_API_KEY.");
         }
         
+        // Thêm system instruction để yêu cầu AI trả lời trực tiếp, không khen ngợi
+        const fullPrompt = `Bạn là một trợ lý AI chuyên nghiệp. 
+QUAN TRỌNG: Bạn phải TUYỆT ĐỐI KHÔNG được viết bất kỳ câu khen ngợi, nhận xét mở đầu hay kết luận nào như "Tuyệt vời!", "Chủ đề này rất thú vị!", "Dưới đây là...", "Hy vọng sẽ giúp ích cho bạn...". Hãy trả lời TRỰC TIẾP nội dung chính mà người dùng yêu cầu, không thêm bất kỳ lời dẫn dắt hay cảm thán nào.
+
+Yêu cầu của người dùng: ${userPrompt}`;
+        
         const requestBody = {
             contents: [{
                 parts: [{
-                    text: promptText
+                    text: fullPrompt
                 }]
             }],
             generationConfig: {
