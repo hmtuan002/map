@@ -1409,6 +1409,7 @@
 </head>
 <body class="h-screen flex flex-col transition-all bg-total">
     <div id="globeContainer"></div>
+    <div id="mapContainer"></div>
     
     <!-- COUNTRY INFO PANEL (HIỂN THỊ BÊN TRÁI) -->
     <div class="country-info-panel-left" id="countryInfoPanel">
@@ -1539,7 +1540,7 @@
         function reverseString(str) {
             return str.split('').reverse().join('');
         }
-        const reversedKey = "M0GVHONkVX_R3yXb27M2xoMqh5PIxhheBySazIA";
+        const reversedKey = "guUoKgNuN6KbGzL-NzcdVSGcVsNcGdGzAySAIzA";
         const API_KEY = reverseString(reversedKey);
 
         const genAI = new GoogleGenerativeAI(API_KEY);
@@ -1571,6 +1572,7 @@
         let currentMarkers = [];
         let currentGeoLayer = null;
         let currentCountryInfoDiv = null;
+        let currentGeoJSON = null;
 
         const colorPalette = [
             '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', 
@@ -1797,6 +1799,10 @@
         }
 
         function initMap2D() {
+            if (!mapContainer || !globeContainer) {
+                console.error('Map containers not found in DOM');
+                return;
+            }
             if (map) map.remove();
             mapContainer.style.display = 'block';
             globeContainer.style.display = 'none';
@@ -1847,6 +1853,10 @@
         }
 
         function initGlobe3D() {
+            if (!mapContainer || !globeContainer) {
+                console.error('Globe container not found in DOM');
+                return;
+            }
             if (globe) globe._destructor();
             mapContainer.style.display = 'none';
             globeContainer.style.display = 'block';
