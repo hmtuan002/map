@@ -681,11 +681,6 @@
             color: white;
         }
 
-        .take-exam-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-        }
-
         .exam-action-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -977,7 +972,7 @@
                         HỆ THỐNG THI THỬ LỊCH SỬ
                         <i class="fas fa-landmark"></i>
                     </h1>
-                    <p>AI tạo đề thi thông minh - Thi trực tiếp có thời gian - Chấm điểm tự động</p>
+                    <p>AI tạo đề thi thông minh - Tạo xong làm bài ngay - Chấm điểm tự động</p>
                 </div>
 
                 <!-- Prompt Input Section - Chỉ có 1 ô nhập duy nhất -->
@@ -1758,7 +1753,7 @@ CHỈ TRẢ VỀ SỐ ĐIỂM, KHÔNG CÓ TEXT KHÁC.`;
             // Tính điểm phần trăm
             const percentageScore = ((totalScore / maxScore) * 10).toFixed(1);
             
-            // Hiển thị kết quả (đã bỏ phần thống kê chi tiết)
+            // Hiển thị kết quả
             let resultHtml = `
                 <div class="score-display">
                     <div class="score-number">${percentageScore}/10</div>
@@ -1806,8 +1801,8 @@ CHỈ TRẢ VỀ SỐ ĐIỂM, KHÔNG CÓ TEXT KHÁC.`;
             document.getElementById('resultModal').classList.add('active');
         }
         
-        // ==================== SHOW EXAM RESULT ====================
-        function showExamResult(examData, examNotes, examTimeMinutes, isThptMode) {
+        // ==================== SHOW AND START EXAM IMMEDIATELY ====================
+        function showAndStartExamImmediately(examData, examNotes, examTimeMinutes, isThptMode) {
             currentExamData = examData;
             currentExamCode = generateExamCode();
             isTHPTMode = isThptMode;
@@ -1820,62 +1815,8 @@ CHỈ TRẢ VỀ SỐ ĐIỂM, KHÔNG CÓ TEXT KHÁC.`;
                 remainingSeconds = examSettings.time * 60;
             }
             
-            let html = `
-                <div class="exam-header">
-                    <h3><i class="fas fa-landmark"></i> ${escapeHtml(examData.title || 'ĐỀ THI LỊCH SỬ')}</h3>
-                </div>
-                <div class="exam-info">
-                    <p><strong>Thời gian:</strong> ${examTimeMinutes} phút</p>
-                    <p><strong>Độ khó:</strong> ${examSettings.difficulty === 'easy' ? 'Dễ' : examSettings.difficulty === 'medium' ? 'Trung bình' : 'Khó'}</p>
-                </div>
-                ${examNotes ? `<div class="exam-info"><strong><i class="fas fa-sticky-note"></i> Ghi chú:</strong><br>${escapeHtml(examNotes)}</div>` : ''}
-                <div class="preview-content" style="max-height: 400px; overflow-y: auto; margin-bottom: 1rem;">
-            `;
-            
-            let mcCounter = 1, tfCounter = 1, essayCounter = 1;
-            examData.blocks.forEach((block) => {
-                if (block.type === 'section_header') {
-                    html += `<div class="section-header"><h4>${escapeHtml(block.title)}</h4><p>${escapeHtml(block.content)}</p></div>`;
-                } else if (block.type === 'mc_question') {
-                    const cleanOptions = block.options.map(opt => opt.replace(/^[A-D]\.\s*/i, ''));
-                    html += `<div class="question-item"><div class="question-header"><div class="question-text"><strong>Câu ${mcCounter} (Trắc nghiệm):</strong> ${markdownToHtml(block.content)}</div><div class="question-points">${block.points || 0.25} điểm</div></div><div class="mc-options">${cleanOptions.map((opt, idx) => `<div class="mc-option"><strong>${String.fromCharCode(65 + idx)}.</strong> ${escapeHtml(opt)}</div>`).join('')}</div></div>`;
-                    mcCounter++;
-                } else if (block.type === 'tf_question') {
-                    html += `<div class="question-item"><div class="question-header"><div class="question-text"><strong>Câu ${tfCounter} (Đúng/Sai):</strong> ${markdownToHtml(block.content)}</div><div class="question-points">${block.points || 1.0} điểm</div></div><div class="tf-statements">${block.statements.map(stmt => `<div class="tf-statement"><div class="tf-statement-text">${escapeHtml(stmt.text)}</div></div>`).join('')}</div></div>`;
-                    tfCounter++;
-                } else if (block.type === 'essay_question') {
-                    html += `<div class="question-item"><div class="question-header"><div class="question-text"><strong>Câu ${essayCounter} (Tự luận):</strong> ${markdownToHtml(block.content)}</div><div class="question-points">${block.points || 1.0} điểm</div></div></div>`;
-                    essayCounter++;
-                }
-            });
-            
-            html += `</div><div class="exam-actions"><button id="takeExamNowBtn" class="exam-action-btn take-exam-btn"><i class="fas fa-pen-fancy"></i> Làm bài ngay</button></div>`;
-            document.getElementById('examResultContainer').innerHTML = html;
-            document.getElementById('examResultContainer').style.display = 'block';
-            document.getElementById('takeExamNowBtn').addEventListener('click', () => renderExamForTaking(examData));
-        }
-        
-        // ==================== RESET TRẠNG THÁI KHI TẠO ĐỀ MỚI ====================
-        function resetGlobalStateForNewExam() {
-            // Dừng timer nếu đang chạy
-            if (examTimerInterval) {
-                clearInterval(examTimerInterval);
-                examTimerInterval = null;
-            }
-            
-            // Reset các biến trạng thái
-            isExamActive = false;
-            isExamSubmitted = false;
-            userAnswers = {};
-            currentExamData = null;
-            
-            // Xóa class exam-submitted nếu có
-            const examContainer = document.getElementById('examResultContainer');
-            if (examContainer) {
-                examContainer.classList.remove('exam-submitted');
-            }
-            
-            console.log('✅ Đã reset trạng thái để tạo đề mới');
+            // Hiển thị và bắt đầu làm bài ngay lập tức
+            renderExamForTaking(examData);
         }
         
         // ==================== GENERATE MAIN FUNCTION ====================
@@ -1893,7 +1834,14 @@ CHỈ TRẢ VỀ SỐ ĐIỂM, KHÔNG CÓ TEXT KHÁC.`;
             }
             
             // Reset trạng thái trước khi tạo đề mới
-            resetGlobalStateForNewExam();
+            if (examTimerInterval) {
+                clearInterval(examTimerInterval);
+                examTimerInterval = null;
+            }
+            isExamActive = false;
+            isExamSubmitted = false;
+            userAnswers = {};
+            currentExamData = null;
             
             generateBtn.disabled = true;
             generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo...';
@@ -1924,8 +1872,9 @@ CHỈ TRẢ VỀ SỐ ĐIỂM, KHÔNG CÓ TEXT KHÁC.`;
                     const examData = await generateTHPTExam(userPrompt);
                     progressFill.style.width = '100%';
                     progressStatus.textContent = 'Hoàn thành!';
-                    setTimeout(() => progressContainer.style.display = 'none', 1000);
-                    showExamResult(examData, examNotes, 50, true);
+                    setTimeout(() => progressContainer.style.display = 'none', 500);
+                    // Tạo đề xong - bắt đầu làm bài ngay lập tức
+                    showAndStartExamImmediately(examData, examNotes, 50, true);
                 } else {
                     progressStatus.textContent = 'Đang tạo đề theo yêu cầu...';
                     progressFill.style.width = '30%';
@@ -1934,8 +1883,9 @@ CHỈ TRẢ VỀ SỐ ĐIỂM, KHÔNG CÓ TEXT KHÁC.`;
                     const examData = await generateAIExam(userPrompt);
                     progressFill.style.width = '100%';
                     progressStatus.textContent = 'Hoàn thành!';
-                    setTimeout(() => progressContainer.style.display = 'none', 1000);
-                    showExamResult(examData, examNotes, examSettings.time, false);
+                    setTimeout(() => progressContainer.style.display = 'none', 500);
+                    // Tạo đề xong - bắt đầu làm bài ngay lập tức
+                    showAndStartExamImmediately(examData, examNotes, examSettings.time, false);
                 }
             } catch (error) {
                 console.error('Lỗi:', error);
