@@ -4,15 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Bản Đồ Lịch Sử 3D - Quả Địa Cầu</title>
-    <!-- Leaflet CSS (cho chế độ 2D) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Font Awesome & Google Fonts -->
+    <title>Lisu Map</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
         body {
             font-family: 'Inter', 'Playfair Display', sans-serif;
@@ -50,27 +51,15 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Container chính cho Globe (3D) và Leaflet (2D) */
-        #mapContainerRoot {
+        #globeContainer {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 1;
-            pointer-events: auto;
+            pointer-events: auto !important;
         }
-        #globeContainer, #leafletContainer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        #globeContainer { z-index: 2; }
-        #leafletContainer { z-index: 1; visibility: hidden; opacity: 0; transition: opacity 0.3s; }
-        .map-mode-2d #globeContainer { visibility: hidden; opacity: 0; pointer-events: none; }
-        .map-mode-2d #leafletContainer { visibility: visible; opacity: 1; z-index: 2; }
         
         #app {
             display: flex;
@@ -80,9 +69,9 @@
             pointer-events: none;
         }
         
-        /* ===== SIDEBAR ===== */
+        /* ===== SIDEBAR - ĐÃ TĂNG CHIỀU RỘNG TỪ 460px LÊN 560px ===== */
         #sidebar {
-            width: 560px;
+            width: 33%;
             height: 100%;
             background-color: var(--card-bg);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
@@ -96,8 +85,14 @@
             border-right: 1px solid var(--border-light);
             pointer-events: auto;
         }
-        #sidebar.sidebar-collapsed { transform: translateX(-100%); left: -100%; }
         
+        #sidebar.sidebar-collapsed {
+            transform: translateX(-100%);
+            position: absolute;
+            left: -100%;
+        }
+        
+        /* ===== NÚT ĐÓNG/MỞ SIDEBAR - ĐÃ CĂN CHỈNH LẠI VỚI CHIỀU RỘNG MỚI ===== */
         .sidebar-toggle-new {
             position: fixed;
             top: 20px;
@@ -118,137 +113,223 @@
             border-left: none;
             font-size: 20px;
         }
-        .sidebar-toggle-new:hover { background-color: #e08e4d; transform: scale(1.05); }
-        .sidebar-toggle-new.collapsed { left: 0; }
         
-        /* ===== TOP BAR: chỉ chứa nút chuyển đổi 2D/3D + language switch ===== */
-        .top-control-bar {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 25;
-            display: flex;
-            gap: 12px;
-            pointer-events: auto;
-            background: rgba(248, 249, 246, 0.9);
-            backdrop-filter: blur(8px);
-            padding: 8px 16px;
-            border-radius: 40px;
-            border: 1px solid var(--border-light);
+        .sidebar-toggle-new:hover {
+            background-color: #e08e4d;
+            transform: scale(1.05);
         }
-        .mode-toggle-btn, .language-switch-compact {
-            background: rgba(255,255,255,0.8);
-            border: 1px solid var(--border-light);
-            border-radius: 32px;
-            padding: 6px 16px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-primary);
-            transition: all 0.2s;
-        }
-        .mode-toggle-btn.active, .language-switch-compact.active {
-            background: var(--accent-orange);
-            color: white;
-            border-color: var(--accent-orange);
-        }
-        .mode-toggle-btn i, .language-switch-compact i { font-size: 14px; }
         
-        /* ===== TIMELINE & YEAR PILL (năm nằm trên slider) ===== */
-        .timeline-globe {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 85%;
-            max-width: 800px;
-            z-index: 15;
-            pointer-events: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+        .sidebar-toggle-new.collapsed {
+            left: 0;
         }
-        .year-pill-globe {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: 40px;
-            padding: 6px 20px;
+        
+        /* ===== INFO PANEL CONTENT VỚI DẤU CHẤM VÀNG ===== */
+        .info-panel-content {
+            padding: 16px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .info-section {
+            margin-bottom: 20px;
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        .section-title {
+            color: var(--accent-orange);
             font-size: 16px;
             font-weight: 600;
-            color: var(--text-primary);
-            border: 1px solid var(--border-light);
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .timeline-bar-globe {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: 12px 20px;
-            border: 1px solid var(--border-light);
-            width: 100%;
-        }
-        .timeline-slider-globe {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #ccc;
-            outline: none;
-        }
-        .timeline-slider-globe::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--accent-orange);
-            cursor: pointer;
-        }
-        
-        /* Search button vuông bo tròn */
-        .search-wrapper {
-            position: relative;
-            margin-bottom: 1rem;
-            margin-top: 1rem;
-            width: 100%;
-        }
-        #search-input {
-            width: 100%;
-            padding: 0.75rem 4rem 0.75rem 1.2rem;
-            border-radius: 2rem;
-            border: 1px solid var(--border-light);
-            background-color: var(--input-bg);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            line-height: 1.5;
-            height: 48px;
-        }
-        .search-button {
-            position: absolute;
-            top: 50%;
-            right: 0.5rem;
-            transform: translateY(-50%);
-            background-color: var(--button-cyan);
-            color: white;
-            border: none;
-            border-radius: 12px; /* vuông bo tròn */
-            width: 44px;
-            height: 44px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid rgba(244, 162, 97, 0.2);
+            font-family: 'Playfair Display', serif;
             display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.2rem;
-            box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
         }
-        .search-button:hover { background-color: #5db8cc; }
         
-        /* Country info panel (giữ nguyên) */
+        .section-title i {
+            margin-right: 8px;
+            color: var(--accent-orange);
+        }
+        
+        .sub-section {
+            margin-left: 16px;
+            margin-bottom: 12px;
+            padding-left: 12px;
+            border-left: 2px solid rgba(244, 162, 97, 0.1);
+        }
+        
+        .sub-section strong {
+            color: var(--button-cyan);
+            font-size: 14px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        
+        .yellow-dot-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0;
+        }
+        
+        .yellow-dot-list li {
+            position: relative;
+            padding: 6px 0 6px 28px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            border-bottom: 1px dashed rgba(244, 162, 97, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .yellow-dot-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .yellow-dot-list li::before {
+            content: "●";
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-orange);
+            font-size: 14px;
+            text-shadow: 0 2px 4px rgba(244, 162, 97, 0.3);
+            animation: dotPulse 2s infinite;
+        }
+        
+        .with-dot {
+            position: relative;
+            padding-left: 28px;
+            margin: 8px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .with-dot::before {
+            content: "●";
+            position: absolute;
+            left: 8px;
+            top: 0;
+            color: var(--accent-orange);
+            font-size: 14px;
+            text-shadow: 0 2px 4px rgba(244, 162, 97, 0.3);
+        }
+        
+        .numbered-item {
+            position: relative;
+            padding-left: 35px;
+            margin: 6px 0;
+        }
+        
+        .numbered-item::before {
+            content: attr(data-number);
+            position: absolute;
+            left: 8px;
+            color: var(--accent-orange);
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        @keyframes dotPulse {
+            0%, 100% {
+                opacity: 1;
+                transform: translateY(-50%) scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(-50%) scale(1.1);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .yellow-dot-list li:hover {
+            background: rgba(244, 162, 97, 0.05);
+            padding-left: 32px;
+        }
+        
+        .yellow-dot-list li:hover::before {
+            color: var(--button-cyan);
+            transform: translateY(-50%) scale(1.2);
+        }
+        
+        .timeline-with-dots {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .timeline-with-dots li {
+            position: relative;
+            padding: 12px 0 12px 35px;
+            border-left: 2px solid var(--accent-orange);
+            margin-left: 15px;
+        }
+        
+        .timeline-with-dots li::before {
+            content: "●";
+            position: absolute;
+            left: -9px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-orange);
+            font-size: 16px;
+            background: var(--card-bg);
+            padding: 2px;
+            z-index: 2;
+        }
+        
+        .timeline-with-dots li:last-child {
+            border-left-color: transparent;
+        }
+        
+        .commanders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 10px 0;
+        }
+        
+        .commander-card {
+            background: rgba(244, 162, 97, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .commander-card::before {
+            content: "●";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-orange);
+            font-size: 16px;
+        }
+        
+        .commander-card strong {
+            color: var(--accent-orange);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .commander-card span {
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        /* ===== COUNTRY INFO PANEL LEFT - ĐÃ CĂN CHỈNH VỚI SIDEBAR MỚI ===== */
         .country-info-panel-left {
             position: fixed;
             top: 20px;
@@ -258,340 +339,3639 @@
             max-height: 80vh;
             background: var(--card-bg);
             border-radius: 16px;
+            border: 1px solid var(--border-light);
             border-left: 4px solid var(--accent-orange);
             overflow: hidden;
             z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: none;
             pointer-events: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             transition: left 0.3s ease;
         }
-        .country-info-panel-left.visible { display: block; }
-        .country-info-header { background: linear-gradient(135deg, var(--button-cyan) 0%, var(--accent-orange) 100%); padding: 16px; display: flex; align-items: center; gap: 10px; position: relative; color: white; }
-        .country-info-close { position: absolute; top: 8px; right: 12px; background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
-        .country-info-content { padding: 16px; max-height: 400px; overflow-y: auto; font-size: 14px; line-height: 1.6; }
         
-        /* Info panel (cũ) */
-        .info-panel { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 540px; max-width: 90vw; max-height: 80vh; background: var(--card-bg); border-radius: 16px; z-index: 200; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .country-info-panel-left.visible {
+            display: block;
+        }
+        
+        .country-info-panel-left .country-info-header {
+            padding: 16px;
+            background: linear-gradient(135deg, var(--button-cyan) 0%, var(--accent-orange) 100%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .country-info-panel-left .header-icon {
+            font-size: 24px;
+            color: white;
+        }
+        
+        .country-info-panel-left .header-title {
+            flex: 1;
+            font-weight: 600;
+            font-size: 18px;
+            color: white;
+            padding-right: 30px;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .country-info-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            opacity: 0.8;
+            line-height: 1;
+            padding: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .country-info-close:hover {
+            opacity: 1;
+        }
+        
+        .country-info-subtitle {
+            padding: 10px 16px;
+            background: rgba(0,0,0,0.05);
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .country-info-content {
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        
+        .country-info-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .country-info-disclaimer {
+            padding: 10px 16px;
+            background: rgba(244, 162, 97, 0.1);
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-light);
+        }
+        
+        /* ===== INFO PANEL ===== */
+        .info-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 540px;
+            max-width: 90vw;
+            max-height: 80vh;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            z-index: 200;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+        
         .info-panel.visible { display: block; }
-        .info-header { background: linear-gradient(135deg, var(--button-cyan) 0%, var(--accent-orange) 100%); padding: 16px; color: white; display: flex; justify-content: space-between; }
-        .info-close { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
-        .info-content { padding: 16px; max-height: 400px; overflow-y: auto; }
+        
+        .info-header {
+            padding: 16px;
+            background: linear-gradient(135deg, var(--button-cyan) 0%, var(--accent-orange) 100%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .info-header-icon {
+            font-size: 24px;
+            color: white;
+        }
+        
+        .info-header-title {
+            flex: 1;
+            font-weight: 600;
+            font-size: 16px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: white;
+            padding-right: 30px;
+        }
+        
+        .info-close {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            opacity: 0.8;
+            line-height: 1;
+            padding: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .info-close:hover { opacity: 1; }
+        
+        .info-subtitle {
+            padding: 10px 16px;
+            background: rgba(0,0,0,0.05);
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .info-content {
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        
+        .info-disclaimer {
+            padding: 10px 16px;
+            background: rgba(244, 162, 97, 0.1);
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-light);
+        }
+        
+        /* ===== TOP BAR ===== */
+        .top-bar-globe {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 15;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 10px;
+            width: max-content;
+            max-width: 90%;
+            pointer-events: auto;
+            transition: opacity 0.3s ease;
+        }
+        
+        .year-pill-globe {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 22px;
+            padding: 10px 24px;
+            font-size: clamp(14px, 4vw, 18px);
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .stats-pill-globe {
+            display: none !important;
+        }
+        
+        /* ===== LAYER PANEL - ĐÃ CĂN CHỈNH VỚI SIDEBAR MỚI ===== */
+        .layer-panel {
+            position: fixed;
+            left: 600px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 15;
+            pointer-events: auto;
+            transition: left 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .layer-btn {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+        
+        .layer-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.05);
+        }
+        
+        .layer-btn.active {
+            background: var(--accent-orange);
+            color: white;
+            border-color: var(--accent-orange);
+        }
+        
+        .layer-btn[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 60px;
+            background: rgba(0,0,0,0.9);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            color: white;
+        }
+        
+        /* ===== TIMELINE - ĐÃ TĂNG CHIỀU DÀI TỪ 72% LÊN 85% VÀ MAX-WIDTH TỪ 640px LÊN 800px ===== */
+        .timeline-globe {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            max-width: 800px;
+            z-index: 15;
+            pointer-events: auto;
+            transition: opacity 0.3s ease;
+        }
+        
+        .timeline-bar-globe {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 13px 16px;
+            border: 1px solid var(--border-light);
+        }
+        
+        .timeline-slider-globe {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #555;
+            outline: none;
+            margin: 6px 0;
+        }
+        
+        .timeline-slider-globe::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-orange);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .playback-controls-globe {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .playback-btn-globe {
+            background: rgba(255,255,255,0.5);
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .playback-btn-globe:hover {
+            background: rgba(255,255,255,0.8);
+        }
+        
+        .playback-btn-globe.active {
+            background: var(--accent-orange);
+            color: white;
+        }
+        
+        .territory-tooltip {
+            background: var(--card-bg);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            pointer-events: none;
+            white-space: nowrap;
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .ui-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.3s ease;
+        }
         
         /* ===== SIDEBAR CONTENT ===== */
-        .sidebar-header { border-bottom: 1px solid var(--border-light); padding: 1rem; }
-        .header-container { display: flex; justify-content: space-between; align-items: center; }
-        .content-container { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; background-color: var(--bg-total); }
-        #result-messages { display: flex; flex-direction: column; gap: 1rem; }
-        .result-container { background-color: var(--card-bg); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid var(--accent-orange); position: relative; }
-        .result-title { font-size: 1.2rem; font-weight: 600; color: var(--accent-orange); margin-bottom: 0.75rem; padding-right: 2rem; }
-        .close-btn { position: absolute; top: 0.8rem; right: 1rem; cursor: pointer; font-size: 1.2rem; }
+        .sidebar-header {
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 1rem 1rem 0 0;
+            position: relative;
+        }
         
-        /* Audio controls */
-        .audio-controls { margin-top: 1rem; padding: 1rem; background: var(--card-bg); border-radius: 0.75rem; border: 1px solid var(--border-light); }
-        .audio-controls-buttons { display: flex; gap: 0.5rem; align-items: center; }
-        .audio-progress { flex-grow: 1; height: 6px; background: #ddd; border-radius: 3px; position: relative; }
-        .audio-progress-bar { position: absolute; height: 100%; background: var(--accent-orange); width: 0%; }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
         
-        /* Mindmap */
-        .mindmap-sieu-ngau { width: 100%; height: 300px; background: white; border-radius: 12px; margin: 1rem 0; overflow: hidden; border: 1px solid var(--border-light); cursor: pointer; }
-        .mindmap-sieu-ngau.expanded { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: white; }
-        .mindmap-title { background: #d32f2f; color: white; padding: 0.5rem 1rem; display: flex; justify-content: space-between; }
-        .mindmap-container { width: 100%; height: calc(100% - 52px); background: white; }
+        .header-title h2 {
+            color: var(--accent-orange);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
         
-        .loading-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; visibility: hidden; opacity: 0; transition: 0.2s; }
-        .loading-screen.active { visibility: visible; opacity: 1; }
-        .spinner-box { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent-orange); border-top-color: transparent; animation: spin 1s infinite; margin: 0 auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .yellow-dot-list { list-style: none; }
-        .yellow-dot-list li { position: relative; padding-left: 24px; margin-bottom: 8px; }
-        .yellow-dot-list li::before { content: "●"; position: absolute; left: 4px; color: var(--accent-orange); }
-        .with-dot { padding-left: 24px; position: relative; margin-bottom: 8px; }
-        .with-dot::before { content: "●"; position: absolute; left: 4px; color: var(--accent-orange); }
+        .header-title i { color: var(--accent-orange); }
         
-        @media (max-width: 768px) { #sidebar { width: 300px; } .sidebar-toggle-new { left: 300px; } .country-info-panel-left { left: 320px; width: 300px; } .top-control-bar { top: 10px; right: 10px; } }
+        .language-switch {
+            display: flex;
+            align-items: center;
+            margin-right: 10%;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-bg);
+            transition: .4s;
+            border-radius: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--accent-orange);
+            transition: .4s;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        input:checked + .slider:before { transform: translateX(30px); }
+        
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        
+        #search-input {
+            width: 100%;
+            padding: 0.75rem 5rem 0.75rem 1.2rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border-light);
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            height: 48px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: block;
+        }
+        
+        #search-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        #search-input::placeholder {
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .search-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            transform: translateY(-50%);
+            background-color: var(--button-cyan);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.4rem 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: none;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+        }
+        
+        .search-button:hover {
+            background-color: #5db8cc;
+            transform: translateY(-50%);
+            box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+        }
+        
+        .search-button:active {
+            transform: translateY(-50%);
+            background-color: var(--button-cyan);
+        }
+        
+        .search-button i {
+            font-size: 0.8rem;
+        }
+        
+        .content-container {
+            flex: 1;
+            padding: 1rem;
+            background-color: var(--bg-total);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-radius: 1rem 1rem 0 0;
+        }
+        
+        #result-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+        
+        .message-content { animation: fadeIn 0.3s ease-in-out; color: var(--text-primary); }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ===== AUDIO CONTROLS ===== */
+        .audio-controls {
+            display: flex;
+            flex-direction: column;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            width: 100%;
+        }
+        
+        .audio-controls-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--accent-orange);
+            font-size: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .audio-controls-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .audio-controls button {
+            background-color: var(--button-cyan);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .audio-controls button:hover:not(:disabled) {
+            background-color: #5db8cc;
+            transform: scale(1.1);
+        }
+        
+        .audio-controls button:disabled {
+            background-color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        .audio-progress {
+            flex-grow: 1;
+            height: 6px;
+            background-color: var(--border-light);
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+            margin-left: 0.5rem;
+            border: 1px solid var(--border-light);
+        }
+        
+        .audio-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: var(--accent-orange);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        /* ===== LOADING SCREEN ===== */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none;
+        }
+        
+        .loading-screen.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .spinner-box {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin3D {
+            from { transform: rotate3d(0.5, 0.5, 0.5, 360deg); }
+            to { transform: rotate3d(0, 0, 0, 0deg); }
+        }
+        
+        .leo-border-1 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            padding: 3px;
+            border-radius: 50%;
+            background: linear-gradient(0deg, rgba(244, 162, 97, 0.1) 33%, #F4A261 100%);
+            animation: spin3D 1.8s linear infinite;
+        }
+        
+        .leo-core-1 {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border-radius: 50%;
+        }
+        
+        .leo-border-2 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            padding: 3px;
+            border-radius: 50%;
+            background: linear-gradient(0deg, rgba(110, 198, 217, 0.1) 33%, #6EC6D9 100%);
+            animation: spin3D 2.2s linear infinite reverse;
+        }
+        
+        .leo-core-2 {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border-radius: 50%;
+        }
+        
+        .loading-text {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #F4A261;
+            text-align: center;
+            animation: blink 1.5s ease-in-out infinite;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .loader-info {
+            margin-top: 15px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+        
+        /* ===== IMAGE CONTAINER ===== */
+        .image-container {
+            width: 100%;
+            margin: 1rem 0;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .image-container .close-btn {
+            display: none !important;
+        }
+        
+        .image-container.expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            margin: 0;
+            border-radius: 0;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+        }
+        
+        .image-content {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            object-position: top center;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .image-container.expanded .image-content {
+            width: auto;
+            height: auto;
+            max-width: 90%;
+            max-height: 80%;
+            object-fit: contain;
+            object-position: center;
+        }
+        
+        .image-title {
+            text-align: center;
+            font-weight: 600;
+            margin: 0;
+            padding: 0.75rem 1rem;
+            color: var(--accent-orange);
+            font-size: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            background-color: var(--card-bg);
+            font-family: 'Playfair Display', serif;
+            position: relative;
+            padding-right: 40px;
+        }
+        
+        /* ===== MINDMAP ===== */
+        .mindmap-sieu-ngau {
+            width: 100%;
+            height: 300px;
+            background: white;
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .mindmap-sieu-ngau.expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            margin: 0;
+            border-radius: 0;
+            padding: 1rem;
+            background: white;
+            cursor: default;
+        }
+        
+        .mindmap-sieu-ngau .mindmap-title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mindmap-sieu-ngau .mindmap-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .mindmap-sieu-ngau .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .mindmap-sieu-ngau .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+            color: white;
+        }
+        
+        .mindmap-sieu-ngau .mindmap-content {
+            width: 100%;
+            height: 100%;
+            padding-top: 52px;
+            position: relative;
+            background: white;
+        }
+        
+        .mindmap-sieu-ngau .mindmap-container {
+            width: 100%;
+            height: calc(100% - 52px);
+            background: white;
+            position: relative;
+            flex: 1;
+        }
+        
+        .mindmap-controls-hidden { display: none !important; }
+        
+        .result-container {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--accent-orange);
+            position: relative;
+        }
+        
+        .result-container .result-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-right: 2rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+        
+        .close-btn:hover {
+            color: var(--accent-orange);
+            background: rgba(244, 162, 97, 0.1);
+        }
+        
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            color: white;
+        }
+        
+        .notification-success { background: #4CAF50; }
+        .notification-error { background: #f44336; }
+        .notification-info { background: var(--button-cyan); }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .timeline-globe {
+                width: 90%;
+                bottom: 20px;
+            }
+            .timeline-bar-globe { padding: 8px 12px; }
+            .playback-btn-globe {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+            .layer-panel { left: 20px; }
+            #sidebar { width: 300px; }
+            .country-info-panel-left { left: 320px; width: 300px; }
+            .sidebar-toggle-new { left: 300px; }
+        }
     </style>
 </head>
-<body class="bg-total">
-    <div id="mapContainerRoot">
-        <div id="globeContainer"></div>
-        <div id="leafletContainer"></div>
-    </div>
+<body class="h-screen flex flex-col transition-all bg-total">
+    <div id="globeContainer"></div>
     
+    <!-- COUNTRY INFO PANEL (HIỂN THỊ BÊN TRÁI) -->
     <div class="country-info-panel-left" id="countryInfoPanel">
-        <div class="country-info-header"><span><i class="fas fa-flag"></i> <span id="countryInfoTitle">Quốc Gia</span></span><button class="country-info-close" id="countryInfoClose">×</button></div>
+        <div class="country-info-header">
+            <span class="header-icon"><i class="fas fa-flag"></i></span>
+            <span class="header-title" id="countryInfoTitle">Quốc Gia</span>
+            <button class="country-info-close" id="countryInfoClose">×</button>
+        </div>
+        <div class="country-info-subtitle" id="countryInfoSubtitle">Thông tin lịch sử</div>
         <div class="country-info-content" id="countryInfoContent"></div>
+        <div class="country-info-disclaimer" id="countryInfoDisclaimer">⚠️ Bối cảnh lịch sử được tạo bởi AI. Hãy kiểm chứng những sự kiện quan trọng.</div>
     </div>
+    
+    <!-- INFO PANEL -->
     <div class="info-panel" id="infoPanel">
-        <div class="info-header"><span>🌍 <span id="infoPanelTitle"></span></span><button class="info-close" id="infoPanelClose">×</button></div>
+        <div class="info-header">
+            <span class="info-header-icon">🌍</span>
+            <span class="info-header-title" id="infoPanelTitle">Quốc Gia</span>
+            <button class="info-close" id="infoPanelClose">×</button>
+        </div>
+        <div class="info-subtitle" id="infoPanelSubtitle">Đang tìm kiếm...</div>
         <div class="info-content" id="infoPanelContent"></div>
+        <div class="info-disclaimer" id="infoPanelDisclaimer">⚠️ Bối cảnh lịch sử được tạo bởi AI. Hãy kiểm chứng những sự kiện quan trọng.</div>
     </div>
     
-    <!-- Top bar: nút 2D/3D + Ngôn ngữ -->
-    <div class="top-control-bar">
-        <div class="mode-toggle-btn" id="toggleMapModeBtn"><i class="fas fa-globe-asia"></i> <span id="modeBtnText">3D</span></div>
-        <div class="language-switch-compact" id="compactLangToggle"><i class="fas fa-language"></i> <span id="langLabel">Vi</span></div>
+    <!-- TOP BAR -->
+    <div class="top-bar-globe" id="topBarGlobe">
+        <div class="year-pill-globe" id="yearDisplay">2010 CN</div>
+        <div class="stats-pill-globe" id="regionCount" style="display: none;">0 quốc gia</div>
     </div>
     
-    <div class="sidebar-toggle-new" id="sidebarToggleNew"><i class="fas fa-chevron-left"></i></div>
+    
+    <!-- NÚT ĐÓNG/MỞ MỚI -->
+    <div class="sidebar-toggle-new" id="sidebarToggleNew">
+        <i class="fas fa-chevron-left"></i>
+    </div>
     
     <div id="app">
-        <div id="sidebar">
+        <div id="sidebar" class="flex flex-col h-full transition-all duration-300 relative bg-card">
             <div class="sidebar-header">
                 <div class="header-container">
-                    <div class="header-title"><h2 class="font-display flex items-center"><i class="fas fa-crown mr-3 text-accent"></i><span id="mainTitleText">Bản Đồ Lịch Sử</span></h2></div>
+                    <div class="header-title">
+                        <h2 class="text-xl font-bold font-display flex items-center">
+                            <i class="fas fa-crown mr-3 text-accent"></i>
+                            <span class="text-accent" id="mainTitleText">Bản Đồ Lịch Sử</span>
+                        </h2>
+                    </div>
+                    <div class="language-switch">
+                        <label class="switch">
+                            <input type="checkbox" id="language-toggle">
+                            <span class="slider">
+                                <span class="vi-text">Vi</span>
+                                <span class="en-text">En</span>
+                            </span>
+                        </label>
+                    </div>
                 </div>
                 <form id="search-form" class="mt-2">
                     <div class="search-wrapper">
-                        <textarea id="search-input" rows="1" placeholder="Nhập trận chiến, nhân vật, địa điểm lịch sử"></textarea>
-                        <button type="submit" class="search-button"><i class="fas fa-paper-plane"></i></button>
+                        <textarea id="search-input" rows="1"
+                            class="w-full"
+                            placeholder="Nhập trận chiến, nhân vật, địa điểm lịch sử"></textarea>
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </form>
             </div>
-            <div class="content-container"><div id="result-messages"></div></div>
+            <div class="content-container">
+                <div id="result-messages" class="flex flex-col gap-4 w-full"></div>
+            </div>
+        </div>
+        <div id="map-container" class="flex-1 flex flex-col h-full overflow-hidden relative">
         </div>
     </div>
     
     <div class="timeline-globe" id="timelineGlobe">
-        <div class="year-pill-globe" id="yearDisplay">2010 CN</div>
         <div class="timeline-bar-globe">
             <input type="range" class="timeline-slider-globe" id="timelineSlider" min="0" max="100" value="94">
+            <div class="playback-controls-globe">
+                <button class="playback-btn-globe" id="prevBtn">⏮</button>
+                <button class="playback-btn-globe" id="playBtn">▶️</button>
+                <button class="playback-btn-globe" id="nextBtn">⏭</button>
+            </div>
         </div>
     </div>
     
-    <div id="loading-screen" class="loading-screen"><div class="spinner-box"></div></div>
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loader-container">
+            <div class="spinner-box">
+                <div class="leo-border-1">
+                    <div class="leo-core-1"></div>
+                </div>
+                <div class="leo-border-2">
+                    <div class="leo-core-2"></div>
+                </div>
+            </div>
+            <div class="loading-text" id="loadingText">AI đang tạo nội dung...</div>
+            <div class="loader-info" id="loaderInfo">
+                Đang xử lý yêu cầu của bạn. Vui lòng chờ trong giây lát...
+            </div>
+        </div>
+    </div>
     
     <script src="https://unpkg.com/globe.gl@2.45.0/dist/globe.gl.min.js"></script>
     <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/d3@7.8.5/dist/d3.min.js"></script>
     <script src="https://unpkg.com/markmap-lib@0.15.3/dist/browser/index.js"></script>
     <script src="https://unpkg.com/markmap-view@0.15.3/dist/browser/index.js"></script>
-    <script type="importmap">{ "imports": { "@google/generative-ai": "https://esm.run/@google/generative-ai" } }</script>
+    <script type="importmap">
+        {
+            "imports": {
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
-        function reverseString(str) { return str.split('').reverse().join(''); }
-        const API_KEY = reverseString("M0GVHONkVX_R3yXb27M2xoMqh5PIxhheBySazIA");
+
+        // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY ====================
+        function reverseString(str) {
+            return str.split('').reverse().join('');
+        }
+        const reversedKey = "M0GVHONkVX_R3yXb27M2xoMqh5PIxhheBySazIA";
+        const API_KEY = reverseString(reversedKey);
+
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
-        
-        // DOM
+
+        // ==================== DOM ELEMENTS ====================
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
         const resultMessages = document.getElementById('result-messages');
         const loadingScreen = document.getElementById('loading-screen');
         const sidebar = document.getElementById('sidebar');
         const sidebarToggleNew = document.getElementById('sidebarToggleNew');
+        const layerPanel = document.getElementById('layerPanel');
+        const topBarGlobe = document.getElementById('topBarGlobe');
         const timelineGlobe = document.getElementById('timelineGlobe');
         const infoPanel = document.getElementById('infoPanel');
         const infoPanelTitle = document.getElementById('infoPanelTitle');
+        const infoPanelSubtitle = document.getElementById('infoPanelSubtitle');
         const infoPanelContent = document.getElementById('infoPanelContent');
         const infoPanelClose = document.getElementById('infoPanelClose');
+        const infoPanelDisclaimer = document.getElementById('infoPanelDisclaimer');
+        const mapContainer = document.getElementById('map-container');
+        const languageToggle = document.getElementById('language-toggle');
+        const mainTitleText = document.getElementById('mainTitleText');
+        
+        // ==================== COUNTRY INFO PANEL ====================
         const countryInfoPanel = document.getElementById('countryInfoPanel');
         const countryInfoTitle = document.getElementById('countryInfoTitle');
+        const countryInfoSubtitle = document.getElementById('countryInfoSubtitle');
         const countryInfoContent = document.getElementById('countryInfoContent');
         const countryInfoClose = document.getElementById('countryInfoClose');
-        const yearDisplay = document.getElementById('yearDisplay');
-        const timelineSlider = document.getElementById('timelineSlider');
-        const toggleMapModeBtn = document.getElementById('toggleMapModeBtn');
-        const modeBtnText = document.getElementById('modeBtnText');
-        const compactLangToggle = document.getElementById('compactLangToggle');
-        const langLabel = document.getElementById('langLabel');
+        const countryInfoDisclaimer = document.getElementById('countryInfoDisclaimer');
         
+        // ==================== GLOBAL VARIABLES ====================
         let globe = null;
-        let leafletMap = null;
-        let currentMapMode = '3d'; // '3d' hoặc '2d'
         let currentYearIndex = 30;
         let dataCache = {};
+        let isPlaying = false;
+        let playInterval = null;
+        let localHistoryCache = new Map();
+        let transformer = null;
         let currentGeoJSON = null;
         let currentLanguage = 'vi';
-        let transformer = null;
-        let isPlaying = false, playInterval = null;
         
+        // ==================== SPEECH SYNTHESIS VARIABLES ====================
+        let speechSynthesisUtterance = null;
+        let isSpeaking = false;
+        let speechProgressInterval = null;
+        let currentSpeechText = '';
+        
+        let layers = {
+            borders: true
+        };
+        
+        const colorPalette = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+            '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
+        ];
+
         const availableYears = [
-            { year: -10000, file: 'world_bc10000.geojson', label: '10.000 TCN' }, { year: -5000, file: 'world_bc5000.geojson', label: '5.000 TCN' },
-            { year: -3000, file: 'world_bc3000.geojson', label: '3.000 TCN' }, { year: -2000, file: 'world_bc2000.geojson', label: '2.000 TCN' },
-            { year: -1500, file: 'world_bc1500.geojson', label: '1.500 TCN' }, { year: -1000, file: 'world_bc1000.geojson', label: '1.000 TCN' },
-            { year: -500, file: 'world_bc500.geojson', label: '500 TCN' }, { year: -323, file: 'world_bc323.geojson', label: '323 TCN' },
-            { year: -200, file: 'world_bc200.geojson', label: '200 TCN' }, { year: -1, file: 'world_bc1.geojson', label: '1 TCN' },
-            { year: 100, file: 'world_100.geojson', label: '100 CN' }, { year: 200, file: 'world_200.geojson', label: '200 CN' },
-            { year: 400, file: 'world_400.geojson', label: '400 CN' }, { year: 600, file: 'world_600.geojson', label: '600 CN' },
-            { year: 800, file: 'world_800.geojson', label: '800 CN' }, { year: 1000, file: 'world_1000.geojson', label: '1.000 CN' },
-            { year: 1200, file: 'world_1200.geojson', label: '1.200 CN' }, { year: 1279, file: 'world_1279.geojson', label: '1.279 CN' },
-            { year: 1400, file: 'world_1400.geojson', label: '1.400 CN' }, { year: 1492, file: 'world_1492.geojson', label: '1.492 CN' },
-            { year: 1600, file: 'world_1600.geojson', label: '1.600 CN' }, { year: 1700, file: 'world_1700.geojson', label: '1.700 CN' },
-            { year: 1783, file: 'world_1783.geojson', label: '1.783 CN' }, { year: 1815, file: 'world_1815.geojson', label: '1.815 CN' },
-            { year: 1880, file: 'world_1880.geojson', label: '1.880 CN' }, { year: 1914, file: 'world_1914.geojson', label: '1.914 CN' },
-            { year: 1938, file: 'world_1938.geojson', label: '1.938 CN' }, { year: 1945, file: 'world_1945.geojson', label: '1.945 CN' },
-            { year: 1960, file: 'world_1960.geojson', label: '1.960 CN' }, { year: 1994, file: 'world_1994.geojson', label: '1.994 CN' },
+            { year: -10000, file: 'world_bc10000.geojson', label: '10.000 TCN' },
+            { year: -5000, file: 'world_bc5000.geojson', label: '5.000 TCN' },
+            { year: -3000, file: 'world_bc3000.geojson', label: '3.000 TCN' },
+            { year: -2000, file: 'world_bc2000.geojson', label: '2.000 TCN' },
+            { year: -1500, file: 'world_bc1500.geojson', label: '1.500 TCN' },
+            { year: -1000, file: 'world_bc1000.geojson', label: '1.000 TCN' },
+            { year: -500, file: 'world_bc500.geojson', label: '500 TCN' },
+            { year: -323, file: 'world_bc323.geojson', label: '323 TCN' },
+            { year: -200, file: 'world_bc200.geojson', label: '200 TCN' },
+            { year: -1, file: 'world_bc1.geojson', label: '1 TCN' },
+            { year: 100, file: 'world_100.geojson', label: '100 CN' },
+            { year: 200, file: 'world_200.geojson', label: '200 CN' },
+            { year: 400, file: 'world_400.geojson', label: '400 CN' },
+            { year: 600, file: 'world_600.geojson', label: '600 CN' },
+            { year: 800, file: 'world_800.geojson', label: '800 CN' },
+            { year: 1000, file: 'world_1000.geojson', label: '1.000 CN' },
+            { year: 1200, file: 'world_1200.geojson', label: '1.200 CN' },
+            { year: 1279, file: 'world_1279.geojson', label: '1.279 CN' },
+            { year: 1400, file: 'world_1400.geojson', label: '1.400 CN' },
+            { year: 1492, file: 'world_1492.geojson', label: '1.492 CN' },
+            { year: 1600, file: 'world_1600.geojson', label: '1.600 CN' },
+            { year: 1700, file: 'world_1700.geojson', label: '1.700 CN' },
+            { year: 1783, file: 'world_1783.geojson', label: '1.783 CN' },
+            { year: 1815, file: 'world_1815.geojson', label: '1.815 CN' },
+            { year: 1880, file: 'world_1880.geojson', label: '1.880 CN' },
+            { year: 1914, file: 'world_1914.geojson', label: '1.914 CN' },
+            { year: 1938, file: 'world_1938.geojson', label: '1.938 CN' },
+            { year: 1945, file: 'world_1945.geojson', label: '1.945 CN' },
+            { year: 1960, file: 'world_1960.geojson', label: '1.960 CN' },
+            { year: 1994, file: 'world_1994.geojson', label: '1.994 CN' },
             { year: 2010, file: 'world_2010.geojson', label: '2.010 CN' }
         ];
         
-        const translations = {
-            vi: { title: "Bản Đồ Lịch Sử", search_placeholder: "Nhập trận chiến, nhân vật, địa điểm lịch sử", historical_context: "⚠️ Bối cảnh lịch sử được tạo bởi AI.", processing_error: "Lỗi xử lý", non_history_error: "Chỉ hỗ trợ lịch sử", battle_name: "Tên", battle_time: "Thời gian", battle_location: "Địa điểm", battle_summary: "Tóm tắt", battle_troops: "Quân số", battle_tactics: "Chiến thuật", battle_casualties: "Thương vong", battle_heroes: "Anh hùng", battle_outcome: "Kết quả", battle_significance: "Ý nghĩa", battle_factions: "Phe tham gia", battle_commanders: "Chỉ huy", key_locations: "Địa điểm", battle_achievements: "Thành tựu", birth_place: "Nơi sinh", biography: "Tiểu sử", family: "Gia đình", education: "Học vấn", career: "Sự nghiệp", quotes: "Câu nói", legacy: "Di sản", battles: "Trận đánh", works: "Tác phẩm", landmark_build_time: "Thời gian xây dựng", landmark_purpose: "Mục đích", landmark_architecture: "Kiến trúc", landmark_contents: "Nội dung", landmark_builders: "Người xây", landmark_dynasty: "Triều đại", landmark_name: "Tên", copy_code: "Sao chép", copied: "Đã sao chép", picture: "Hình ảnh", audio_controls: "Thuyết minh", play_audio: "Phát", pause_audio: "Tạm dừng", stop_audio: "Dừng", zoom_in: "Phóng to", zoom_out: "Thu nhỏ", save_image: "Lưu ảnh", save_success: "Đã lưu", save_error: "Lỗi lưu", mindmap_title: "🧠 Sơ đồ tư duy", figure_mindmap_title: "🧠 Sơ đồ - Nhân vật", landmark_mindmap_title: "🧠 Sơ đồ - Địa danh", ai_assistant: "AI" },
-            en: { title: "3D Historical Map", search_placeholder: "Enter historical event, figure or landmark...", historical_context: "⚠️ AI-generated context.", processing_error: "Error", non_history_error: "History only", battle_name: "Name", battle_time: "Time", battle_location: "Location", battle_summary: "Summary", battle_troops: "Troops", battle_tactics: "Tactics", battle_casualties: "Casualties", battle_heroes: "Heroes", battle_outcome: "Outcome", battle_significance: "Significance", battle_factions: "Factions", battle_commanders: "Commanders", key_locations: "Key locations", battle_achievements: "Achievements", birth_place: "Birthplace", biography: "Biography", family: "Family", education: "Education", career: "Career", quotes: "Quotes", legacy: "Legacy", battles: "Battles", works: "Works", landmark_build_time: "Built", landmark_purpose: "Purpose", landmark_architecture: "Architecture", landmark_contents: "Contents", landmark_builders: "Builders", landmark_dynasty: "Dynasty", landmark_name: "Name", copy_code: "Copy", copied: "Copied", picture: "Image", audio_controls: "Audio", play_audio: "Play", pause_audio: "Pause", stop_audio: "Stop", zoom_in: "Zoom in", zoom_out: "Zoom out", save_image: "Save", save_success: "Saved", save_error: "Error", mindmap_title: "🧠 Mind Map", figure_mindmap_title: "🧠 Figure Map", landmark_mindmap_title: "🧠 Landmark Map", ai_assistant: "AI" }
+        // ==================== HÀM TÌM INDEX NĂM GẦN NHẤT ====================
+        function findYearIndexByTargetYear(targetYear) {
+            let closestIndex = -1;
+            let minDiff = Infinity;
+            
+            for (let idx = 0; idx < availableYears.length; idx++) {
+                const item = availableYears[idx];
+                if (item.year >= targetYear) {
+                    const diff = Math.abs(item.year - targetYear);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestIndex = idx;
+                    }
+                }
+            }
+            
+            if (closestIndex === -1 && availableYears.length > 0) {
+                closestIndex = availableYears.length - 1;
+            }
+            
+            return closestIndex;
+        }
+        
+        // ==================== SPEECH SYNTHESIS FUNCTIONS ====================
+        function stopSpeech() {
+            if (speechSynthesisUtterance) {
+                try {
+                    window.speechSynthesis.cancel();
+                    isSpeaking = false;
+                    const progressBars = document.querySelectorAll('.audio-progress-bar');
+                    for (let i = 0; i < progressBars.length; i++) {
+                        progressBars[i].style.width = '0%';
+                    }
+                    const playBtns = document.querySelectorAll('#play-audio');
+                    for (let i = 0; i < playBtns.length; i++) {
+                        if (playBtns[i]) playBtns[i].disabled = false;
+                    }
+                    const pauseBtns = document.querySelectorAll('#pause-audio');
+                    const stopBtns = document.querySelectorAll('#stop-audio');
+                    for (let i = 0; i < pauseBtns.length; i++) {
+                        if (pauseBtns[i]) pauseBtns[i].disabled = true;
+                    }
+                    for (let i = 0; i < stopBtns.length; i++) {
+                        if (stopBtns[i]) stopBtns[i].disabled = true;
+                    }
+                    if (speechProgressInterval) {
+                        clearInterval(speechProgressInterval);
+                        speechProgressInterval = null;
+                    }
+                } catch (e) {
+                    console.error("Lỗi khi dừng giọng nói:", e);
+                }
+            }
+        }
+        
+        // ==================== HÀM NGẮT GIỌNG NÓI KHI THỰC HIỆN CHỨC NĂNG KHÁC ====================
+        function stopSpeechForNewAction() {
+            if (isSpeaking) {
+                stopSpeech();
+                console.log("Đã dừng đọc do thực hiện chức năng khác");
+            }
+        }
+        
+        // ==================== KEYWORDS ====================
+        const battleKeywords = [
+            "trận chiến", "battle", "war", "engagement", "conflict", "campaign", 
+            "chiến tranh", "trận", "cuộc chiến", "chiến dịch", "đánh"
+        ];
+        
+        const vietnamHistoricalLocations = {
+            "Điện Biên Phủ": {
+                lat: 21.3867,
+                lng: 103.0150,
+                name: "Điện Biên Phủ",
+                name_vi: "Điện Biên Phủ",
+                name_en: "Dien Bien Phu",
+                description: "Nơi diễn ra chiến dịch Điện Biên Phủ 1954",
+                description_vi: "Điện Biên Phủ, tỉnh Điện Biên, nơi diễn ra chiến dịch Điện Biên Phủ năm 1954, đánh dấu chiến thắng lịch sử của Việt Nam trước thực dân Pháp",
+                description_en: "Dien Bien Phu, Dien Bien Province, the site of the 1954 Dien Bien Phu Campaign, marking a historic victory of Vietnam over French colonial forces"
+            },
+            "Kinh thành Huế": {
+                lat: 16.4697,
+                lng: 107.5777,
+                name: "Kinh thành Huế",
+                name_vi: "Kinh thành Huế",
+                name_en: "Hue Imperial City",
+                description: "Trung tâm triều Nguyễn",
+                description_vi: "Kinh thành Huế, trung tâm chính trị của triều Nguyễn từ 1802-1945",
+                description_en: "Hue Imperial City, political center of the Nguyen Dynasty from 1802-1945"
+            },
+            "Thăng Long": {
+                lat: 21.0333,
+                lng: 105.8500,
+                name: "Thăng Long (Hà Nội)",
+                description: "Kinh đô thời Lý, Trần, Lê",
+                name_vi: "Thăng Long (Hà Nội)",
+                name_en: "Thang Long (Hanoi)",
+                description_vi: "Kinh đô của Việt Nam thời Lý, Trần, Lê",
+                description_en: "Capital of Vietnam during Ly, Tran, and Le dynasties"
+            },
+            "Bạch Đằng": {
+                lat: 20.8667,
+                lng: 106.7333,
+                name: "Sông Bạch Đằng",
+                description: "Nơi diễn ra các trận thủy chiến lừng danh",
+                name_vi: "Sông Bạch Đằng",
+                name_en: "Bach Dang River",
+                description_vi: "Nơi diễn ra các trận thủy chiến lịch sử chống quân xâm lược",
+                description_en: "Site of historic naval battles against invaders"
+            }
         };
         
+        // ==================== TRANSLATIONS ====================
+        const translations = {
+            vi: {
+                title: "Lisu Map",
+                search_placeholder: "Nhập trận chiến, nhân vật, địa điểm lịch sử",
+                country_info_close: "Nhấp vào bản đồ để đóng thông tin",
+                map_label: "Lisu Map",
+                battle_name: "Tên Nhân Vật",
+                battle_time: "Thời Gian",
+                battle_location: "Địa Điểm",
+                battle_summary: "Tóm Tắt",
+                battle_factions: "Các Phe Tham Gia",
+                battle_troops: "Quân Số",
+                latitude: "Vĩ độ",
+                longitude: "Kinh độ",
+                battle_commanders: "Chỉ Huy",
+                battle_tactics: "Chiến Thuật",
+                battle_casualties: "Thương Vong",
+                battle_timeline: "Diễn Biến Chính",
+                battle_outcome: "Kết Quả",
+                battle_significance: "Tác động Lịch Sử",
+                event: "Sự kiện",
+                battle_heroes: "Anh Hùng Tiêu Biểu",
+                mindmap_title: "🧠 SƠ ĐỒ TƯ DUY",
+                figure_mindmap_title: "🧠 SƠ ĐỒ TƯ DUY - NHÂN VẬT",
+                landmark_mindmap_title: "🧠 SƠ ĐỒ TƯ DUY - ĐỊA DANH",
+                non_history_error: "Xin lỗi, tôi chỉ trả lời các câu hỏi liên quan đến lịch sử. Vui lòng nhập một truy vấn về lịch sử!",
+                map_error: "Lỗi tải dữ liệu bản đồ, vui lòng thử lại sau.",
+                processing_error: "Lỗi khi xử lý yêu cầu. Vui lòng thử lại!",
+                copy_code: "Sao chép mã",
+                birth_place: "Nơi sinh",
+                battle_achievements: "Thành Tựu Nổi Bật",
+                copied: "Đã sao chép!",
+                landmark_build_time: "Thời gian xây dựng",
+                unknown: "Không xác định",
+                no_summary: "Không có tóm tắt",
+                ai_assistant: "Trợ Lý AI",
+                close: "Đóng",
+                picture: "Hình ảnh",
+                map_marker: "Điểm đánh dấu bản đồ",
+                play_audio: "Phát thuyết minh",
+                pause_audio: "Tạm dừng",
+                stop_audio: "Dừng",
+                key_locations: "Địa điểm quan trọng",
+                audio_progress: "Tiến trình",
+                audio_controls: "Điều khiển âm thanh",
+                timeline_title: "Diễn biến trận chiến",
+                landmark_name: "Tên địa danh",
+                landmark_purpose: "Mục đích xây dựng",
+                landmark_architecture: "Kiến trúc",
+                landmark_contents: "Nội dung bên trong",
+                landmark_builders: "Người xây dựng",
+                landmark_dynasty: "Triều đại",
+                loading_text_1: "AI đang tạo nội dung...",
+                loading_text_2: "Đang xử lý dữ liệu...",
+                loading_text_3: "Đang phân tích thông tin...",
+                loading_text_4: "Đang tổng hợp nội dung...",
+                zoom_in: "Phóng to",
+                zoom_out: "Thu nhỏ",
+                save_image: "Lưu ảnh",
+                save_success: "Đã lưu sơ đồ tư duy thành công!",
+                save_error: "Lỗi khi lưu sơ đồ tư duy!",
+                loading_info: "Đang xử lý yêu cầu của bạn. Vui lòng chờ trong giây lát...",
+                searching: "Đang tìm kiếm...",
+                historical_context: "⚠️ Bối cảnh lịch sử được tạo bởi AI. Hãy kiểm chứng những sự kiện quan trọng.",
+                biography: "Tiểu sử",
+                family: "Gia đình",
+                education: "Học vấn",
+                career: "Sự nghiệp",
+                quotes: "Câu nói nổi tiếng",
+                legacy: "Di sản để lại",
+                battles: "Các trận đánh",
+                works: "Tác phẩm"
+            },
+            en: {
+                title: "3D Historical Map",
+                search_placeholder: "Enter historical event, figure or landmark...",
+                country_info_close: "Click the map to close the information",
+                map_label: "3D Historical Map",
+                battle_name: "Character Name",
+                battle_time: "Time",
+                battle_location: "Location",
+                battle_summary: "Summary",
+                picture: "Picture",
+                battle_factions: "Participating Factions",
+                battle_troops: "Troop Numbers",
+                latitude: "Latitude",
+                longitude: "Longitude",
+                battle_commanders: "Commanders",
+                battle_tactics: "Tactics",
+                battle_casualties: "Casualties",
+                battle_timeline: "Main Events",
+                battle_outcome: "Outcome",
+                birth_place: "Place of birth",
+                battle_significance: "Historical Significance",
+                battle_heroes: "Notable Heroes",
+                event: "Event",
+                mindmap_title: "🧠 MIND MAP",
+                figure_mindmap_title: "🧠 MIND MAP - FIGURE",
+                landmark_mindmap_title: "🧠 MIND MAP - LANDMARK",
+                non_history_error: "Sorry, I only answer questions related to history. Please enter a history-related query!",
+                map_error: "Error loading map data, please try again later.",
+                processing_error: "Error processing request. Please try again!",
+                copy_code: "Copy code",
+                copied: "Copied!",
+                landmark_build_time: "Construction Time",
+                unknown: "Unknown",
+                no_summary: "No summary available",
+                ai_assistant: "AI Assistant",
+                close: "Close",
+                map_marker: "Map Marker",
+                play_audio: "Play narration",
+                pause_audio: "Pause",
+                stop_audio: "Stop",
+                key_locations: "Key locations",
+                audio_progress: "Progress",
+                audio_controls: "Audio controls",
+                timeline_title: "Battle timeline",
+                landmark_name: "Landmark Name",
+                landmark_purpose: "Purpose of Construction",
+                landmark_architecture: "Architecture",
+                landmark_contents: "Contents Inside",
+                landmark_builders: "Builders",
+                landmark_dynasty: "Dynasty",
+                loading_text_1: "AI is creating content...",
+                loading_text_2: "Processing data...",
+                loading_text_3: "Analyzing information...",
+                loading_text_4: "Synthesizing content...",
+                zoom_in: "Zoom in",
+                zoom_out: "Zoom out",
+                save_image: "Save image",
+                save_success: "Mind map saved successfully!",
+                save_error: "Error saving mind map!",
+                loading_info: "Processing your request. Please wait a moment...",
+                searching: "Searching...",
+                historical_context: "⚠️ Historical context generated by AI. Please verify important events.",
+                biography: "Biography",
+                family: "Family",
+                education: "Education",
+                career: "Career",
+                quotes: "Famous Quotes",
+                legacy: "Legacy",
+                battles: "Battles",
+                works: "Works"
+            }
+        };
+        
+        const countryNameMap = {
+            "Nguyễn Khuyến": "Vietnam",
+            "Việt Nam": "Vietnam",
+            "Anh": "United Kingdom",
+            "Mỹ": "United States",
+            "Hoa Kỳ": "United States",
+            "Pháp": "France",
+            "Đức": "Germany",
+            "Nga": "Russia",
+            "Nhật Bản": "Japan",
+            "Trung Quốc": "China",
+            "Trung Hoa": "China",
+            "Hàn Quốc": "South Korea",
+            "Ấn Độ": "India",
+            "Brazil": "Brazil",
+            "Canada": "Canada",
+            "Ý": "Italy",
+            "Tây Ban Nha": "Spain",
+            "Bồ Đào Nha": "Portugal",
+            "Thụy Điển": "Sweden",
+            "Na Uy": "Norway",
+            "Phần Lan": "Finland",
+            "Đan Mạch": "Denmark",
+            "Hà Lan": "Netherlands",
+            "Bỉ": "Belgium",
+            "Thụy Sĩ": "Switzerland",
+            "Áo": "Austria",
+            "Ba Lan": "Poland",
+            "Hy Lạp": "Greece",
+            "Thổ Nhĩ Kỳ": "Turkey",
+            "Ai Cập": "Egypt",
+            "Nam Phi": "South Africa",
+            "Mexico": "Mexico",
+            "Argentina": "Argentina",
+            "Úc": "Australia",
+            "New Zealand": "New Zealand",
+            "Hà Nội": "Hanoi",
+            "Huế": "Hue",
+            "Trần Hưng Đạo": "Tran Hung Dao",
+            "Nguyễn Huệ": "Nguyen Hue"
+        };
+        
+        const historyData = {
+            "Australia": {
+                history: {
+                    vi: "Úc, một quốc gia lục địa ở Nam Bán Cầu, có lịch sử bản địa kéo dài hơn 60.000 năm với các dân tộc Thổ dân và Người dân đảo Torres Strait. Người châu Âu, chủ yếu là Anh, bắt đầu thuộc địa hóa vào năm 1788 với việc thành lập thuộc địa tù nhân ở New South Wales. Úc trở thành một liên bang độc lập vào năm 1901, thống nhất sáu thuộc địa. Thế kỷ 20, Úc phát triển mạnh nhờ khai thác khoáng sản và nông nghiệp, đồng thời tham gia các cuộc chiến tranh thế giới cùng phe Đồng minh. Ngày nay, Úc nổi tiếng với nền kinh tế phát triển, đa dạng văn hóa (nhờ nhập cư), và các biểu tượng như Nhà hát Opera Sydney, rạn san hô Great Barrier, và văn hóa Thổ dân độc đáo.",
+                    en: "Australia, a continent-country in the Southern Hemisphere, has a history spanning over 60,000 years with Indigenous Aboriginal and Torres Strait Islander peoples. European colonization, primarily by the British, began in 1788 with the establishment of a penal colony in New South Wales. Australia became an independent federation in 1901, uniting six colonies. In the 20th century, it prospered through mining and agriculture and participated in global wars as part of the Allies. Today, Australia is known for its strong economy, cultural diversity (driven by immigration), and iconic landmarks like the Sydney Opera House, the Great Barrier Reef, and unique Indigenous culture."
+                }
+            },
+            "Vietnam": {
+                history: {
+                    vi: "Việt Nam có lịch sử hơn 4.000 năm, bắt đầu từ thời các vua Hùng dựng nước Văn Lang, được xem là nhà nước đầu tiên trong truyền thuyết. Sau thời kỳ Bắc thuộc dưới sự cai trị của Trung Quốc, Việt Nam giành độc lập vào thế kỷ 10 dưới triều đại Ngô, Đinh, và các triều đại phong kiến như Lý, Trần, Hậu Lê, Nguyễn đã xây dựng một nền văn hóa đặc sắc với các di sản như Văn Miếu và chùa Một Cột. Thế kỷ 19, Việt Nam trở thành thuộc địa Pháp, dẫn đến các phong trào kháng chiến. Thế kỷ 20, Việt Nam đấu tranh giành độc lập qua các cuộc chiến chống Pháp và Mỹ, thống nhất đất nước năm 1975. Ngày nay, Việt Nam là một nền kinh tế đang phát triển nhanh, với văn hóa phong phú (phở, áo dài) và vai trò ngày càng quan trọng trong khu vực Đông Nam Á.",
+                    en: "Vietnam's history spans over 4,000 years, beginning with the legendary Hung Kings who founded Van Lang, considered the first state in Vietnamese tradition. After centuries of Chinese domination, Vietnam gained independence in the 10th century under the Ngô and Đinh dynasties, followed by feudal dynasties like Lý, Trần, Later Lê, and Nguyễn, which built a distinct culture with landmarks like the Temple of Literature and One Pillar Pagoda. In the 19th century, Vietnam became a French colony, sparking resistance movements. The 20th century saw Vietnam fight for independence against France and the U.S., unifying in 1975. Today, Vietnam is a rapidly developing economy with a rich culture (phở, áo dài) and an increasingly significant role in Southeast Asia."
+                }
+            }
+        };
+        
+        // ==================== UI FUNCTIONS ====================
         function updateLanguage(lang) {
             currentLanguage = lang;
+            document.documentElement.lang = lang;
             searchInput.placeholder = translations[lang].search_placeholder;
-            document.getElementById('mainTitleText').textContent = translations[lang].title;
-            langLabel.textContent = lang === 'vi' ? 'Vi' : 'En';
-            compactLangToggle.classList.toggle('active', lang === 'en');
+            if (mainTitleText) mainTitleText.textContent = translations[lang].title;
+            languageToggle.checked = lang === 'en';
+            if (infoPanelDisclaimer) infoPanelDisclaimer.textContent = translations[lang].historical_context;
+            if (countryInfoDisclaimer) countryInfoDisclaimer.textContent = translations[lang].historical_context;
+            
+            const loadingText = document.getElementById('loadingText');
+            const loaderInfo = document.getElementById('loaderInfo');
+            if (loadingText) loadingText.textContent = translations[lang].loading_text_1;
+            if (loaderInfo) loaderInfo.textContent = translations[lang].loading_info;
         }
         
-        function toggleLang() { updateLanguage(currentLanguage === 'vi' ? 'en' : 'vi'); }
+        function toggleLanguage() {
+            const newLang = languageToggle.checked ? 'en' : 'vi';
+            updateLanguage(newLang);
+        }
         
-        function showLoading(show) { loadingScreen.classList.toggle('active', show); }
+        function showLoadingScreen() {
+            loadingScreen.classList.add('active');
+            const loadingText = document.getElementById('loadingText');
+            const loaderInfo = document.getElementById('loaderInfo');
+            
+            loadingText.textContent = translations[currentLanguage].loading_text_1;
+            loaderInfo.textContent = translations[currentLanguage].loading_info;
+            
+            const textVariations = [
+                translations[currentLanguage].loading_text_1,
+                translations[currentLanguage].loading_text_2,
+                translations[currentLanguage].loading_text_3,
+                translations[currentLanguage].loading_text_4
+            ];
+            let textIndex = 0;
+            const textInterval = setInterval(() => {
+                textIndex = (textIndex + 1) % textVariations.length;
+                loadingText.textContent = textVariations[textIndex];
+                loadingText.style.opacity = '0.5';
+                setTimeout(() => {
+                    loadingText.style.opacity = '1';
+                }, 200);
+            }, 3000);
+            loadingScreen.textInterval = textInterval;
+        }
+        
+        function hideLoadingScreen() {
+            loadingScreen.classList.remove('active');
+            if (loadingScreen.textInterval) {
+                clearInterval(loadingScreen.textInterval);
+                loadingScreen.textInterval = null;
+            }
+        }
+        
+        function toggleSidebarNew() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggleNew');
+            const toggleIcon = toggleBtn.querySelector('i');
+            const countryPanel = document.getElementById('countryInfoPanel');
+            
+            sidebar.classList.toggle('sidebar-collapsed');
+            
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                toggleIcon.classList.remove('fa-chevron-left');
+                toggleIcon.classList.add('fa-chevron-right');
+                toggleBtn.classList.add('collapsed');
+                layerPanel.style.left = '20px';
+                if (countryPanel.classList.contains('visible')) {
+                    countryPanel.style.left = '20px';
+                }
+            } else {
+                toggleIcon.classList.remove('fa-chevron-right');
+                toggleIcon.classList.add('fa-chevron-left');
+                toggleBtn.classList.remove('collapsed');
+                layerPanel.style.left = '600px';
+                if (countryPanel.classList.contains('visible')) {
+                    countryPanel.style.left = '580px';
+                }
+            }
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        const uiElementsToToggle = [topBarGlobe, layerPanel, timelineGlobe];
+        function toggleUIElements(hide) {
+            for (let i = 0; i < uiElementsToToggle.length; i++) {
+                const el = uiElementsToToggle[i];
+                if (el) {
+                    if (hide) {
+                        el.classList.add('ui-hidden');
+                    } else {
+                        el.classList.remove('ui-hidden');
+                    }
+                }
+            }
+        }
+        
+        // ==================== HÀM ẨN/HIỆN NÚT ĐÓNG THANH THÔNG TIN ====================
+        function toggleCloseButtons(hide) {
+            const closeBtns = document.querySelectorAll('.country-info-close, .info-close, #sidebarToggleNew');
+            for (let i = 0; i < closeBtns.length; i++) {
+                if (hide) {
+                    closeBtns[i].style.display = 'none';
+                } else {
+                    closeBtns[i].style.display = '';
+                }
+            }
+        }
+        
+        // ==================== QUERY DETECTION ====================
+        function isBattleQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            for (let i = 0; i < battleKeywords.length; i++) {
+                if (lowerQuery.includes(battleKeywords[i].toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function isFigureQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            const figureKeywords = [
+                "nhân vật", "vua", "hoàng đế", "tướng", "anh hùng", "nhà thơ", "nhà văn",
+                "nguyễn huệ", "trần hưng đạo", "nguyễn khuyến", "quang trung",
+                "lý thường kiệt", "ngô quyền", "chủ tịch", "bí thư", "character", "king", 
+                "emperor", "general", "hero", "poet", "writer", "Nguyễn Huệ", "Trần Hưng Đạo", 
+                "Nguyễn Khuyến", "Quang Trung", "Lý Thường Kiệt", "Ngô Quyền", "president", "secretary"
+            ];
+            for (let i = 0; i < figureKeywords.length; i++) {
+                if (lowerQuery.includes(figureKeywords[i].toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function isLandmarkQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            const landmarkKeywords = [
+                "kinh thành", "đền", "chùa", "di tích", "thành", "cung điện", "địa danh", "địa điểm", "lăng", "mộ",
+                "huế", "thăng long", "cổ loa", "mỹ sơn", "văn miếu", "capital city", "temple", 
+                "pagoda", "heritage site", "fortress", "palace", "geographical name", "location", 
+                "tomb", "grave", "Hue", "Thang Long", "Co Loa", "My Son", "Van Mieu"
+            ];
+            for (let i = 0; i < landmarkKeywords.length; i++) {
+                if (lowerQuery.includes(landmarkKeywords[i].toLowerCase())) {
+                    return true;
+                }
+            }
+            
+            const locationKeys = Object.keys(vietnamHistoricalLocations);
+            for (let i = 0; i < locationKeys.length; i++) {
+                const loc = locationKeys[i];
+                if (lowerQuery.includes(loc.toLowerCase())) {
+                    return true;
+                }
+                if (vietnamHistoricalLocations[loc].name_en && 
+                    lowerQuery.includes(vietnamHistoricalLocations[loc].name_en.toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function isCountryQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            const countryKeywords = [
+                "quốc gia", "đất nước", "nước", "lịch sử", "history", "country", "nation", "state"
+            ];
+            
+            const countryNames = Object.keys(countryNameMap);
+            for (let i = 0; i < countryNames.length; i++) {
+                if (lowerQuery.includes(countryNames[i].toLowerCase())) {
+                    return true;
+                }
+            }
+            
+            for (let i = 0; i < countryKeywords.length; i++) {
+                if (lowerQuery.includes(countryKeywords[i].toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function extractCountryName(query) {
+            const lowerQuery = query.toLowerCase();
+            const countryNames = Object.keys(countryNameMap);
+            for (let i = 0; i < countryNames.length; i++) {
+                if (lowerQuery.includes(countryNames[i].toLowerCase())) {
+                    return countryNames[i];
+                }
+            }
+            
+            for (const viName in countryNameMap) {
+                const enName = countryNameMap[viName];
+                if (lowerQuery.includes(viName.toLowerCase()) ||
+                    (enName && lowerQuery.includes(enName.toLowerCase()))) {
+                    return viName;
+                }
+            }
+            return null;
+        }
+        
+        // ==================== INFO PANEL FUNCTIONS ====================
+        function showInfoPanel(title, subtitle, content) {
+            infoPanelTitle.textContent = title;
+            infoPanelSubtitle.textContent = subtitle;
+            infoPanelContent.innerHTML = content;
+            infoPanel.classList.add('visible');
+        }
+        
+        function hideInfoPanel() {
+            infoPanel.classList.remove('visible');
+        }
+        
+        // ==================== COUNTRY INFO PANEL FUNCTIONS ====================
+        function showCountryInfoPanel(title, subtitle, content) {
+            countryInfoTitle.textContent = title;
+            countryInfoSubtitle.textContent = subtitle;
+            countryInfoContent.innerHTML = content;
+            countryInfoPanel.classList.add('visible');
+            
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                countryInfoPanel.style.left = '20px';
+            } else {
+                countryInfoPanel.style.left = '580px';
+            }
+        }
+        
+        function hideCountryInfoPanel() {
+            countryInfoPanel.classList.remove('visible');
+        }
+        
+        // ==================== GLOBE FUNCTIONS ====================
+        async function initApp() {
+            await initGlobe();
+            setupEventListeners();
+            updateLanguage('vi');
+            languageToggle.addEventListener('change', toggleLanguage);
+            checkUrlParameters();
+            const { Transformer } = window.markmap;
+            transformer = new Transformer();
+            
+            infoPanelClose.addEventListener('click', hideInfoPanel);
+            countryInfoClose.addEventListener('click', hideCountryInfoPanel);
+            
+            setTimeout(() => {
+                loadYear(30);
+            }, 500);
+        }
+        
+        async function initGlobe() {
+            window.addEventListener('resize', function() {
+                if (globe) {
+                    globe.width(window.innerWidth);
+                    globe.height(window.innerHeight);
+                }
+            });
+            
+            globe = Globe()
+                .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+                .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+                .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+                .showAtmosphere(true)
+                .atmosphereColor('#3a7bd5')
+                .atmosphereAltitude(0.25)
+                .polygonsData([])
+                .polygonAltitude(0.01)
+                .polygonCapColor(function(d) { return d.color || '#444'; })
+                .polygonSideColor(function() { return 'rgba(100, 100, 100, 0.2)'; })
+                .polygonStrokeColor(function() { return '#fff'; })
+                .polygonLabel(function(d) { 
+                    let name = d.properties?.NAME || d.properties?.SUBJECTO || 'Không xác định';
+                    return '<div class="territory-tooltip">' + name + '</div>';
+                })
+                .onPolygonClick(handleTerritoryClick)
+                .labelsData([])
+                .labelText(function(d) { return d.name; })
+                .labelSize(1.2)
+                .labelColor(function() { return 'rgba(255, 255, 255, 0.9)'; })
+                .labelResolution(2)
+                .labelAltitude(0.02)
+                (document.getElementById('globeContainer'));
+            
+            globe.pointOfView({ lat: 20, lng: 105, altitude: 2.5 });
+            
+            await loadYear(currentYearIndex);
+            
+            setupGlobeControls();
+        }
         
         async function loadYear(index) {
-            if (index < 0 || index >= availableYears.length) return;
+            if (index < 0 || index >= availableYears.length) {
+                return;
+            }
+            
             currentYearIndex = index;
             const yearData = availableYears[index];
-            yearDisplay.textContent = yearData.label;
-            timelineSlider.value = (index / (availableYears.length - 1)) * 100;
+            
+            document.getElementById('yearDisplay').textContent = yearData.label;
+            document.getElementById('timelineSlider').value = (index / (availableYears.length - 1)) * 100;
+            
             if (!dataCache[yearData.file]) {
                 try {
-                    const resp = await fetch(`data/geojson/${yearData.file}`);
-                    if (!resp.ok) throw new Error();
-                    dataCache[yearData.file] = await resp.json();
-                } catch(e) { console.error("Lỗi tải GeoJSON", e); return; }
+                    const url = `data/geojson/${yearData.file}`;
+                    console.log(`Đang tải: ${url}`);
+                    const response = await fetch(url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    dataCache[yearData.file] = await response.json();
+                    console.log(`Đã tải thành công: ${yearData.file}`);
+                } catch (err) {
+                    console.error('Lỗi tải GeoJSON:', err);
+                    return;
+                }
             }
+            
             currentGeoJSON = dataCache[yearData.file];
-            if (currentMapMode === '3d' && globe) renderBorders3D();
-            else if (currentMapMode === '2d' && leafletMap) renderBorders2D();
+            renderBorders(currentGeoJSON, yearData.year);
         }
         
-        function renderBorders3D() {
-            if (!globe || !currentGeoJSON) return;
-            const features = currentGeoJSON.features;
-            const entities = [...new Set(features.map(f => f.properties?.SUBJECTO || f.properties?.NAME || 'unknown'))];
-            const polygons = features.map((f, i) => ({ ...f, color: `hsl(${(entities.indexOf(f.properties?.SUBJECTO || f.properties?.NAME) * 45) % 360}, 60%, 65%)` }));
+        function renderBorders(geojson, year) {
+            if (!layers.borders) {
+                globe.polygonsData([]);
+                return;
+            }
+            
+            const entities = [];
+            for (let i = 0; i < geojson.features.length; i++) {
+                const name = geojson.features[i].properties.SUBJECTO 
+                          || geojson.features[i].properties.NAME 
+                          || geojson.features[i].properties.name 
+                          || ('region_' + i);
+                if (name && !entities.includes(name)) {
+                    entities.push(name);
+                }
+            }
+            
+            const polygons = [];
+            for (let i = 0; i < geojson.features.length; i++) {
+                const f = geojson.features[i];
+                const entityName = f.properties.SUBJECTO 
+                                || f.properties.NAME 
+                                || f.properties.name 
+                                || ('region_' + i);
+                let colorIndex = entities.indexOf(entityName) % colorPalette.length;
+                if (colorIndex < 0) {
+                    colorIndex = i % colorPalette.length;
+                }
+                polygons.push({
+                    ...f,
+                    color: colorPalette[colorIndex] + '99'
+                });
+            }
+            
             globe.polygonsData(polygons);
-            const labels = features.map(f => {
-                const coords = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates[0][0] : f.geometry.coordinates[0];
-                if(!coords) return null;
-                let sumLat=0, sumLng=0; coords.slice(0,10).forEach(c => { sumLat+=c[1]; sumLng+=c[0]; });
-                return { name: f.properties?.SUBJECTO || f.properties?.NAME, lat: sumLat/coords.length, lng: sumLng/coords.length };
-            }).filter(l => l && l.name);
+            
+            updateLabels(geojson);
+        }
+        
+        function updateLabels(geojson) {
+            const labels = [];
+            const seen = new Set();
+            
+            for (let i = 0; i < geojson.features.length; i++) {
+                const f = geojson.features[i];
+                const name = f.properties.SUBJECTO || f.properties.NAME;
+                if (!name || seen.has(name)) {
+                    continue;
+                }
+                
+                let coords = f.geometry.coordinates;
+                if (f.geometry.type === 'MultiPolygon') {
+                    coords = coords[0];
+                }
+                if (coords && coords[0]) {
+                    const ring = coords[0];
+                    if (ring.length > 0) {
+                        let sumLat = 0;
+                        let sumLng = 0;
+                        for (let j = 0; j < ring.length; j++) {
+                            sumLat += ring[j][1];
+                            sumLng += ring[j][0];
+                        }
+                        const lat = sumLat / ring.length;
+                        const lng = sumLng / ring.length;
+                        
+                        let maxLat = ring[0][1];
+                        let minLat = ring[0][1];
+                        let maxLng = ring[0][0];
+                        let minLng = ring[0][0];
+                        for (let j = 1; j < ring.length; j++) {
+                            if (ring[j][1] > maxLat) maxLat = ring[j][1];
+                            if (ring[j][1] < minLat) minLat = ring[j][1];
+                            if (ring[j][0] > maxLng) maxLng = ring[j][0];
+                            if (ring[j][0] < minLng) minLng = ring[j][0];
+                        }
+                        const area = (maxLat - minLat) * (maxLng - minLng);
+                        if (area > 50) {
+                            labels.push({ name: name, lat: lat, lng: lng });
+                            seen.add(name);
+                        }
+                    }
+                }
+            }
+            
             globe.labelsData(labels);
         }
         
-        function renderBorders2D() {
-            if (!leafletMap || !currentGeoJSON) return;
-            if (window.leafletLayer) leafletMap.removeLayer(window.leafletLayer);
-            window.leafletLayer = L.geoJSON(currentGeoJSON, {
-                style: { color: '#F4A261', weight: 1.5, fillOpacity: 0.2 },
-                onEachFeature: (f, layer) => {
-                    const name = f.properties?.SUBJECTO || f.properties?.NAME || 'Đất nước';
-                    layer.bindTooltip(name);
-                    layer.on('click', () => { 
-                        const coords = layer.getBounds().getCenter();
-                        handleTerritoryClick2D(name, coords.lat, coords.lng);
-                    });
-                }
-            }).addTo(leafletMap);
+        function handleTerritoryClick(polygon, event, coordinates) {
+            const name = polygon.properties?.SUBJECTO || polygon.properties?.NAME || 'Không xác định';
+            const lat = coordinates.lat;
+            const lng = coordinates.lng;
+            stopSpeechForNewAction();
+            queryLocalHistory(lat, lng, name);
         }
-        
-        function handleTerritoryClick2D(name, lat, lng) { queryLocalHistory(lat, lng, name); }
         
         async function queryLocalHistory(lat, lng, placeName) {
             const year = availableYears[currentYearIndex].year;
-            infoPanelTitle.textContent = placeName;
-            infoPanelContent.innerHTML = '<div style="text-align:center;padding:20px;">⏳ Đang tra cứu...</div>';
-            infoPanel.classList.add('visible');
+            const yearBucket = Math.round(year / 50) * 50;
+            const cacheKey = lat.toFixed(1) + ',' + lng.toFixed(1) + ',' + yearBucket;
+            
+            showInfoPanel(placeName, availableYears[currentYearIndex].label + ' • ' + translations[currentLanguage].searching, 
+                '<div style="text-align:center;padding:20px;"><div style="width:30px;height:30px;margin:0 auto;border:3px solid #f3f3f3;border-top:3px solid #F4A261;border-radius:50%;animation:spin 1s linear infinite;"></div></div>');
+            
+            if (localHistoryCache.has(cacheKey)) {
+                displayLocalHistory(localHistoryCache.get(cacheKey));
+                return;
+            }
+            
             try {
-                const prompt = `Provide history of ${placeName} around year ${year} in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. Keep under 200 words.`;
-                const resp = await model.generateContent(prompt);
-                const text = resp.response.text();
-                infoPanelContent.innerHTML = text.replace(/\n/g, '<br>');
-            } catch(e) { infoPanelContent.innerHTML = 'Lỗi tải dữ liệu'; }
-        }
-        
-        function initGlobe3D() {
-            globe = Globe()
-                .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-                .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-                .showAtmosphere(true)
-                .polygonsData([])
-                .polygonAltitude(0.01)
-                .polygonCapColor(d => d.color)
-                .polygonLabel(d => `<div class="territory-tooltip">${d.properties?.SUBJECTO || d.properties?.NAME}</div>`)
-                .onPolygonClick((poly, ev, coords) => { const name = poly.properties?.SUBJECTO || poly.properties?.NAME; if(name) queryLocalHistory(coords.lat, coords.lng, name); })
-                (document.getElementById('globeContainer'));
-            globe.pointOfView({ lat: 20, lng: 105, altitude: 2.5 });
-            if (currentGeoJSON) renderBorders3D();
-        }
-        
-        function initLeaflet2D() {
-            if (leafletMap) return;
-            leafletMap = L.map('leafletContainer').setView([20, 105], 3);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(leafletMap);
-            if (currentGeoJSON) renderBorders2D();
-        }
-        
-        function switchMapMode(mode) {
-            currentMapMode = mode;
-            const root = document.getElementById('mapContainerRoot');
-            if (mode === '3d') {
-                root.classList.remove('map-mode-2d');
-                modeBtnText.textContent = '3D';
-                if (!globe) initGlobe3D();
-                else if (currentGeoJSON) renderBorders3D();
-                if (leafletMap) leafletMap.invalidateSize();
-            } else {
-                root.classList.add('map-mode-2d');
-                modeBtnText.textContent = '2D';
-                initLeaflet2D();
-                if (globe && currentGeoJSON) renderBorders2D();
+                const result = await queryGemini(lat, lng, placeName, year);
+                const data = { placeName: placeName, result: result, year: year };
+                localHistoryCache.set(cacheKey, data);
+                displayLocalHistory(data);
+            } catch (err) {
+                infoPanelContent.innerHTML = '<div style="color:#ff6b6b;">Lỗi tải lịch sử: ' + err.message + '</div>';
             }
         }
         
-        async function handleSubmit(e) {
-            if(e) e.preventDefault();
-            const query = searchInput.value.trim();
-            if(!query) return;
-            showLoading(true);
-            try {
-                const prompt = `You are a historian. Provide detailed info about "${query}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'} as JSON. For battle: {name,time,location,summary,outcome,significance,yearValue}. For figure: {name,time,location,biography,achievements,yearValue}. For landmark: {name,location,build_time,purpose,yearValue}. Only JSON.`;
-                const result = await model.generateContent(prompt);
-                let text = result.response.text();
-                text = text.replace(/```json|```/g, '').trim();
-                let data = JSON.parse(text);
-                const container = document.createElement('div'); container.className = 'result-container';
-                container.innerHTML = `<div class="result-title">${data.name || query}<span class="close-btn" onclick="this.parentElement.parentElement.remove()">✖</span></div><div class="result-content"></div>`;
-                const contentDiv = container.querySelector('.result-content');
-                let html = '<div class="info-panel-content">';
-                if(data.time) html += `<p class="with-dot"><strong>${translations[currentLanguage].battle_time}:</strong> ${data.time}</p>`;
-                if(data.location) html += `<p class="with-dot"><strong>${translations[currentLanguage].battle_location}:</strong> ${data.location}</p>`;
-                if(data.summary) html += `<p class="with-dot"><strong>${translations[currentLanguage].battle_summary}:</strong> ${data.summary}</p>`;
-                if(data.outcome) html += `<p class="with-dot"><strong>${translations[currentLanguage].battle_outcome}:</strong> ${data.outcome}</p>`;
-                if(data.biography) html += `<p class="with-dot"><strong>${translations[currentLanguage].biography}:</strong> ${data.biography}</p>`;
-                if(data.achievements) html += `<ul class="yellow-dot-list"><li>${data.achievements.join('</li><li>')}</li></ul>`;
-                html += '</div>';
-                contentDiv.innerHTML = html;
-                resultMessages.prepend(container);
-                if(data.yearValue && !isNaN(data.yearValue)) {
-                    let targetYear = data.yearValue;
-                    const idx = availableYears.findIndex(y => y.year >= targetYear);
-                    if(idx !== -1) loadYear(idx);
-                }
-            } catch(err) { console.error(err); resultMessages.innerHTML = `<div class="result-container">${translations[currentLanguage].processing_error}</div>`; }
-            finally { showLoading(false); searchInput.value = ''; }
+        function displayLocalHistory(data) {
+            infoPanelSubtitle.textContent = availableYears[currentYearIndex].label;
+            
+            let html = data.result
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^\* /gm, '• ')
+                .replace(/^- /gm, '• ')
+                .replace(/\n/g, '<br>');
+            
+            infoPanelContent.innerHTML = html;
         }
         
-        // Event listeners
-        timelineSlider.addEventListener('input', e => { const idx = Math.round((e.target.value/100)*(availableYears.length-1)); loadYear(idx); });
-        sidebarToggleNew.addEventListener('click', () => { sidebar.classList.toggle('sidebar-collapsed'); const icon = sidebarToggleNew.querySelector('i'); icon.classList.toggle('fa-chevron-left'); icon.classList.toggle('fa-chevron-right'); sidebarToggleNew.classList.toggle('collapsed'); });
-        infoPanelClose.addEventListener('click', () => infoPanel.classList.remove('visible'));
-        countryInfoClose.addEventListener('click', () => countryInfoPanel.classList.remove('visible'));
-        compactLangToggle.addEventListener('click', toggleLang);
-        toggleMapModeBtn.addEventListener('click', () => switchMapMode(currentMapMode === '3d' ? '2d' : '3d'));
-        searchForm.addEventListener('submit', handleSubmit);
+        async function queryGemini(lat, lng, placeName, year) {
+            const yearLabel = year < 0 ? Math.abs(year) + ' BC' : year + ' AD';
+            const responseLanguage = currentLanguage === 'en' ? 'English' : 'Vietnamese';
+            
+            const prompt = `You are a history expert. Provide an overview of ${placeName} during the period ${yearLabel}.
+Respond in ${responseLanguage}.
+Include (if relevant):
+- Indigenous peoples or tribes
+- Settlements, colonies, or cities
+- Political control (empires, kingdoms, tribes)
+- Notable events or conflicts
+- Economic activities
+- Famous historical figures
+Keep the response under 250 words. Use bullet points.`;
+            
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.3, maxOutputTokens: 400 }
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            return text || 'No information available';
+        }
         
-        updateLanguage('vi');
-        loadYear(30);
-        setTimeout(() => { switchMapMode('3d'); }, 100);
-        window.copyToClipboard = (btn) => { const code = decodeURIComponent(btn.getAttribute('data-code')); navigator.clipboard.writeText(code); btn.innerHTML = '<i class="fas fa-check"></i>'; setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i>', 1000); };
+        function setupGlobeControls() {
+            const timelineSlider = document.getElementById('timelineSlider');
+            timelineSlider.addEventListener('input', function(e) {
+                const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
+                stopSpeechForNewAction();
+                loadYear(index);
+            });
+            
+            const prevBtn = document.getElementById('prevBtn');
+            prevBtn.addEventListener('click', function() {
+                stopSpeechForNewAction();
+                loadYear(Math.max(0, currentYearIndex - 1));
+            });
+            
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.addEventListener('click', function() {
+                stopSpeechForNewAction();
+                loadYear(Math.min(availableYears.length - 1, currentYearIndex + 1));
+            });
+            
+            const playBtn = document.getElementById('playBtn');
+            playBtn.addEventListener('click', function() {
+                stopSpeechForNewAction();
+                togglePlay();
+            });
+            
+            const layerBtns = document.querySelectorAll('.layer-btn');
+            for (let i = 0; i < layerBtns.length; i++) {
+                const btn = layerBtns[i];
+                btn.addEventListener('click', function() {
+                    const layer = btn.dataset.layer;
+                    layers[layer] = !layers[layer];
+                    btn.classList.toggle('active');
+                    
+                    if (layer === 'borders' && currentGeoJSON) {
+                        renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
+                    }
+                });
+            }
+        }
+        
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playBtn');
+            
+            if (isPlaying) {
+                btn.textContent = '⏸️';
+                btn.classList.add('active');
+                playInterval = setInterval(function() {
+                    let nextIndex = currentYearIndex + 1;
+                    if (nextIndex >= availableYears.length) {
+                        nextIndex = 0;
+                    }
+                    loadYear(nextIndex);
+                }, 2000);
+            } else {
+                btn.textContent = '▶️';
+                btn.classList.remove('active');
+                clearInterval(playInterval);
+                playInterval = null;
+            }
+        }
+        
+        function checkUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search');
+            if (searchQuery) {
+                const decodedQuery = decodeURIComponent(searchQuery);
+                searchInput.value = decodedQuery;
+                setTimeout(function() {
+                    handleSubmit(null);
+                }, 500);
+            }
+        }
+        
+        function getExactLocation(name) {
+            const normalizedName = name.toLowerCase();
+            const locationKeys = Object.keys(vietnamHistoricalLocations);
+            for (let i = 0; i < locationKeys.length; i++) {
+                const key = locationKeys[i];
+                const value = vietnamHistoricalLocations[key];
+                if (normalizedName.includes(key.toLowerCase()) ||
+                    (value.name_en && normalizedName.includes(value.name_en.toLowerCase()))) {
+                    return { lat: value.lat, lng: value.lng };
+                }
+            }
+            return null;
+        }
+        
+        async function saveMindmapAsImage(container, query) {
+            try {
+                const svg = container.querySelector('svg');
+                if (!svg) {
+                    console.error('Không tìm thấy SVG để lưu');
+                    showNotification(translations[currentLanguage].save_error, 'error');
+                    return;
+                }
+                
+                const svgClone = svg.cloneNode(true);
+                
+                const bbox = svg.getBBox();
+                const padding = 40;
+                const width = bbox.width + padding * 2;
+                const height = bbox.height + padding * 2;
+                
+                svgClone.setAttribute('width', width);
+                svgClone.setAttribute('height', height);
+                svgClone.setAttribute('viewBox', (bbox.x - padding) + ' ' + (bbox.y - padding) + ' ' + width + ' ' + height);
+                
+                const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+                style.textContent = `
+                    .markmap-node circle, .markmap-node rect, .markmap-node polygon {
+                        fill: #ffebee !important;
+                        stroke: #d32f2f !important;
+                        stroke-width: 2px !important;
+                    }
+                    .markmap-node text {
+                        fill: #b71c1c !important;
+                        font-family: 'Playfair Display', serif !important;
+                        font-size: 14px !important;
+                    }
+                    .markmap-node.root-node text {
+                        font-size: 18px !important;
+                        font-weight: 700 !important;
+                    }
+                    .markmap-link path {
+                        stroke: #d32f2f !important;
+                        stroke-width: 2px !important;
+                    }
+                    .markmap-arrow { fill: #d32f2f !important; }
+                `;
+                svgClone.insertBefore(style, svgClone.firstChild);
+                
+                const svgData = new XMLSerializer().serializeToString(svgClone);
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                img.onload = function() {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, width, height);
+                    
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const link = document.createElement('a');
+                    const title = query ? query.replace(/[^a-zA-Z0-9À-ỹ]/g, '_') : 'mindmap';
+                    const timestamp = new Date().getTime();
+                    link.download = title + '_mindmap_' + timestamp + '.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    showNotification(translations[currentLanguage].save_success, 'success');
+                };
+                
+                img.onerror = function(error) {
+                    console.error('Lỗi khi tạo ảnh:', error);
+                    showNotification(translations[currentLanguage].save_error, 'error');
+                };
+                
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                
+            } catch (error) {
+                console.error('Lỗi trong saveMindmapAsImage:', error);
+                showNotification(translations[currentLanguage].save_error, 'error');
+            }
+        }
+        
+        function enhanceMindmapWithSaveButton(mindmapDiv, query) {
+            const titleBar = mindmapDiv.querySelector('.mindmap-title');
+            if (!titleBar) {
+                return;
+            }
+            
+            let controlsDiv = mindmapDiv.querySelector('.mindmap-controls');
+            if (!controlsDiv) {
+                controlsDiv = document.createElement('div');
+                controlsDiv.className = 'mindmap-controls';
+                titleBar.appendChild(controlsDiv);
+            }
+            
+            const existingSaveBtn = controlsDiv.querySelector('.save-mindmap');
+            if (!existingSaveBtn) {
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'control-btn save-mindmap';
+                saveBtn.title = translations[currentLanguage].save_image;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i>';
+                
+                saveBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    saveMindmapAsImage(mindmapDiv, query);
+                });
+                
+                controlsDiv.appendChild(saveBtn);
+            }
+        }
+        
+        function getFieldTitle(key) {
+            const titles = {
+                'name': '📛 Tên',
+                'time': '⏰ Thời gian',
+                'location': '📍 Địa điểm',
+                'summary': '📝 Tóm tắt',
+                'troops': '⚔️ Quân số',
+                'tactics': '🎯 Chiến thuật',
+                'casualties': '💔 Thương vong',
+                'heroes': '🦸 Anh hùng',
+                'key_locations': '🏰 Địa điểm quan trọng',
+                'factions': '🚩 Các phe',
+                'commanders': '👑 Chỉ huy',
+                'timeline': '📅 Diễn biến',
+                'outcome': '🏆 Kết quả',
+                'significance': '✨ Ý nghĩa',
+                'achievements': '🌟 Thành tựu',
+                'build_time': '⏳ Thời gian xây dựng',
+                'purpose': '🎯 Mục đích',
+                'architecture': '🏛️ Kiến trúc',
+                'contents': '📦 Nội dung',
+                'builders': '👷 Người xây dựng',
+                'dynasty': '👑 Triều đại',
+                'biography': '📖 Tiểu sử',
+                'family': '👨‍👩‍👧‍👦 Gia đình',
+                'education': '🎓 Học vấn',
+                'career': '💼 Sự nghiệp',
+                'quotes': '💬 Câu nói nổi tiếng',
+                'legacy': '🏛️ Di sản để lại',
+                'battles': '⚔️ Các trận đánh',
+                'works': '📚 Tác phẩm'
+            };
+            return titles[key] || key.charAt(0).toUpperCase() + key.slice(1);
+        }
+        
+        function formatBattleWithYellowDots(data) {
+            let html = '';
+            
+            html += '<div class="info-section">';
+            html += '<h4 class="section-title"><i class="fas fa-info-circle"></i> ' + (currentLanguage === 'vi' ? 'Thông tin cơ bản' : 'Basic Information') + '</h4>';
+            html += '<p class="with-dot"><strong>' + (currentLanguage === 'vi' ? 'Thời gian' : 'Time') + ':</strong> ' + (data.time || translations[currentLanguage].unknown) + '</p>';
+            html += '<p class="with-dot"><strong>' + (currentLanguage === 'vi' ? 'Địa điểm' : 'Location') + ':</strong> ' + (data.location || translations[currentLanguage].unknown) + '</p>';
+            if (data.lat && data.lng) {
+                html += '<p class="with-dot"><strong>' + translations[currentLanguage].latitude + ':</strong> ' + data.lat + ', <strong>' + translations[currentLanguage].longitude + ':</strong> ' + data.lng + '</p>';
+            }
+            html += '</div>';
+            
+            if (data.troops || data.tactics) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-shield-alt"></i> ' + (currentLanguage === 'vi' ? 'Quân sự' : 'Military') + '</h4>';
+                if (data.troops) html += '<p class="with-dot"><strong>' + translations[currentLanguage].battle_troops + ':</strong> ' + data.troops + '</p>';
+                if (data.tactics) html += '<p class="with-dot"><strong>' + translations[currentLanguage].battle_tactics + ':</strong> ' + data.tactics + '</p>';
+                if (data.casualties) html += '<p class="with-dot"><strong>' + translations[currentLanguage].battle_casualties + ':</strong> ' + data.casualties + '</p>';
+                html += '</div>';
+            }
+            
+            if (data.factions || data.commanders) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-users"></i> ' + translations[currentLanguage].battle_factions + '</h4>';
+                
+                if (data.factions && Array.isArray(data.factions)) {
+                    html += '<ul class="yellow-dot-list">';
+                    for (let i = 0; i < data.factions.length; i++) {
+                        const faction = data.factions[i];
+                        html += '<li><strong>' + faction + '</strong>';
+                        if (data.commanders && data.commanders[faction]) {
+                            html += ' - ' + translations[currentLanguage].battle_commanders + ': ' + data.commanders[faction];
+                        }
+                        html += '</li>';
+                    }
+                    html += '</ul>';
+                } else if (data.commanders) {
+                    html += '<div class="commanders-grid">';
+                    const commanderKeys = Object.keys(data.commanders);
+                    for (let i = 0; i < commanderKeys.length; i++) {
+                        const faction = commanderKeys[i];
+                        const commander = data.commanders[faction];
+                        html += '<div class="commander-card">';
+                        html += '<strong>' + faction + '</strong>';
+                        html += '<span>' + commander + '</span>';
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                }
+                html += '</div>';
+            }
+            
+            if (data.heroes && data.heroes.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-star"></i> ' + translations[currentLanguage].battle_heroes + '</h4>';
+                html += '<ul class="yellow-dot-list">';
+                for (let i = 0; i < data.heroes.length; i++) {
+                    html += '<li>' + data.heroes[i] + '</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.key_locations && data.key_locations.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-map-pin"></i> ' + translations[currentLanguage].key_locations + '</h4>';
+                html += '<ul class="yellow-dot-list">';
+                for (let i = 0; i < data.key_locations.length; i++) {
+                    html += '<li>' + data.key_locations[i] + '</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.timeline && data.timeline.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-history"></i> ' + translations[currentLanguage].battle_timeline + '</h4>';
+                html += '<ul class="timeline-with-dots">';
+                for (let i = 0; i < data.timeline.length; i++) {
+                    html += '<li><strong>' + translations[currentLanguage].event + ' ' + (i + 1) + ':</strong> ' + data.timeline[i] + '</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.outcome || data.significance) {
+                html += '<div class="info-section">';
+                if (data.outcome) {
+                    html += '<h4 class="section-title"><i class="fas fa-trophy"></i> ' + translations[currentLanguage].battle_outcome + '</h4>';
+                    html += '<p class="with-dot">' + data.outcome + '</p>';
+                }
+                if (data.significance) {
+                    html += '<h4 class="section-title"><i class="fas fa-lightbulb"></i> ' + translations[currentLanguage].battle_significance + '</h4>';
+                    html += '<p class="with-dot">' + data.significance + '</p>';
+                }
+                html += '</div>';
+            }
+            
+            return html;
+        }
+        
+        function formatFigureWithYellowDots(data) {
+            let html = '';
+            
+            html += '<div class="info-section">';
+            html += '<h4 class="section-title"><i class="fas fa-info-circle"></i> ' + translations[currentLanguage].battle_name + '</h4>';
+            html += '<p class="with-dot"><strong>' + (currentLanguage === 'vi' ? 'Thời gian sống' : 'Lifespan') + ':</strong> ' + (data.time || translations[currentLanguage].unknown) + '</p>';
+            html += '<p class="with-dot"><strong>' + translations[currentLanguage].birth_place + ':</strong> ' + (data.location || translations[currentLanguage].unknown) + '</p>';
+            if (data.lat && data.lng) {
+                html += '<p class="with-dot"><strong>' + translations[currentLanguage].latitude + ':</strong> ' + data.lat + ', <strong>' + translations[currentLanguage].longitude + ':</strong> ' + data.lng + '</p>';
+            }
+            html += '</div>';
+            
+            if (data.biography) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-book-open"></i> ' + translations[currentLanguage].biography + '</h4>';
+                html += '<p class="with-dot">' + data.biography + '</p>';
+                html += '</div>';
+            } else if (data.summary) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-align-left"></i> ' + translations[currentLanguage].battle_summary + '</h4>';
+                html += '<p class="with-dot">' + data.summary + '</p>';
+                html += '</div>';
+            }
+            
+            if (data.family) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-users"></i> ' + translations[currentLanguage].family + '</h4>';
+                if (Array.isArray(data.family)) {
+                    html += '<ul class="yellow-dot-list">';
+                    for (let i = 0; i < data.family.length; i++) {
+                        html += '<li>' + data.family[i] + '</li>';
+                    }
+                    html += '</ul>';
+                } else {
+                    html += '<p class="with-dot">' + data.family + '</p>';
+                }
+                html += '</div>';
+            }
+            
+            if (data.education) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-graduation-cap"></i> ' + translations[currentLanguage].education + '</h4>';
+                if (Array.isArray(data.education)) {
+                    html += '<ul class="yellow-dot-list">';
+                    for (let i = 0; i < data.education.length; i++) {
+                        html += '<li>' + data.education[i] + '</li>';
+                    }
+                    html += '</ul>';
+                } else {
+                    html += '<p class="with-dot">' + data.education + '</p>';
+                }
+                html += '</div>';
+            }
+            
+            if (data.career) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-briefcase"></i> ' + translations[currentLanguage].career + '</h4>';
+                if (Array.isArray(data.career)) {
+                    html += '<ul class="yellow-dot-list">';
+                    for (let i = 0; i < data.career.length; i++) {
+                        html += '<li>' + data.career[i] + '</li>';
+                    }
+                    html += '</ul>';
+                } else {
+                    html += '<p class="with-dot">' + data.career + '</p>';
+                }
+                html += '</div>';
+            }
+            
+            if (data.achievements && data.achievements.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-trophy"></i> ' + translations[currentLanguage].battle_achievements + '</h4>';
+                html += '<ul class="yellow-dot-list">';
+                for (let i = 0; i < data.achievements.length; i++) {
+                    html += '<li>' + data.achievements[i] + '</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.battles && data.battles.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-fist-raised"></i> ' + translations[currentLanguage].battles + '</h4>';
+                html += '<ul class="yellow-dot-list">';
+                for (let i = 0; i < data.battles.length; i++) {
+                    html += '<li>' + data.battles[i] + '</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.works && data.works.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-pen-fancy"></i> ' + translations[currentLanguage].works + '</h4>';
+                html += '<ul class="yellow-dot-list">';
+                for (let i = 0; i < data.works.length; i++) {
+                    html += '<li>' + data.works[i] + '</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.quotes && data.quotes.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-quote-left"></i> ' + translations[currentLanguage].quotes + '</h4>';
+                html += '<ul class="yellow-dot-list">';
+                for (let i = 0; i < data.quotes.length; i++) {
+                    html += '<li>"' + data.quotes[i] + '"</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.legacy) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-landmark"></i> ' + translations[currentLanguage].legacy + '</h4>';
+                html += '<p class="with-dot">' + data.legacy + '</p>';
+                html += '</div>';
+            } else if (data.significance) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-lightbulb"></i> ' + translations[currentLanguage].battle_significance + '</h4>';
+                html += '<p class="with-dot">' + data.significance + '</p>';
+                html += '</div>';
+            }
+            
+            return html;
+        }
+        
+        function formatLandmarkWithYellowDots(data) {
+            let html = '';
+            
+            html += '<div class="info-section">';
+            html += '<h4 class="section-title"><i class="fas fa-info-circle"></i> ' + (currentLanguage === 'vi' ? 'Thông tin cơ bản' : 'Basic Information') + '</h4>';
+            html += '<p class="with-dot"><strong>' + translations[currentLanguage].landmark_name + ':</strong> ' + (data.name || translations[currentLanguage].unknown) + '</p>';
+            html += '<p class="with-dot"><strong>' + translations[currentLanguage].battle_location + ':</strong> ' + (data.location || translations[currentLanguage].unknown) + '</p>';
+            if (data.lat && data.lng) {
+                html += '<p class="with-dot"><strong>' + translations[currentLanguage].latitude + ':</strong> ' + data.lat + ', <strong>' + translations[currentLanguage].longitude + ':</strong> ' + data.lng + '</p>';
+            }
+            html += '</div>';
+            
+            if (data.build_time) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-clock"></i> ' + translations[currentLanguage].landmark_build_time + '</h4>';
+                html += '<p class="with-dot">' + data.build_time + '</p>';
+                html += '</div>';
+            }
+            
+            if (data.purpose) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-bullseye"></i> ' + translations[currentLanguage].landmark_purpose + '</h4>';
+                html += '<p class="with-dot">' + data.purpose + '</p>';
+                html += '</div>';
+            }
+            
+            if (data.architecture) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-building"></i> ' + translations[currentLanguage].landmark_architecture + '</h4>';
+                html += '<p class="with-dot">' + data.architecture + '</p>';
+                html += '</div>';
+            }
+            
+            if (data.contents && data.contents.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-box-open"></i> ' + translations[currentLanguage].landmark_contents + '</h4>';
+                html += '<ul class="yellow-dot-list">';
+                for (let i = 0; i < data.contents.length; i++) {
+                    html += '<li>' + data.contents[i] + '</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.builders && data.builders.length > 0) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-users"></i> ' + translations[currentLanguage].landmark_builders + '</h4>';
+                html += '<ul class="yellow-dot-list">';
+                for (let i = 0; i < data.builders.length; i++) {
+                    html += '<li>' + data.builders[i] + '</li>';
+                }
+                html += '</ul>';
+                html += '</div>';
+            }
+            
+            if (data.dynasty) {
+                html += '<div class="info-section">';
+                html += '<h4 class="section-title"><i class="fas fa-crown"></i> ' + translations[currentLanguage].landmark_dynasty + '</h4>';
+                html += '<p class="with-dot">' + data.dynasty + '</p>';
+                html += '</div>';
+            }
+            
+            return html;
+        }
+        
+        function setupEventListeners() {
+            searchForm.addEventListener('submit', function(e) {
+                stopSpeechForNewAction();
+                handleSubmit(e);
+            });
+            
+            sidebarToggleNew.addEventListener('click', toggleSidebarNew);
+            
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (searchInput.value.trim() !== '') {
+                        stopSpeechForNewAction();
+                        searchForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+        }
+        
+        function clearPreviousData() {
+            resultMessages.innerHTML = '';
+            stopSpeechForNewAction();
+        }
+        
+        async function handleSubmit(e) {
+            if (e) {
+                e.preventDefault();
+            }
+            stopSpeechForNewAction();
+            const userQuery = searchInput.value.trim();
+            if (!userQuery) {
+                return;
+            }
+            clearPreviousData();
+            searchInput.value = "";
+            showLoadingScreen();
+            
+            try {
+                let prompt = "";
+                let responseType = "general";
+                
+                if (isCountryQuery(userQuery) && !isBattleQuery(userQuery) && !isFigureQuery(userQuery) && !isLandmarkQuery(userQuery)) {
+                    const countryName = extractCountryName(userQuery);
+                    if (countryName) {
+                        toggleCountry(countryName);
+                        hideLoadingScreen();
+                        return;
+                    }
+                } else if (isFigureQuery(userQuery)) {
+                    responseType = "figure";
+                    prompt = `
+RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide comprehensive information about the historical figure "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}.
+
+IMPORTANT: All text fields MUST be in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}.
+
+JSON structure:
+{
+    "name": "Full name of the figure",
+    "time": "Lifespan (year of birth - year of death) - MUST HAVE SPECIFIC YEAR (eg: 1010-1080)",
+    "location": "Specific birthplace or main location associated",
+    "lat": latitude number,
+    "lng": longitude number,
+    "biography": "Detailed biography covering their life story, key events, and historical context",
+    "family": ["List of family members (parents, spouse, children) with brief descriptions"],
+    "education": ["List of educational background, teachers, training"],
+    "career": ["List of major career milestones, positions held, roles"],
+    "achievements": ["List of notable achievements and contributions"],
+    "battles": ["List of important battles or military campaigns participated"],
+    "works": ["List of important literary works, policies, or creations"],
+    "quotes": ["List of famous quotes or sayings"],
+    "legacy": "Description of their lasting legacy and influence",
+    "yearValue": SPECIFIC YEAR (from birth or death year, eg: 1010),
+    "isBC": true/false
+}
+`;
+                } else if (isBattleQuery(userQuery)) {
+                    responseType = "battle";
+                    prompt = `
+RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide detailed information about the historical battle "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
+{
+    "name": "Battle name",
+    "time": "Time of battle - MUST HAVE SPECIFIC YEAR (eg: 1288, 1954)",
+    "location": "Specific location",
+    "lat": 10.38,
+    "lng": 106.35,
+    "summary": "Battle summary",
+    "troops": "Troop numbers",
+    "tactics": "Tactics",
+    "casualties": "Casualties",
+    "heroes": ["List of heroes"],
+    "key_locations": ["Important locations"],
+    "factions": ["List of factions"],
+    "commanders": {"Faction A": "Commander name"},
+    "timeline": ["Event 1"],
+    "outcome": "Result",
+    "significance": "Historical significance",
+    "yearValue": SPECIFIC YEAR (from battle time, eg: 1288),
+    "isBC": true/false
+}
+                    `;
+                } else if (isLandmarkQuery(userQuery)) {
+                    responseType = "landmark";
+                    prompt = `
+RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical landmark "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
+{
+    "name": "Landmark name",
+    "location": "Specific location",
+    "lat": 16.4697,
+    "lng": 107.5777,
+    "build_time": "Construction time - MUST HAVE SPECIFIC YEAR (eg: 1804, 1049)",
+    "purpose": "Purpose of construction",
+    "architecture": "Architectural style",
+    "contents": ["List of notable structures"],
+    "builders": ["List of builders"],
+    "dynasty": "Dynasty",
+    "yearValue": SPECIFIC YEAR (from construction time, eg: 1049),
+    "isBC": true/false
+}
+                    `;
+                } else {
+                    throw new Error(translations[currentLanguage].non_history_error);
+                }
+                
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                let botReply = response.text();
+                console.log("Phản hồi từ Gemini:", botReply);
+                
+                if (responseType === "landmark" || responseType === "figure" || responseType === "battle") {
+                    try {
+                        let jsonStr = botReply;
+                        if (jsonStr.includes('```json')) {
+                            jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
+                        } else if (jsonStr.includes('```')) {
+                            jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+                        }
+                        
+                        let parsedData;
+                        try {
+                            parsedData = JSON.parse(jsonStr);
+                        } catch (e) {
+                            jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
+                            jsonStr = jsonStr.replace(/'/g, '"');
+                            jsonStr = jsonStr.replace(/,\s*}/g, '}');
+                            jsonStr = jsonStr.replace(/,\s*]/g, ']');
+                            parsedData = JSON.parse(jsonStr);
+                        }
+                        
+                        const resultContainer = createResultContainer(parsedData.name || userQuery);
+                        
+                        const imageUrl = await getWikipediaImage(parsedData.name || userQuery);
+                        if (imageUrl) {
+                            const imageContainer = createImageContainer(parsedData.name || userQuery, imageUrl);
+                            resultContainer.querySelector('.result-content').appendChild(imageContainer);
+                        }
+                        
+                        const infoDiv = document.createElement('div');
+                        infoDiv.className = 'info-panel-content';
+                        
+                        if (responseType === "battle") {
+                            infoDiv.innerHTML = formatBattleWithYellowDots(parsedData);
+                        } else if (responseType === "figure") {
+                            infoDiv.innerHTML = formatFigureWithYellowDots(parsedData);
+                        } else {
+                            infoDiv.innerHTML = formatLandmarkWithYellowDots(parsedData);
+                        }
+                        
+                        resultContainer.querySelector('.result-content').appendChild(infoDiv);
+                        resultMessages.appendChild(resultContainer);
+                        
+                        if (parsedData.yearValue && !isNaN(parsedData.yearValue)) {
+                            let targetYear = parsedData.yearValue;
+                            if (parsedData.isBC === true) {
+                                targetYear = -Math.abs(targetYear);
+                            }
+                            const targetIndex = findYearIndexByTargetYear(targetYear);
+                            if (targetIndex !== -1 && targetIndex !== currentYearIndex) {
+                                console.log(`Tìm thấy năm ${targetYear} (${parsedData.isBC ? 'TCN' : 'CN'}), chuyển đến năm ${availableYears[targetIndex].label}`);
+                                setTimeout(function() {
+                                    loadYear(targetIndex);
+                                }, 500);
+                            }
+                        }
+                        
+                        if (parsedData.lat && parsedData.lng) {
+                            globe.pointOfView({ lat: parsedData.lat, lng: parsedData.lng, altitude: 1.2 });
+                        } else if (parsedData.location) {
+                            const location = await getLocationCoordinates(parsedData.location);
+                            if (location && location.lat && location.lng) {
+                                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.2 });
+                            }
+                        }
+                        
+                        const mindmapDiv = createMindmapContainerSieuNgau(parsedData.name || userQuery, 
+                            responseType === "battle" ? translations[currentLanguage].mindmap_title : 
+                            (responseType === "figure" ? translations[currentLanguage].figure_mindmap_title : translations[currentLanguage].landmark_mindmap_title));
+                        resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
+                        
+                        let markdownContent = "";
+                        if (responseType === "battle") {
+                            markdownContent = generateBattleMarkdown(parsedData);
+                        } else if (responseType === "figure") {
+                            markdownContent = generateFigureMarkdown(parsedData);
+                        } else {
+                            markdownContent = generateLandmarkMarkdown(parsedData);
+                        }
+                        
+                        await renderMarkmap(mindmapDiv, markdownContent, userQuery);
+                        enhanceMindmapWithSaveButton(mindmapDiv, userQuery);
+                        
+                        const narrationText = generateNarrationText(parsedData);
+                        const audioControls = createAudioControls(narrationText, parsedData.name || userQuery);
+                        resultContainer.querySelector('.result-content').appendChild(audioControls);
+                        
+                    } catch (e) {
+                        console.error("Lỗi phân tích JSON:", e);
+                        addMessageToUI("assistant", botReply);
+                    }
+                } else {
+                    addMessageToUI("assistant", botReply);
+                }
+            } catch (error) {
+                console.error("Lỗi trong handleSubmit:", error);
+                addMessageToUI("assistant", translations[currentLanguage].processing_error);
+            } finally {
+                hideLoadingScreen();
+                scrollToTop();
+            }
+        }
+        
+        function toggleCountry(countryName) {
+            const location = getExactLocation(countryName);
+            if (location) {
+                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.2 });
+            } else {
+                globe.pointOfView({ lat: 20, lng: 105, altitude: 2.5 });
+            }
+            
+            const translatedName = translateCountryName(countryName);
+            const displayName = currentLanguage === 'en' ? translatedName : countryName;
+            
+            let historyText = "";
+            if (historyData[translatedName] && historyData[translatedName].history) {
+                historyText = historyData[translatedName].history[currentLanguage];
+            } else {
+                historyText = translations[currentLanguage].no_summary;
+            }
+            
+            showCountryInfoPanel(
+                displayName,
+                currentLanguage === 'vi' ? 'Thông tin lịch sử' : 'Historical Information',
+                '<p class="mb-4">' + historyText + '</p>' +
+                '<div class="flex items-center text-sm text-secondary">' +
+                '<i class="fas fa-info-circle mr-2"></i>' +
+                '<span>' + translations[currentLanguage].country_info_close + '</span>' +
+                '</div>'
+            );
+        }
+        
+        function translateCountryName(name) {
+            if (countryNameMap[name]) {
+                return currentLanguage === 'en' ? countryNameMap[name] : name;
+            }
+            const lowerName = name.toLowerCase();
+            const viNames = Object.keys(countryNameMap);
+            for (let i = 0; i < viNames.length; i++) {
+                const viName = viNames[i];
+                if (viName.toLowerCase() === lowerName) {
+                    return currentLanguage === 'en' ? countryNameMap[viName] : viName;
+                }
+            }
+            return name;
+        }
+        
+        function transliterateVietnamese(text) {
+            const map = {
+                'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+                'è': 'e', 'é': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+                'ì': 'i', 'í': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+                'ò': 'o', 'ó': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+                'ù': 'u', 'ú': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+                'ỳ': 'y', 'ý': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+                'đ': 'd', 'â': 'a', 'ê': 'e', 'ô': 'o', 'ơ': 'o', 'ư': 'u'
+            };
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (map[char]) {
+                    result += map[char];
+                } else {
+                    result += char;
+                }
+            }
+            return result.replace(/\s+/g, ' ').trim();
+        }
+        
+        async function getLocationCoordinates(locationName) {
+            try {
+                if (!locationName) {
+                    return null;
+                }
+                
+                const normalizedLocation = locationName.trim().toLowerCase();
+                const transliteratedLocation = transliterateVietnamese(normalizedLocation);
+                
+                if (normalizedLocation.includes('điện biên phủ') ||
+                    normalizedLocation.includes('dien bien phu') ||
+                    transliteratedLocation.includes('dien bien phu')) {
+                    const value = vietnamHistoricalLocations["Điện Biên Phủ"];
+                    return {
+                        lat: value.lat,
+                        lng: value.lng,
+                        name: currentLanguage === 'vi' ? (value.name_vi || value.name) : (value.name_en || value.name),
+                        description: currentLanguage === 'vi' ? (value.description_vi || value.description) : (value.description_en || value.description)
+                    };
+                }
+                
+                const locationKeys = Object.keys(vietnamHistoricalLocations);
+                for (let i = 0; i < locationKeys.length; i++) {
+                    const key = locationKeys[i];
+                    const value = vietnamHistoricalLocations[key];
+                    const keyNormalized = key.toLowerCase();
+                    const nameEnNormalized = value.name_en ? value.name_en.toLowerCase() : '';
+                    const nameViNormalized = value.name_vi ? value.name_vi.toLowerCase() : value.name.toLowerCase();
+                    
+                    if (normalizedLocation.includes(keyNormalized) ||
+                        (nameEnNormalized && normalizedLocation.includes(nameEnNormalized)) ||
+                        (nameViNormalized && normalizedLocation.includes(nameViNormalized)) ||
+                        (nameEnNormalized && transliteratedLocation.includes(nameEnNormalized))) {
+                        return {
+                            lat: value.lat,
+                            lng: value.lng,
+                            name: currentLanguage === 'vi' ? (value.name_vi || value.name) : (value.name_en || value.name),
+                            description: currentLanguage === 'vi' ? (value.description_vi || value.description) : (value.description_en || value.description)
+                        };
+                    }
+                }
+                
+                let query = encodeURIComponent(locationName);
+                let data;
+                try {
+                    const response = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + query + '&limit=1&accept-language=' + currentLanguage, {
+                        signal: AbortSignal.timeout(5000)
+                    });
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status);
+                    }
+                    data = await response.json();
+                } catch (error) {
+                    console.error('Lỗi gọi Nominatim cho "' + locationName + '":', error);
+                }
+                
+                if (data && data.length > 0) {
+                    const result = data[0];
+                    return {
+                        lat: parseFloat(result.lat),
+                        lng: parseFloat(result.lon),
+                        name: result.display_name.split(',')[0],
+                        description: null
+                    };
+                }
+                
+                console.warn('Không tìm thấy tọa độ cho địa điểm: "' + locationName + '"');
+                return null;
+            } catch (error) {
+                console.error('Lỗi khi lấy tọa độ cho "' + locationName + '":', error);
+                return null;
+            }
+        }
+        
+        function generateNarrationText(data) {
+            const isBattle = data.factions !== undefined;
+            const isLandmark = data.purpose !== undefined && data.architecture !== undefined;
+            const isFigure = (data.achievements !== undefined || data.biography !== undefined) && !isBattle;
+            
+            if (isBattle) {
+                let narration = (currentLanguage === 'vi' ? 'Trận ' : 'The battle of ') + (data.name || (currentLanguage === 'vi' ? 'lịch sử' : 'history')) + ' ';
+                narration += (currentLanguage === 'vi' ? 'diễn ra vào ' : 'took place in ') + (data.time || (currentLanguage === 'vi' ? 'thời gian không xác định' : 'unknown time')) + '. ';
+                if (data.location) {
+                    narration += (currentLanguage === 'vi' ? 'Trận chiến diễn ra tại ' : 'The battle took place at ') + data.location + '. ';
+                }
+                if (data.troops) {
+                    narration += (currentLanguage === 'vi' ? 'Quân số tham chiến: ' : 'Troop numbers: ') + data.troops + '. ';
+                }
+                if (data.tactics) {
+                    narration += (currentLanguage === 'vi' ? 'Chiến thuật được sử dụng: ' : 'Tactics used: ') + data.tactics + '. ';
+                }
+                if (data.casualties) {
+                    narration += (currentLanguage === 'vi' ? 'Thương vong: ' : 'Casualties: ') + data.casualties + '. ';
+                }
+                if (data.heroes && data.heroes.length > 0) {
+                    narration += (currentLanguage === 'vi' ? 'Anh hùng tiêu biểu: ' : 'Notable heroes: ') + data.heroes.join(', ') + '. ';
+                }
+                if (data.key_locations && data.key_locations.length > 0) {
+                    narration += (currentLanguage === 'vi' ? 'Các địa điểm quan trọng: ' : 'Key locations: ') + data.key_locations.join(', ') + '. ';
+                }
+                if (data.factions && data.factions.length > 0) {
+                    narration += (currentLanguage === 'vi' ? 'Các phe tham gia gồm: ' : 'Participating factions: ') + data.factions.join(' và ') + '. ';
+                }
+                if (data.timeline && data.timeline.length > 0) {
+                    narration += (currentLanguage === 'vi' ? 'Diễn biến chính của trận chiến: ' : 'Main events of the battle: ');
+                    for (let i = 0; i < data.timeline.length; i++) {
+                        narration += (currentLanguage === 'vi' ? 'Sự kiện ' : 'Event ') + (i + 1) + ': ' + data.timeline[i] + '. ';
+                    }
+                }
+                if (data.outcome) {
+                    narration += (currentLanguage === 'vi' ? 'Kết quả: ' : 'Outcome: ') + data.outcome + '. ';
+                }
+                if (data.significance) {
+                    narration += (currentLanguage === 'vi' ? 'Ý nghĩa lịch sử: ' : 'Historical significance: ') + data.significance + '. ';
+                }
+                return narration;
+            } else if (isLandmark) {
+                let narration = (currentLanguage === 'vi' ? 'Địa danh ' : 'The landmark ') + (data.name || (currentLanguage === 'vi' ? 'lịch sử' : 'historical')) + ' ';
+                narration += (currentLanguage === 'vi' ? 'tại ' : 'at ') + (data.location || (currentLanguage === 'vi' ? 'địa điểm không xác định' : 'unknown location')) + '. ';
+                if (data.build_time) {
+                    narration += (currentLanguage === 'vi' ? 'Được xây dựng vào: ' : 'Built in: ') + data.build_time + '. ';
+                }
+                if (data.purpose) {
+                    narration += (currentLanguage === 'vi' ? 'Mục đích xây dựng: ' : 'Purpose of construction: ') + data.purpose + '. ';
+                }
+                if (data.architecture) {
+                    narration += (currentLanguage === 'vi' ? 'Đặc điểm kiến trúc: ' : 'Architectural features: ') + data.architecture + '. ';
+                }
+                if (data.contents && data.contents.length > 0) {
+                    narration += (currentLanguage === 'vi' ? 'Các công trình nổi bật bên trong gồm: ' : 'Notable contents inside: ') + data.contents.join(', ') + '. ';
+                }
+                if (data.builders && data.builders.length > 0) {
+                    narration += (currentLanguage === 'vi' ? 'Những người xây dựng: ' : 'Builders: ') + data.builders.join(', ') + '. ';
+                }
+                if (data.dynasty) {
+                    narration += (currentLanguage === 'vi' ? 'Thuộc triều đại: ' : 'Dynasty: ') + data.dynasty + '. ';
+                }
+                return narration;
+            } else if (isFigure) {
+                let narration = (currentLanguage === 'vi' ? 'Nhân vật lịch sử ' : 'Historical figure ') + (data.name || (currentLanguage === 'vi' ? 'không xác định' : 'unknown')) + ' ';
+                narration += (currentLanguage === 'vi' ? 'sống vào ' : 'lived in ') + (data.time || (currentLanguage === 'vi' ? 'thời gian không xác định' : 'unknown time')) + '. ';
+                if (data.location) {
+                    narration += (currentLanguage === 'vi' ? 'Nơi sinh hoặc hoạt động chính: ' : 'Place of birth or main activity: ') + data.location + '. ';
+                }
+                if (data.biography) {
+                    narration += (currentLanguage === 'vi' ? 'Tiểu sử: ' : 'Biography: ') + data.biography + '. ';
+                } else if (data.summary) {
+                    narration += (currentLanguage === 'vi' ? 'Tóm tắt tiểu sử: ' : 'Biography summary: ') + data.summary + '. ';
+                }
+                if (data.achievements && data.achievements.length > 0) {
+                    narration += (currentLanguage === 'vi' ? 'Các thành tựu nổi bật: ' : 'Notable achievements: ') + data.achievements.join('; ') + '. ';
+                }
+                if (data.legacy) {
+                    narration += (currentLanguage === 'vi' ? 'Di sản để lại: ' : 'Legacy: ') + data.legacy + '. ';
+                } else if (data.significance) {
+                    narration += (currentLanguage === 'vi' ? 'Ý nghĩa lịch sử: ' : 'Historical significance: ') + data.significance + '. ';
+                }
+                return narration;
+            }
+            return "";
+        }
+        
+        function createAudioControls(text, title) {
+            const audioControls = document.createElement('div');
+            audioControls.className = 'audio-controls';
+            audioControls.innerHTML = `
+                <div class="audio-controls-title">
+                    <i class="fas fa-volume-up mr-2"></i>
+                    ${translations[currentLanguage].audio_controls}
+                </div>
+                <div class="audio-controls-buttons">
+                    <button id="play-audio" class="bg-button text-white p-2 rounded-full hover:bg-button/80">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="pause-audio" class="bg-button text-white p-2 rounded-full hover:bg-button/80" disabled>
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button id="stop-audio" class="bg-button text-white p-2 rounded-full hover:bg-button/80">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                    <div class="audio-progress">
+                        <div class="audio-progress-bar"></div>
+                    </div>
+                </div>
+            `;
+            
+            const playBtn = audioControls.querySelector('#play-audio');
+            const pauseBtn = audioControls.querySelector('#pause-audio');
+            const stopBtn = audioControls.querySelector('#stop-audio');
+            const progressBar = audioControls.querySelector('.audio-progress-bar');
+            
+            playBtn.addEventListener('click', function() {
+                stopSpeech();
+                currentSpeechText = text;
+                speechSynthesisUtterance = new SpeechSynthesisUtterance(text);
+                speechSynthesisUtterance.lang = currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
+                speechSynthesisUtterance.rate = 0.9;
+                
+                playBtn.disabled = true;
+                pauseBtn.disabled = false;
+                stopBtn.disabled = false;
+                
+                let startTime = Date.now();
+                const totalDuration = text.length / 10;
+                speechProgressInterval = setInterval(function() {
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    const progress = Math.min(elapsed / totalDuration, 1) * 100;
+                    progressBar.style.width = progress + '%';
+                    if (progress >= 100) {
+                        stopSpeech();
+                    }
+                }, 100);
+                
+                speechSynthesisUtterance.onend = function() {
+                    stopSpeech();
+                };
+                
+                window.speechSynthesis.speak(speechSynthesisUtterance);
+                isSpeaking = true;
+            });
+            
+            pauseBtn.addEventListener('click', function() {
+                if (isSpeaking) {
+                    window.speechSynthesis.pause();
+                    isSpeaking = false;
+                    playBtn.disabled = false;
+                    pauseBtn.disabled = true;
+                    if (speechProgressInterval) {
+                        clearInterval(speechProgressInterval);
+                        speechProgressInterval = null;
+                    }
+                }
+            });
+            
+            stopBtn.addEventListener('click', stopSpeech);
+            
+            return audioControls;
+        }
+        
+        function createResultContainer(title) {
+            const container = document.createElement('div');
+            container.className = 'result-container';
+            container.innerHTML = `
+                <div class="result-title">
+                    <span>${title}</span>
+                    <span class="close-btn" onclick="this.parentElement.parentElement.remove();">
+                        <i class="fas fa-times"></i>
+                    </span>
+                </div>
+                <div class="result-content mt-4"></div>
+            `;
+            return container;
+        }
+        
+        function createImageContainer(title, imageUrl) {
+            const container = document.createElement('div');
+            container.className = 'image-container';
+            container.innerHTML = `
+                <div class="image-title relative">
+                    ${translations[currentLanguage].picture}: ${title}
+                </div>
+                <img src="${imageUrl}" alt="${title}" class="image-content" style="object-fit: cover; object-position: top center;" />
+            `;
+            
+            const imgElement = container.querySelector('.image-content');
+            imgElement.addEventListener('click', function(e) {
+                e.stopPropagation();
+                container.classList.toggle('expanded');
+                if (container.classList.contains('expanded')) {
+                    toggleCloseButtons(true);
+                    toggleUIElements(true);
+                } else {
+                    toggleCloseButtons(false);
+                    toggleUIElements(false);
+                }
+            });
+            
+            container.addEventListener('click', function(e) {
+                if (container.classList.contains('expanded') && e.target === container) {
+                    container.classList.remove('expanded');
+                    toggleCloseButtons(false);
+                    toggleUIElements(false);
+                }
+            });
+            
+            return container;
+        }
+        
+        function createMindmapContainerSieuNgau(title, mindmapTitle) {
+            const mindmapDiv = document.createElement('div');
+            mindmapDiv.className = 'mindmap-sieu-ngau';
+            
+            mindmapDiv.innerHTML = `
+                <div class="mindmap-title">
+                    <span>${mindmapTitle}: ${title}</span>
+                    <div class="mindmap-controls mindmap-controls-hidden">
+                        <button class="control-btn zoom-in" title="${translations[currentLanguage].zoom_in}">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="control-btn zoom-out" title="${translations[currentLanguage].zoom_out}">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mindmap-content">
+                    <div class="loading-mindmap">${translations[currentLanguage].ai_assistant}</div>
+                </div>
+            `;
+            
+            mindmapDiv.addEventListener('click', function(e) {
+                if (e.target === this || (e.target.closest('.mindmap-title') && !e.target.closest('.control-btn'))) {
+                    mindmapDiv.classList.toggle('expanded');
+                    
+                    if (mindmapDiv.classList.contains('expanded')) {
+                        toggleCloseButtons(true);
+                        toggleUIElements(true);
+                        const controls = mindmapDiv.querySelector('.mindmap-controls');
+                        if (controls) {
+                            controls.classList.remove('mindmap-controls-hidden');
+                        }
+                    } else {
+                        toggleCloseButtons(false);
+                        toggleUIElements(false);
+                        const controls = mindmapDiv.querySelector('.mindmap-controls');
+                        if (controls) {
+                            controls.classList.add('mindmap-controls-hidden');
+                        }
+                    }
+                    
+                    setTimeout(function() {
+                        if (mindmapDiv.mm) {
+                            mindmapDiv.mm.fit();
+                        }
+                    }, 50);
+                }
+            });
+            
+            return mindmapDiv;
+        }
+        
+        function generateBattleMarkdown(battleData) {
+            function safeText(text) {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            }
+            
+            let markdown = '# ⚔️ ' + (safeText(battleData.name) || (currentLanguage === 'vi' ? 'TRẬN CHIẾN' : 'BATTLE')) + '\n';
+            
+            if (battleData.time) {
+                markdown += '\n## ⏰ ' + translations[currentLanguage].battle_time + '\n';
+                markdown += '- ' + safeText(battleData.time) + '\n';
+            }
+            
+            if (battleData.location) {
+                markdown += '\n## 📍 ' + translations[currentLanguage].battle_location + '\n';
+                markdown += '- ' + safeText(battleData.location) + '\n';
+            }
+            
+            if (battleData.troops) {
+                markdown += '\n## ⚔️ ' + translations[currentLanguage].battle_troops + '\n';
+                markdown += '- ' + safeText(battleData.troops) + '\n';
+            }
+            
+            if (battleData.tactics) {
+                markdown += '\n## 🎯 ' + translations[currentLanguage].battle_tactics + '\n';
+                markdown += '- ' + safeText(battleData.tactics) + '\n';
+            }
+            
+            if (battleData.casualties) {
+                markdown += '\n## 💔 ' + translations[currentLanguage].battle_casualties + '\n';
+                markdown += '- ' + safeText(battleData.casualties) + '\n';
+            }
+            
+            if (battleData.heroes && battleData.heroes.length > 0) {
+                markdown += '\n## 🦸 ' + translations[currentLanguage].battle_heroes + '\n';
+                const heroCount = Math.min(5, battleData.heroes.length);
+                for (let i = 0; i < heroCount; i++) {
+                    markdown += '- ✨ ' + safeText(battleData.heroes[i]) + '\n';
+                }
+            }
+            
+            if (battleData.key_locations && battleData.key_locations.length > 0) {
+                markdown += '\n## 🏰 ' + translations[currentLanguage].key_locations + '\n';
+                const locCount = Math.min(5, battleData.key_locations.length);
+                for (let i = 0; i < locCount; i++) {
+                    markdown += '- 📍 ' + safeText(battleData.key_locations[i]) + '\n';
+                }
+            }
+            
+            if (battleData.factions && battleData.factions.length > 0) {
+                markdown += '\n## ⚔️ ' + translations[currentLanguage].battle_factions + '\n';
+                for (let i = 0; i < battleData.factions.length; i++) {
+                    const faction = battleData.factions[i];
+                    markdown += '- ' + safeText(faction) + '\n';
+                    if (battleData.commanders && battleData.commanders[faction]) {
+                        markdown += ' - 👑 ' + safeText(battleData.commanders[faction]) + '\n';
+                    }
+                }
+            }
+            
+            if (battleData.outcome) {
+                markdown += '\n## 🏆 ' + translations[currentLanguage].battle_outcome + '\n';
+                markdown += '- ' + safeText(battleData.outcome) + '\n';
+            }
+            
+            if (battleData.significance) {
+                markdown += '\n## 🌟 ' + translations[currentLanguage].battle_significance + '\n';
+                const shortSignificance = battleData.significance.length > 150 ?
+                    battleData.significance.substring(0, 150) + "..." :
+                    battleData.significance;
+                markdown += '- ' + safeText(shortSignificance) + '\n';
+            }
+            
+            return markdown;
+        }
+        
+        function generateFigureMarkdown(figureData) {
+            function safeText(text) {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            }
+            
+            let markdown = '# 👑 ' + (safeText(figureData.name) || (currentLanguage === 'vi' ? 'NHÂN VẬT' : 'FIGURE')) + '\n';
+            
+            if (figureData.time) {
+                markdown += '\n## ⏰ ' + translations[currentLanguage].battle_time + '\n';
+                markdown += '- ' + safeText(figureData.time) + '\n';
+            }
+            
+            if (figureData.location) {
+                markdown += '\n## 📍 ' + translations[currentLanguage].birth_place + '\n';
+                markdown += '- ' + safeText(figureData.location) + '\n';
+            }
+            
+            if (figureData.biography) {
+                markdown += '\n## 📖 ' + translations[currentLanguage].biography + '\n';
+                const shortBio = figureData.biography.length > 200 ?
+                    figureData.biography.substring(0, 200) + "..." :
+                    figureData.biography;
+                markdown += '- ' + safeText(shortBio) + '\n';
+            } else if (figureData.summary) {
+                markdown += '\n## 📝 ' + translations[currentLanguage].battle_summary + '\n';
+                markdown += '- ' + safeText(figureData.summary) + '\n';
+            }
+            
+            if (figureData.family && figureData.family.length > 0) {
+                markdown += '\n## 👨‍👩‍👧‍👦 ' + translations[currentLanguage].family + '\n';
+                const familyCount = Math.min(5, figureData.family.length);
+                for (let i = 0; i < familyCount; i++) {
+                    markdown += '- ' + safeText(figureData.family[i]) + '\n';
+                }
+            }
+            
+            if (figureData.education && figureData.education.length > 0) {
+                markdown += '\n## 🎓 ' + translations[currentLanguage].education + '\n';
+                const eduCount = Math.min(5, figureData.education.length);
+                for (let i = 0; i < eduCount; i++) {
+                    markdown += '- ' + safeText(figureData.education[i]) + '\n';
+                }
+            }
+            
+            if (figureData.career && figureData.career.length > 0) {
+                markdown += '\n## 💼 ' + translations[currentLanguage].career + '\n';
+                const careerCount = Math.min(5, figureData.career.length);
+                for (let i = 0; i < careerCount; i++) {
+                    markdown += '- ' + safeText(figureData.career[i]) + '\n';
+                }
+            }
+            
+            if (figureData.achievements && figureData.achievements.length > 0) {
+                markdown += '\n## 🏆 ' + translations[currentLanguage].battle_achievements + '\n';
+                const achievementCount = Math.min(5, figureData.achievements.length);
+                for (let i = 0; i < achievementCount; i++) {
+                    markdown += '- ✨ ' + safeText(figureData.achievements[i]) + '\n';
+                }
+            }
+            
+            if (figureData.battles && figureData.battles.length > 0) {
+                markdown += '\n## ⚔️ ' + translations[currentLanguage].battles + '\n';
+                const battleCount = Math.min(5, figureData.battles.length);
+                for (let i = 0; i < battleCount; i++) {
+                    markdown += '- ' + safeText(figureData.battles[i]) + '\n';
+                }
+            }
+            
+            if (figureData.works && figureData.works.length > 0) {
+                markdown += '\n## 📚 ' + translations[currentLanguage].works + '\n';
+                const workCount = Math.min(5, figureData.works.length);
+                for (let i = 0; i < workCount; i++) {
+                    markdown += '- ' + safeText(figureData.works[i]) + '\n';
+                }
+            }
+            
+            if (figureData.quotes && figureData.quotes.length > 0) {
+                markdown += '\n## 💬 ' + translations[currentLanguage].quotes + '\n';
+                const quoteCount = Math.min(3, figureData.quotes.length);
+                for (let i = 0; i < quoteCount; i++) {
+                    markdown += '- "' + safeText(figureData.quotes[i]) + '"\n';
+                }
+            }
+            
+            if (figureData.legacy) {
+                markdown += '\n## 🏛️ ' + translations[currentLanguage].legacy + '\n';
+                const shortLegacy = figureData.legacy.length > 150 ?
+                    figureData.legacy.substring(0, 150) + "..." :
+                    figureData.legacy;
+                markdown += '- ' + safeText(shortLegacy) + '\n';
+            } else if (figureData.significance) {
+                markdown += '\n## 🌟 ' + translations[currentLanguage].battle_significance + '\n';
+                const shortSignificance = figureData.significance.length > 150 ?
+                    figureData.significance.substring(0, 150) + "..." :
+                    figureData.significance;
+                markdown += '- ' + safeText(shortSignificance) + '\n';
+            }
+            
+            return markdown;
+        }
+        
+        function generateLandmarkMarkdown(landmarkData) {
+            function safeText(text) {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            }
+            
+            let markdown = '# 🏰 ' + (safeText(landmarkData.name) || (currentLanguage === 'vi' ? 'ĐỊA DANH' : 'LANDMARK')) + '\n';
+            
+            if (landmarkData.location) {
+                markdown += '\n## 📍 ' + translations[currentLanguage].battle_location + '\n';
+                markdown += '- ' + safeText(landmarkData.location) + '\n';
+            }
+            
+            if (landmarkData.build_time) {
+                markdown += '\n## ⏳ ' + translations[currentLanguage].landmark_build_time + '\n';
+                markdown += '- ' + safeText(landmarkData.build_time) + '\n';
+            }
+            
+            if (landmarkData.purpose) {
+                markdown += '\n## 🎯 ' + translations[currentLanguage].landmark_purpose + '\n';
+                const shortPurpose = landmarkData.purpose.length > 150 ?
+                    landmarkData.purpose.substring(0, 150) + "..." :
+                    landmarkData.purpose;
+                markdown += '- ' + safeText(shortPurpose) + '\n';
+            }
+            
+            if (landmarkData.architecture) {
+                markdown += '\n## 🏛️ ' + translations[currentLanguage].landmark_architecture + '\n';
+                const shortArchitecture = landmarkData.architecture.length > 150 ?
+                    landmarkData.architecture.substring(0, 150) + "..." :
+                    landmarkData.architecture;
+                markdown += '- ' + safeText(shortArchitecture) + '\n';
+            }
+            
+            if (landmarkData.dynasty) {
+                markdown += '\n## 👑 ' + translations[currentLanguage].landmark_dynasty + '\n';
+                markdown += '- ' + safeText(landmarkData.dynasty) + '\n';
+            }
+            
+            if (landmarkData.builders && landmarkData.builders.length > 0) {
+                markdown += '\n## 👷 ' + translations[currentLanguage].landmark_builders + '\n';
+                const builderCount = Math.min(3, landmarkData.builders.length);
+                for (let i = 0; i < builderCount; i++) {
+                    markdown += '- ✨ ' + safeText(landmarkData.builders[i]) + '\n';
+                }
+            }
+            
+            if (landmarkData.contents && landmarkData.contents.length > 0) {
+                markdown += '\n## 📦 ' + translations[currentLanguage].landmark_contents + '\n';
+                const contentCount = Math.min(3, landmarkData.contents.length);
+                for (let i = 0; i < contentCount; i++) {
+                    markdown += '- 📜 ' + safeText(landmarkData.contents[i]) + '\n';
+                }
+            }
+            
+            return markdown;
+        }
+        
+        async function renderMarkmap(container, markdown, query) {
+            try {
+                const contentDiv = container.querySelector('.mindmap-content');
+                if (!contentDiv) {
+                    return;
+                }
+                
+                const mindmapContainer = document.createElement('div');
+                mindmapContainer.className = 'mindmap-container';
+                mindmapContainer.id = 'mindmap-' + Math.random().toString(36).substr(2, 9);
+                contentDiv.innerHTML = '';
+                contentDiv.appendChild(mindmapContainer);
+                
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '100%');
+                svg.setAttribute('height', '100%');
+                mindmapContainer.appendChild(svg);
+                
+                const { root } = transformer.transform(markdown);
+                const { Markmap } = window.markmap;
+                const mm = Markmap.create(svg, {
+                    duration: 500,
+                    nodeMinHeight: 16,
+                    spacingVertical: 5,
+                    spacingHorizontal: 80,
+                    autoFit: true,
+                    fitRatio: 0.95,
+                }, root);
+                
+                container.mm = mm;
+                
+                const zoomInBtn = container.querySelector('.zoom-in');
+                const zoomOutBtn = container.querySelector('.zoom-out');
+                
+                if (zoomInBtn) {
+                    zoomInBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (container.mm) {
+                            container.mm.rescale(1.2);
+                        }
+                    });
+                }
+                
+                if (zoomOutBtn) {
+                    zoomOutBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (container.mm) {
+                            container.mm.rescale(0.8);
+                        }
+                    });
+                }
+                
+                setTimeout(function() {
+                    mm.fit();
+                    
+                    const rootNode = svg.querySelector('.markmap-node');
+                    if (rootNode) {
+                        rootNode.classList.add('root-node');
+                    }
+                }, 100);
+            } catch (error) {
+                console.error("Lỗi render markmap:", error);
+                const contentDiv = container.querySelector('.mindmap-content');
+                if (contentDiv) {
+                    contentDiv.innerHTML = '<div class="mindmap-error">' + translations[currentLanguage].processing_error + '</div>';
+                }
+            }
+        }
+        
+        function addMessageToUI(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'mb-4 ' + (role === 'user' ? 'text-right' : 'text-left');
+            const bubbleClass = role === 'user'
+                ? 'bg-card text-primary rounded-tr-none border border-custom'
+                : 'bg-card text-primary rounded-tl-none border border-custom';
+                
+            let translatedContent = content;
+            if (content.includes("Xin lỗi, tôi chỉ trả lời các câu hỏi liên quan đến lịch sử")) {
+                translatedContent = translations[currentLanguage].non_history_error;
+            } else if (content.includes("Lỗi tải dữ liệu bản đồ")) {
+                translatedContent = translations[currentLanguage].map_error;
+            } else if (content.includes("Lỗi khi xử lý yêu cầu")) {
+                translatedContent = translations[currentLanguage].processing_error;
+            } else {
+                translatedContent = formatMessage(content);
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="inline-block max-w-[85%] rounded-xl p-4 ${bubbleClass} relative">
+                    <div class="message-content">${translatedContent}</div>
+                    ${role === 'assistant' ? `
+                    <span class="close-btn" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </span>
+                    ` : ''}
+                </div>
+            `;
+            
+            resultMessages.appendChild(messageDiv);
+            scrollToTop();
+        }
+        
+        function formatMessage(content) {
+            if (!content) return '';
+            
+            let formatted = content.replace(/```([\w]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+                const langDisplay = lang ? lang : 'text';
+                return '<div class="code-block">' +
+                    '<div class="code-header flex justify-between items-center px-3 py-2 bg-card text-accent text-xs rounded-t-md border border-custom">' +
+                    '<span>' + langDisplay + '</span>' +
+                    '<button class="copy-code-btn hover:text-accent" onclick="copyToClipboard(this)" data-code="' + encodeURIComponent(code.trim()) + '">' +
+                    '<i class="fas fa-copy mr-1"></i> <span>' + translations[currentLanguage].copy_code + '</span>' +
+                    '</button>' +
+                    '</div>' +
+                    '<pre><code class="language-' + (lang || 'text') + '">' + escapeHtml(code.trim()) + '</code></pre>' +
+                    '</div>';
+            });
+            
+            formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-accent">$1</strong>');
+            formatted = formatted.replace(/\*([^*]+)\*/g, '<em class="text-accent">$1</em>');
+            formatted = formatted.replace(/`([^`]+)`/g, '<code class="bg-card px-1 py-0.5 rounded text-accent border border-custom">$1</code>');
+            
+            const paragraphs = formatted.split('\n\n');
+            let result = '';
+            for (let i = 0; i < paragraphs.length; i++) {
+                const paragraph = paragraphs[i];
+                if (paragraph.trim().startsWith('<') && paragraph.trim().endsWith('>')) {
+                    result += paragraph;
+                } else {
+                    result += '<p>' + paragraph + '</p>';
+                }
+            }
+            formatted = result;
+            formatted = formatted.replace(/\n(?![<])/g, '<br>');
+            
+            return formatted;
+        }
+        
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+        
+        function scrollToTop() {
+            setTimeout(function() {
+                const contentContainer = document.querySelector('.content-container');
+                if (contentContainer) {
+                    contentContainer.scrollTop = 0;
+                }
+            }, 100);
+        }
+        
+        function copyToClipboard(button) {
+            const code = decodeURIComponent(button.getAttribute('data-code'));
+            navigator.clipboard.writeText(code).then(function() {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-1"></i> ' + translations[currentLanguage].copied;
+                setTimeout(function() {
+                    button.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+        
+        async function getWikipediaImage(query) {
+            try {
+                const lang = currentLanguage === 'vi' ? 'vi' : 'en';
+                const searchUrl = 'https://' + lang + '.wikipedia.org/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(query) + '&format=json&origin=*';
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
+                
+                if (searchData.query.search.length === 0) {
+                    console.warn('Không tìm thấy bài viết Wikipedia cho "' + query + '"');
+                    return null;
+                }
+                
+                const title = searchData.query.search[0].title;
+                const imageUrl = 'https://' + lang + '.wikipedia.org/w/api.php?action=query&titles=' + encodeURIComponent(title) + '&prop=pageimages&format=json&pithumbsize=500&origin=*';
+                const imageResponse = await fetch(imageUrl);
+                const imageData = await imageResponse.json();
+                
+                const pages = imageData.query.pages;
+                const pageId = Object.keys(pages)[0];
+                const imageInfo = pages[pageId].thumbnail;
+                
+                return imageInfo ? imageInfo.source : null;
+            } catch (error) {
+                console.error('Lỗi khi lấy ảnh từ Wikipedia:', error);
+                return null;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', initApp);
+        window.copyToClipboard = copyToClipboard;
+        window.toggleSidebarNew = toggleSidebarNew;
     </script>
 </body>
 </html>
