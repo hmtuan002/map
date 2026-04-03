@@ -559,8 +559,8 @@
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
             border-radius: 40px;
-            padding: 6px 20px;
-            font-size: 16px;
+            padding: 4px 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
             border: 1px solid var(--border-light);
@@ -626,27 +626,27 @@
             color: white;
         }
         
-        /* ===== TIMELINE - ĐÃ TĂNG CHIỀU DÀI VÀ KÍCH THƯỚC ===== */
+        /* ===== TIMELINE - THANH NHỎ HƠN ===== */
         .timeline-globe {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 85%;
-            max-width: 800px;
+            width: 70%;
+            max-width: 700px;
             z-index: 15;
             pointer-events: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
         }
         
         .timeline-bar-globe {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: 12px 20px;
+            border-radius: 12px;
+            padding: 6px 16px;
             border: 1px solid var(--border-light);
             width: 100%;
             position: relative;
@@ -655,16 +655,16 @@
         .timeline-slider-globe {
             -webkit-appearance: none;
             width: 100%;
-            height: 10px;
-            border-radius: 5px;
+            height: 6px;
+            border-radius: 3px;
             background: #ccc;
             outline: none;
         }
         
         .timeline-slider-globe::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 28px;
-            height: 28px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: var(--accent-orange);
             cursor: pointer;
@@ -675,18 +675,18 @@
         .playback-controls-globe {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-top: 8px;
+            gap: 6px;
+            margin-top: 4px;
         }
         
         .playback-btn-globe {
             background: rgba(255,255,255,0.5);
             border: 1px solid var(--border-light);
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
+            width: 28px;
+            height: 28px;
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 11px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -910,7 +910,7 @@
             display: flex;
             flex-direction: column;
             margin-top: 1rem;
-            padding: 1rem;
+            padding: 0.75rem;
             background-color: var(--card-bg);
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -920,9 +920,9 @@
         
         .audio-controls-title {
             font-weight: 600;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             color: var(--accent-orange);
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-family: 'Playfair Display', serif;
         }
         
@@ -930,7 +930,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
         }
         
         .audio-controls button {
@@ -938,8 +938,8 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -959,13 +959,12 @@
         
         .audio-progress {
             flex-grow: 1;
-            height: 6px;
+            height: 4px;
             background-color: var(--border-light);
-            border-radius: 3px;
+            border-radius: 2px;
             position: relative;
             overflow: hidden;
             margin-left: 0.5rem;
-            border: 1px solid var(--border-light);
         }
         
         .audio-progress-bar {
@@ -1084,7 +1083,7 @@
             line-height: 1.5;
         }
         
-        /* ===== IMAGE CONTAINER ===== */
+        /* ===== IMAGE CONTAINER - TĂNG CHIỀU CAO ===== */
         .image-container {
             width: 100%;
             margin: 1rem 0;
@@ -1120,7 +1119,7 @@
         
         .image-content {
             width: 100%;
-            height: 400px;
+            height: 500px;
             object-fit: cover;
             object-position: top center;
             border-radius: 0;
@@ -1326,13 +1325,13 @@
         @media (max-width: 768px) {
             .timeline-globe {
                 width: 90%;
-                bottom: 20px;
+                bottom: 15px;
             }
-            .timeline-bar-globe { padding: 8px 12px; }
+            .timeline-bar-globe { padding: 6px 12px; }
             .playback-btn-globe {
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
+                width: 28px;
+                height: 28px;
+                font-size: 10px;
             }
             .layer-panel { left: 20px; }
             #sidebar { width: 85%; }
@@ -1348,9 +1347,26 @@
             border: none;
         }
         .custom-marker i {
-            font-size: 28px;
+            font-size: 32px;
             color: #E67E22;
-            text-shadow: 0 0 5px white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            animation: markerBounce 0.5s ease-out;
+        }
+        
+        @keyframes markerBounce {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Marker 3D đẹp hơn */
+        .globe-marker {
+            animation: glowPulse 1.5s infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 2px #E67E22); }
+            50% { filter: drop-shadow(0 0 8px #E67E22); }
         }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -1525,8 +1541,9 @@
         let currentGeoJSON = null;
         let currentLanguage = 'vi';
         let pendingYearLoadTimer = null;
-        let currentGlobeMarker = null;
-        let currentLeafletMarker = null;
+        let currentMarkerData = null;  // Lưu marker để giữ khi chuyển chức năng
+        let currentGlobeMarkerObj = null;
+        let currentLeafletMarkerObj = null;
         let currentPolygons = [];
         
         // ==================== SPEECH SYNTHESIS VARIABLES ====================
@@ -1545,13 +1562,13 @@
             '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
         ];
 
-        // ==================== DANH SÁCH NĂM ĐÃ ĐƯỢC MỞ RỘNG VỚI 20 MỐC MỚI ====================
+        // ==================== DANH SÁCH NĂM ====================
         const availableYears = [
             { year: -123000, file: 'world_bc123000.geojson', label: '123.000 TCN' },
-            { year: -8000, file: 'world_bc8000.geojson', label: '8.000 TCN' },
-            { year: -4000, file: 'world_bc4000.geojson', label: '4.000 TCN' },
             { year: -10000, file: 'world_bc10000.geojson', label: '10.000 TCN' },
+            { year: -8000, file: 'world_bc8000.geojson', label: '8.000 TCN' },
             { year: -5000, file: 'world_bc5000.geojson', label: '5.000 TCN' },
+            { year: -4000, file: 'world_bc4000.geojson', label: '4.000 TCN' },
             { year: -3000, file: 'world_bc3000.geojson', label: '3.000 TCN' },
             { year: -2000, file: 'world_bc2000.geojson', label: '2.000 TCN' },
             { year: -1500, file: 'world_bc1500.geojson', label: '1.500 TCN' },
@@ -1620,44 +1637,59 @@
             return closestIndex;
         }
         
-        // ==================== HÀM THÊM MARKER VÀ ZOOM ====================
+        // ==================== HÀM THÊM MARKER VÀ ZOOM (GIỮ MARKER) ====================
         function addMarkerAndZoom(lat, lng, title) {
+            // Lưu marker data để có thể phục hồi sau
+            currentMarkerData = { lat: lat, lng: lng, title: title };
+            
             // Xóa marker cũ nếu có
-            if (currentGlobeMarker) {
-                if (globe) globe.pointsData([]);
-                currentGlobeMarker = null;
+            if (currentGlobeMarkerObj && globe) {
+                globe.pointsData([]);
+                currentGlobeMarkerObj = null;
             }
-            if (currentLeafletMarker) {
-                if (map2d) map2d.removeLayer(currentLeafletMarker);
-                currentLeafletMarker = null;
+            if (currentLeafletMarkerObj && map2d) {
+                map2d.removeLayer(currentLeafletMarkerObj);
+                currentLeafletMarkerObj = null;
             }
             
-            // Thêm marker mới cho 3D
+            // Thêm marker mới cho 3D với hiệu ứng đẹp
             if (globe && !viewToggle.checked) {
                 const markerData = [{ lat: lat, lng: lng, size: 0.5, color: '#E67E22', name: title }];
                 globe.pointsData(markerData)
                     .pointColor(() => '#E67E22')
-                    .pointAltitude(0.05)
-                    .pointRadius(0.4);
-                currentGlobeMarker = markerData;
-                // Zoom đến vị trí
-                globe.pointOfView({ lat: lat, lng: lng, altitude: 1.0, duration: 1000 });
-                console.log(`Đã thêm marker 3D tại (${lat}, ${lng}) và zoom đến`);
+                    .pointAltitude(0.08)
+                    .pointRadius(0.5);
+                currentGlobeMarkerObj = markerData;
+                // Thêm hiệu ứng animation cho marker 3D
+                if (globe.pointAltitude) {
+                    // Tạo hiệu ứng glow bằng cách thêm custom shader nếu cần
+                    console.log(`Đã thêm marker 3D tại (${lat}, ${lng})`);
+                }
+                // Zoom đến vị trí với animation mượt
+                globe.pointOfView({ lat: lat, lng: lng, altitude: 0.8, duration: 1000 });
+                console.log(`Đã zoom 3D đến (${lat}, ${lng})`);
             }
             // Thêm marker mới cho 2D và zoom
             else if (map2d && viewToggle.checked) {
                 const markerIcon = L.divIcon({
                     className: 'custom-marker',
-                    html: '<i class="fas fa-map-marker-alt" style="font-size:28px; color:#E67E22; filter: drop-shadow(0 0 4px white);"></i>',
-                    iconSize: [28, 28],
-                    popupAnchor: [0, -14]
+                    html: '<i class="fas fa-map-marker-alt" style="font-size:32px; color:#E67E22; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>',
+                    iconSize: [32, 32],
+                    popupAnchor: [0, -16]
                 });
                 const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map2d);
                 marker.bindPopup(`<b>${title}</b><br>📍 Vị trí được xác định trên bản đồ`).openPopup();
-                currentLeafletMarker = marker;
+                currentLeafletMarkerObj = marker;
                 // Zoom đến vị trí
-                map2d.setView([lat, lng], 8);
+                map2d.setView([lat, lng], 10);
                 console.log(`Đã thêm marker 2D tại (${lat}, ${lng}) và zoom đến`);
+            }
+        }
+        
+        // ==================== HÀM PHỤC HỒI MARKER KHI CHUYỂN CHẾ ĐỘ ====================
+        function restoreMarker() {
+            if (currentMarkerData) {
+                addMarkerAndZoom(currentMarkerData.lat, currentMarkerData.lng, currentMarkerData.title);
             }
         }
         
@@ -2243,6 +2275,8 @@
             
             pendingYearLoadTimer = setTimeout(async () => {
                 await loadYearActual(index);
+                // Sau khi load năm mới, phục hồi marker nếu có
+                restoreMarker();
                 pendingYearLoadTimer = null;
             }, 500);
         }
@@ -3563,7 +3597,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 <div class="image-title relative">
                     ${translations[currentLanguage].picture}: ${title}
                 </div>
-                <img src="${imageUrl}" alt="${title}" class="image-content" style="object-fit: cover; object-position: top center;" />
+                <img src="${imageUrl}" alt="${title}" class="image-content" />
             `;
             
             const imgElement = container.querySelector('.image-content');
@@ -4069,7 +4103,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 }
                 
                 const title = searchData.query.search[0].title;
-                const imageUrl = 'https://' + lang + '.wikipedia.org/w/api.php?action=query&titles=' + encodeURIComponent(title) + '&prop=pageimages&format=json&pithumbsize=500&origin=*';
+                const imageUrl = 'https://' + lang + '.wikipedia.org/w/api.php?action=query&titles=' + encodeURIComponent(title) + '&prop=pageimages&format=json&pithumbsize=800&origin=*';
                 const imageResponse = await fetch(imageUrl);
                 const imageData = await imageResponse.json();
                 
@@ -4084,7 +4118,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
         }
 
-        // Xử lý chuyển đổi 2D/3D
+        // Xử lý chuyển đổi 2D/3D - phục hồi marker sau khi chuyển
         viewToggle.addEventListener('change', function() {
             const is2D = this.checked;
             
@@ -4094,10 +4128,14 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 init2DMap();
                 if (currentGeoJSON) render2DPolygons(currentGeoJSON);
                 if (map2d) map2d.setView([20, 105], 4);
+                // Phục hồi marker sau khi chuyển sang 2D
+                setTimeout(() => restoreMarker(), 100);
             } else {
                 globeContainer.style.display = 'block';
                 map2dContainer.style.display = 'none';
                 if (globe && currentGeoJSON) renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
+                // Phục hồi marker sau khi chuyển sang 3D
+                setTimeout(() => restoreMarker(), 100);
             }
         });
 
