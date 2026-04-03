@@ -2150,7 +2150,7 @@
                 .atmosphereAltitude(0.25)
                 .polygonsData([])
                 .polygonAltitude(0.01)
-                .polygonCapColor(function(d) { return d.color || '#444'; })
+                .polygonCapColor(function(d) { return d.color || 'rgba(100, 100, 100, 0.9)'; })
                 .polygonSideColor(function() { return 'rgba(100, 100, 100, 1)'; })
                 .polygonStrokeColor(function() { return '#fff'; })
                 .polygonLabel(function(d) { 
@@ -2221,7 +2221,7 @@
                 }
                 polygons.push({
                     ...f,
-                    color: colorPalette[colorIndex] + '99'
+                    color: colorPalette[colorIndex]
                 });
             }
             
