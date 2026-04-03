@@ -1319,11 +1319,15 @@
             .country-info-panel-left { left: 320px; width: 300px; }
             .sidebar-toggle-new { left: 300px; }
         }
+        #map2dContainer .leaflet-control-zoom { display: none; }
+        .leaflet-tile-pane { filter: brightness(0.9); }
     </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body class="h-screen flex flex-col transition-all bg-total">
     <div id="globeContainer"></div>
-    
+    <div id="map2dContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none;"></div>
     <!-- COUNTRY INFO PANEL (HIỂN THỊ BÊN TRÁI) -->
     <div class="country-info-panel-left" id="countryInfoPanel">
         <div class="country-info-header">
@@ -1366,6 +1370,13 @@
                         </h2>
                     </div>
                     <div class="language-switch">
+                        <label class="switch">
+                            <input type="checkbox" id="view-toggle">
+                            <span class="slider">
+                                <span class="vi-text">3D</span>
+                                <span class="en-text">2D</span>
+                            </span>
+                        </label>
                         <label class="switch">
                             <input type="checkbox" id="language-toggle">
                             <span class="slider">
@@ -3923,6 +3934,89 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 return null;
             }
         }
+
+// Biến lưu bản đồ 2D
+let map2d = null;
+let currentPolygons = [];
+
+// Hàm khởi tạo bản đồ 2D
+function init2DMap() {
+    if (map2d) return;
+    map2d = L.map('map2dContainer').setView([20, 105], 4);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+    }).addTo(map2d);
+}
+
+// Hàm vẽ polygon lên bản đồ 2D
+function render2DPolygons(geojson) {
+    if (!map2d) init2DMap();
+    
+    // Xóa polygon cũ
+    currentPolygons.forEach(poly => map2d.removeLayer(poly));
+    currentPolygons = [];
+    
+    if (!geojson || !layers.borders) return;
+    
+    const entities = [...new Set(geojson.features.map(f => 
+        f.properties.SUBJECTO || f.properties.NAME || f.properties.name
+    ).filter(Boolean))];
+    
+    geojson.features.forEach((feature, i) => {
+        const name = feature.properties.SUBJECTO || feature.properties.NAME || feature.properties.name;
+        const colorIndex = entities.indexOf(name) % colorPalette.length;
+        
+        const polygon = L.geoJSON(feature, {
+            style: {
+                color: colorPalette[colorIndex],
+                weight: 1.5,
+                fillOpacity: 0.4,
+                fillColor: colorPalette[colorIndex]
+            },
+            onEachFeature: (f, layer) => {
+                layer.on('click', () => {
+                    const coords = layer.getBounds().getCenter();
+                    stopSpeechForNewAction();
+                    queryLocalHistory(coords.lat, coords.lng, name);
+                });
+            }
+        }).addTo(map2d);
+        
+        currentPolygons.push(polygon);
+    });
+}
+
+// Xử lý chuyển đổi 2D/3D
+const viewToggle = document.getElementById('view-toggle');
+const globeContainer = document.getElementById('globeContainer');
+const map2dContainer = document.getElementById('map2dContainer');
+
+viewToggle.addEventListener('change', function() {
+    const is2D = this.checked;
+    
+    if (is2D) {
+        // Chuyển sang 2D
+        globeContainer.style.display = 'none';
+        map2dContainer.style.display = 'block';
+        init2DMap();
+        if (currentGeoJSON) render2DPolygons(currentGeoJSON);
+        if (map2d) map2d.setView([20, 105], 4);
+    } else {
+        // Chuyển sang 3D
+        globeContainer.style.display = 'block';
+        map2dContainer.style.display = 'none';
+        if (globe && currentGeoJSON) renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
+    }
+});
+
+// Cập nhật cả 2 bản đồ khi load năm mới
+const originalLoadYear = loadYear;
+window.loadYear = async function(index) {
+    await originalLoadYear(index);
+    if (viewToggle.checked && currentGeoJSON) {
+        render2DPolygons(currentGeoJSON);
+    }
+};
         
         document.addEventListener('DOMContentLoaded', initApp);
         window.copyToClipboard = copyToClipboard;
