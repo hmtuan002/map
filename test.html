@@ -731,7 +731,7 @@
         .language-switch {
             display: flex;
             align-items: center;
-            margin-right: 10%;
+            margin-right: 2.5%;
         }
         
         .switch {
@@ -826,14 +826,14 @@
         
         .search-button {
             position: absolute;
-            top: 0.5rem;
+            top: 50%;
             right: 0.5rem;
             transform: translateY(-50%);
             background-color: var(--button-cyan);
             color: white;
             border: none;
             border-radius: 2rem;
-            padding: 0.4rem 1rem;
+            padding: 0.8rem 0.8rem;
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
@@ -1351,7 +1351,6 @@
     <!-- TOP BAR -->
     <div class="top-bar-globe" id="topBarGlobe">
         <div class="year-pill-globe" id="yearDisplay">2010 CN</div>
-        <div class="stats-pill-globe" id="regionCount" style="display: none;">0 quốc gia</div>
     </div>
     
     
@@ -1402,11 +1401,7 @@
     <div class="timeline-globe" id="timelineGlobe">
         <div class="timeline-bar-globe">
             <input type="range" class="timeline-slider-globe" id="timelineSlider" min="0" max="100" value="94">
-            <div class="playback-controls-globe">
-                <button class="playback-btn-globe" id="prevBtn">⏮</button>
-                <button class="playback-btn-globe" id="playBtn">▶️</button>
-                <button class="playback-btn-globe" id="nextBtn">⏭</button>
-            </div>
+            <div class="year-pill-globe" id="yearDisplay">2010 CN</div>
         </div>
     </div>
     
