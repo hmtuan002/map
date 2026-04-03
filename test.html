@@ -733,6 +733,22 @@
             align-items: center;
             margin-right: 2.5%;
         }
+
+        .map-switch-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 34px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 8px;
+        }
+        
+        .map-switch-btn i { font-size: 12px; }
         
         .switch {
             position: relative;
@@ -1373,6 +1389,12 @@
                                 <span class="en-text">En</span>
                             </span>
                         </label>
+                    </div>
+                    <div class="map-switch">
+                        <button class="map-switch-btn" id="mapSwitchBtn">
+                            <i class="fas fa-globe"></i>
+                            <span id="mapSwitchText">2D Map</span>
+                        </button>
                     </div>
                 </div>
                 <form id="search-form" class="mt-2">
