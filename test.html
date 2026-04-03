@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Lisu Map</title>
+    <title>Lisu Map - Bản Đồ Lịch Sử Tương Tác</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
@@ -68,9 +68,9 @@
             pointer-events: none;
         }
         
-        /* ===== SIDEBAR - ĐÃ TĂNG CHIỀU RỘNG TỪ 460px LÊN 560px ===== */
+        /* ===== SIDEBAR - ĐÃ TĂNG CHIỀU RỘNG TỪ 33% LÊN 36% ===== */
         #sidebar {
-            width: 33%;
+            width: 36%;
             height: 100%;
             background-color: var(--card-bg);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
@@ -91,11 +91,11 @@
             left: -100%;
         }
         
-        /* ===== NÚT ĐÓNG/MỞ SIDEBAR - ĐÃ CĂN CHỈNH LẠI VỚI CHIỀU RỘNG MỚI ===== */
+        /* ===== NÚT ĐÓNG/MỞ SIDEBAR ===== */
         .sidebar-toggle-new {
             position: fixed;
             top: 20px;
-            left: 33%;
+            left: 36%;
             width: 44px;
             height: 44px;
             background-color: var(--accent-orange);
@@ -345,7 +345,7 @@
             color: var(--text-primary);
         }
         
-        /* ===== COUNTRY INFO PANEL LEFT - ĐÃ CĂN CHỈNH VỚI SIDEBAR MỚI ===== */
+        /* ===== COUNTRY INFO PANEL LEFT ===== */
         .country-info-panel-left {
             position: fixed;
             top: 20px;
@@ -572,7 +572,7 @@
             display: none !important;
         }
         
-        /* ===== LAYER PANEL - ĐÃ CĂN CHỈNH VỚI SIDEBAR MỚI ===== */
+        /* ===== LAYER PANEL ===== */
         .layer-panel {
             position: fixed;
             left: 600px;
@@ -626,7 +626,7 @@
             color: white;
         }
         
-        /* ===== TIMELINE - ĐÃ TĂNG CHIỀU DÀI TỪ 72% LÊN 85% VÀ MAX-WIDTH TỪ 640px LÊN 800px ===== */
+        /* ===== TIMELINE - ĐÃ TĂNG CHIỀU DÀI VÀ KÍCH THƯỚC ===== */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
@@ -655,19 +655,21 @@
         .timeline-slider-globe {
             -webkit-appearance: none;
             width: 100%;
-            height: 6px;
-            border-radius: 3px;
+            height: 10px;
+            border-radius: 5px;
             background: #ccc;
             outline: none;
         }
         
         .timeline-slider-globe::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             background: var(--accent-orange);
             cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 2px solid white;
         }
         
         .playback-controls-globe {
@@ -720,10 +722,10 @@
             transition: opacity 0.3s ease;
         }
         
-        /* ===== SIDEBAR CONTENT ===== */
+        /* ===== SIDEBAR CONTENT - ĐÃ TĂNG KÍCH THƯỚC 20% ===== */
         .sidebar-header {
             border-bottom: 1px solid var(--border-light);
-            padding: 1rem;
+            padding: 1.5rem;
             background-color: var(--card-bg);
             border-radius: 1rem 1rem 0 0;
             position: relative;
@@ -735,12 +737,13 @@
             align-items: center;
             width: 100%;
             position: relative;
+            margin-bottom: 1rem;
         }
         
         .header-title h2 {
             color: var(--accent-orange);
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
         }
         
         .header-title i { color: var(--accent-orange); }
@@ -748,14 +751,14 @@
         .language-switch {
             display: flex;
             align-items: center;
-            margin-right: 2.5%;
+            gap: 1rem;
         }
         
         .switch {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 30px;
+            width: 70px;
+            height: 34px;
         }
         
         .switch input {
@@ -777,8 +780,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 8px;
-            font-size: 12px;
+            padding: 0 12px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
             border: 1px solid var(--border-light);
@@ -787,8 +790,8 @@
         .slider:before {
             position: absolute;
             content: "";
-            height: 22px;
-            width: 22px;
+            height: 26px;
+            width: 26px;
             left: 4px;
             bottom: 3px;
             background-color: var(--accent-orange);
@@ -797,29 +800,29 @@
             z-index: 2;
         }
         
-        input:checked + .slider:before { transform: translateX(30px); }
+        input:checked + .slider:before { transform: translateX(34px); }
         
         .search-wrapper {
             position: relative;
-            margin-bottom: 1rem;
-            margin-top: 1rem;
+            margin-bottom: 0;
+            margin-top: 0.5rem;
             width: 100%;
         }
         
         #search-input {
             width: 100%;
-            padding: 0.75rem 5rem 0.75rem 1.2rem;
-            border-radius: 2rem;
+            padding: 1rem 6rem 1rem 1.5rem;
+            border-radius: 3rem;
             border: 1px solid var(--border-light);
             background-color: var(--input-bg);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            font-size: 1rem;
+            font-size: 1.1rem;
             line-height: 1.5;
             resize: none;
             transition: all 0.2s;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-            height: 48px;
+            height: 56px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -835,7 +838,7 @@
         #search-input::placeholder {
             color: var(--text-secondary);
             font-style: italic;
-            font-size: 0.95rem;
+            font-size: 1rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -844,20 +847,20 @@
         .search-button {
             position: absolute;
             top: 50%;
-            right: 0.4rem;
+            right: 0.5rem;
             transform: translateY(-50%);
             background-color: var(--button-cyan);
             color: white;
             border: none;
-            border-radius: 2rem;
-            padding: 0.8rem 0.8rem;
+            border-radius: 3rem;
+            padding: 0.8rem 1.5rem;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: none;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.5rem;
             box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
         }
         
@@ -873,13 +876,13 @@
         }
         
         .search-button i {
-            font-size: 0.8rem;
+            font-size: 1rem;
         }
         
         .content-container {
             flex: 1;
-            padding: 1rem;
-            background-color: var(--bg-total);
+            padding: 1.5rem;
+            background-color: #E8F4F8;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -889,7 +892,7 @@
         #result-messages {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.5rem;
             flex: 1;
             overflow-y: auto;
             padding-bottom: 1rem;
@@ -935,8 +938,8 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1253,7 +1256,7 @@
         }
         
         .result-container .result-title {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-weight: 600;
             color: var(--accent-orange);
             margin-bottom: 1rem;
@@ -1332,12 +1335,23 @@
                 font-size: 12px;
             }
             .layer-panel { left: 20px; }
-            #sidebar { width: 300px; }
-            .country-info-panel-left { left: 320px; width: 300px; }
-            .sidebar-toggle-new { left: 300px; }
+            #sidebar { width: 85%; }
+            .country-info-panel-left { left: 20px; width: 90%; }
+            .sidebar-toggle-new { left: 85%; }
         }
         #map2dContainer .leaflet-control-zoom { display: none; }
         .leaflet-tile-pane { filter: brightness(0.9); }
+        
+        /* Marker tùy chỉnh cho bản đồ 2D */
+        .custom-marker {
+            background: transparent;
+            border: none;
+        }
+        .custom-marker i {
+            font-size: 28px;
+            color: #E67E22;
+            text-shadow: 0 0 5px white;
+        }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1345,6 +1359,7 @@
 <body class="h-screen flex flex-col transition-all bg-total">
     <div id="globeContainer"></div>
     <div id="map2dContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none;"></div>
+    
     <!-- COUNTRY INFO PANEL (HIỂN THỊ BÊN TRÁI) -->
     <div class="country-info-panel-left" id="countryInfoPanel">
         <div class="country-info-header">
@@ -1368,8 +1383,6 @@
         <div class="info-content" id="infoPanelContent"></div>
         <div class="info-disclaimer" id="infoPanelDisclaimer">⚠️ Bối cảnh lịch sử được tạo bởi AI. Hãy kiểm chứng những sự kiện quan trọng.</div>
     </div>
-    
-    
     
     <!-- NÚT ĐÓNG/MỞ MỚI -->
     <div class="sidebar-toggle-new" id="sidebarToggleNew">
@@ -1409,7 +1422,7 @@
                             class="w-full"
                             placeholder="Nhập trận chiến, nhân vật, địa điểm lịch sử"></textarea>
                         <button type="submit" class="search-button">
-                            <i class="fas fa-paper-plane"></i>
+                            <i class="fas fa-paper-plane"></i> Tìm kiếm
                         </button>
                     </div>
                 </form>
@@ -1462,16 +1475,13 @@
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
-        // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY (ĐÃ ĐẢO) ====================
+        // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY ====================
         function reverseString(str) {
             return str.split('').reverse().join('');
         }
-        // API key đã được đảo ngược: key gốc "AIzaSyBhehIPxM5o2Mx27bXy3_RVkXNHOVG0M" đã được đảo
         const reversedKey = "M0GVHONkVX_R3yXb27M2xoMqh5PIxhheBySazIA";
         const API_KEY = reverseString(reversedKey);
-
         const genAI = new GoogleGenerativeAI(API_KEY);
-        // SỬ DỤNG MODEL MỚI: gemini-2.5-flash-lite
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
         // ==================== DOM ELEMENTS ====================
@@ -1481,8 +1491,6 @@
         const loadingScreen = document.getElementById('loading-screen');
         const sidebar = document.getElementById('sidebar');
         const sidebarToggleNew = document.getElementById('sidebarToggleNew');
-        const layerPanel = document.getElementById('layerPanel');
-        const topBarGlobe = document.getElementById('topBarGlobe');
         const timelineGlobe = document.getElementById('timelineGlobe');
         const infoPanel = document.getElementById('infoPanel');
         const infoPanelTitle = document.getElementById('infoPanelTitle');
@@ -1490,9 +1498,11 @@
         const infoPanelContent = document.getElementById('infoPanelContent');
         const infoPanelClose = document.getElementById('infoPanelClose');
         const infoPanelDisclaimer = document.getElementById('infoPanelDisclaimer');
-        const mapContainer = document.getElementById('map-container');
         const languageToggle = document.getElementById('language-toggle');
         const mainTitleText = document.getElementById('mainTitleText');
+        const viewToggle = document.getElementById('view-toggle');
+        const globeContainer = document.getElementById('globeContainer');
+        const map2dContainer = document.getElementById('map2dContainer');
         
         // ==================== COUNTRY INFO PANEL ====================
         const countryInfoPanel = document.getElementById('countryInfoPanel');
@@ -1504,31 +1514,20 @@
         
         // ==================== GLOBAL VARIABLES ====================
         let globe = null;
+        let map2d = null;
         let currentYearIndex = 30;
         let dataCache = {};
         let allGeoJSONLoaded = false;
-        async function preloadAllGeoJSON() {
-            const promises = availableYears.map(async (yearData) => {
-                if (!dataCache[yearData.file]) {
-                    try {
-                        const response = await fetch(`data/geojson/${yearData.file}`);
-                        dataCache[yearData.file] = await response.json();
-                        console.log(`Preloaded: ${yearData.file}`);
-                    } catch(e) { console.warn(`Failed: ${yearData.file}`, e); }
-                }
-            });
-            await Promise.all(promises);
-            allGeoJSONLoaded = true;
-        }
         let isPlaying = false;
         let playInterval = null;
         let localHistoryCache = new Map();
         let transformer = null;
         let currentGeoJSON = null;
         let currentLanguage = 'vi';
-        
-        // ==================== DEBOUNCE TIMER CHO NĂM ====================
         let pendingYearLoadTimer = null;
+        let currentGlobeMarker = null;
+        let currentLeafletMarker = null;
+        let currentPolygons = [];
         
         // ==================== SPEECH SYNTHESIS VARIABLES ====================
         let speechSynthesisUtterance = null;
@@ -1546,37 +1545,57 @@
             '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
         ];
 
+        // ==================== DANH SÁCH NĂM ĐÃ ĐƯỢC MỞ RỘNG VỚI 20 MỐC MỚI ====================
         const availableYears = [
+            { year: -123000, file: 'world_bc123000.geojson', label: '123.000 TCN' },
+            { year: -8000, file: 'world_bc8000.geojson', label: '8.000 TCN' },
+            { year: -4000, file: 'world_bc4000.geojson', label: '4.000 TCN' },
             { year: -10000, file: 'world_bc10000.geojson', label: '10.000 TCN' },
             { year: -5000, file: 'world_bc5000.geojson', label: '5.000 TCN' },
             { year: -3000, file: 'world_bc3000.geojson', label: '3.000 TCN' },
             { year: -2000, file: 'world_bc2000.geojson', label: '2.000 TCN' },
             { year: -1500, file: 'world_bc1500.geojson', label: '1.500 TCN' },
             { year: -1000, file: 'world_bc1000.geojson', label: '1.000 TCN' },
+            { year: -700, file: 'world_bc700.geojson', label: '700 TCN' },
             { year: -500, file: 'world_bc500.geojson', label: '500 TCN' },
             { year: -323, file: 'world_bc323.geojson', label: '323 TCN' },
+            { year: -300, file: 'world_bc300.geojson', label: '300 TCN' },
             { year: -200, file: 'world_bc200.geojson', label: '200 TCN' },
+            { year: -100, file: 'world_bc100.geojson', label: '100 TCN' },
             { year: -1, file: 'world_bc1.geojson', label: '1 TCN' },
             { year: 100, file: 'world_100.geojson', label: '100 CN' },
             { year: 200, file: 'world_200.geojson', label: '200 CN' },
+            { year: 300, file: 'world_300.geojson', label: '300 CN' },
             { year: 400, file: 'world_400.geojson', label: '400 CN' },
+            { year: 500, file: 'world_500.geojson', label: '500 CN' },
             { year: 600, file: 'world_600.geojson', label: '600 CN' },
+            { year: 700, file: 'world_700.geojson', label: '700 CN' },
             { year: 800, file: 'world_800.geojson', label: '800 CN' },
+            { year: 900, file: 'world_900.geojson', label: '900 CN' },
             { year: 1000, file: 'world_1000.geojson', label: '1.000 CN' },
+            { year: 1100, file: 'world_1100.geojson', label: '1.100 CN' },
             { year: 1200, file: 'world_1200.geojson', label: '1.200 CN' },
             { year: 1279, file: 'world_1279.geojson', label: '1.279 CN' },
             { year: 1400, file: 'world_1400.geojson', label: '1.400 CN' },
             { year: 1492, file: 'world_1492.geojson', label: '1.492 CN' },
+            { year: 1500, file: 'world_1500.geojson', label: '1.500 CN' },
+            { year: 1530, file: 'world_1530.geojson', label: '1.530 CN' },
             { year: 1600, file: 'world_1600.geojson', label: '1.600 CN' },
+            { year: 1650, file: 'world_1650.geojson', label: '1.650 CN' },
             { year: 1700, file: 'world_1700.geojson', label: '1.700 CN' },
+            { year: 1715, file: 'world_1715.geojson', label: '1.715 CN' },
             { year: 1783, file: 'world_1783.geojson', label: '1.783 CN' },
+            { year: 1800, file: 'world_1800.geojson', label: '1.800 CN' },
             { year: 1815, file: 'world_1815.geojson', label: '1.815 CN' },
             { year: 1880, file: 'world_1880.geojson', label: '1.880 CN' },
+            { year: 1900, file: 'world_1900.geojson', label: '1.900 CN' },
             { year: 1914, file: 'world_1914.geojson', label: '1.914 CN' },
+            { year: 1920, file: 'world_1920.geojson', label: '1.920 CN' },
             { year: 1938, file: 'world_1938.geojson', label: '1.938 CN' },
             { year: 1945, file: 'world_1945.geojson', label: '1.945 CN' },
             { year: 1960, file: 'world_1960.geojson', label: '1.960 CN' },
             { year: 1994, file: 'world_1994.geojson', label: '1.994 CN' },
+            { year: 2000, file: 'world_2000.geojson', label: '2.000 CN' },
             { year: 2010, file: 'world_2010.geojson', label: '2.010 CN' }
         ];
         
@@ -1587,12 +1606,10 @@
             
             for (let idx = 0; idx < availableYears.length; idx++) {
                 const item = availableYears[idx];
-                if (item.year >= targetYear) {
-                    const diff = Math.abs(item.year - targetYear);
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        closestIndex = idx;
-                    }
+                const diff = Math.abs(item.year - targetYear);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestIndex = idx;
                 }
             }
             
@@ -1601,6 +1618,47 @@
             }
             
             return closestIndex;
+        }
+        
+        // ==================== HÀM THÊM MARKER VÀ ZOOM ====================
+        function addMarkerAndZoom(lat, lng, title) {
+            // Xóa marker cũ nếu có
+            if (currentGlobeMarker) {
+                if (globe) globe.pointsData([]);
+                currentGlobeMarker = null;
+            }
+            if (currentLeafletMarker) {
+                if (map2d) map2d.removeLayer(currentLeafletMarker);
+                currentLeafletMarker = null;
+            }
+            
+            // Thêm marker mới cho 3D
+            if (globe && !viewToggle.checked) {
+                const markerData = [{ lat: lat, lng: lng, size: 0.5, color: '#E67E22', name: title }];
+                globe.pointsData(markerData)
+                    .pointColor(() => '#E67E22')
+                    .pointAltitude(0.05)
+                    .pointRadius(0.4);
+                currentGlobeMarker = markerData;
+                // Zoom đến vị trí
+                globe.pointOfView({ lat: lat, lng: lng, altitude: 1.0, duration: 1000 });
+                console.log(`Đã thêm marker 3D tại (${lat}, ${lng}) và zoom đến`);
+            }
+            // Thêm marker mới cho 2D và zoom
+            else if (map2d && viewToggle.checked) {
+                const markerIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: '<i class="fas fa-map-marker-alt" style="font-size:28px; color:#E67E22; filter: drop-shadow(0 0 4px white);"></i>',
+                    iconSize: [28, 28],
+                    popupAnchor: [0, -14]
+                });
+                const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map2d);
+                marker.bindPopup(`<b>${title}</b><br>📍 Vị trí được xác định trên bản đồ`).openPopup();
+                currentLeafletMarker = marker;
+                // Zoom đến vị trí
+                map2d.setView([lat, lng], 8);
+                console.log(`Đã thêm marker 2D tại (${lat}, ${lng}) và zoom đến`);
+            }
         }
         
         // ==================== SPEECH SYNTHESIS FUNCTIONS ====================
@@ -1635,62 +1693,12 @@
             }
         }
         
-        // ==================== HÀM NGẮT GIỌNG NÓI KHI THỰC HIỆN CHỨC NĂNG KHÁC ====================
         function stopSpeechForNewAction() {
             if (isSpeaking) {
                 stopSpeech();
                 console.log("Đã dừng đọc do thực hiện chức năng khác");
             }
         }
-        
-        // ==================== KEYWORDS ====================
-        const battleKeywords = [
-            "trận chiến", "battle", "war", "engagement", "conflict", "campaign", 
-            "chiến tranh", "trận", "cuộc chiến", "chiến dịch", "đánh"
-        ];
-        
-        const vietnamHistoricalLocations = {
-            "Điện Biên Phủ": {
-                lat: 21.3867,
-                lng: 103.0150,
-                name: "Điện Biên Phủ",
-                name_vi: "Điện Biên Phủ",
-                name_en: "Dien Bien Phu",
-                description: "Nơi diễn ra chiến dịch Điện Biên Phủ 1954",
-                description_vi: "Điện Biên Phủ, tỉnh Điện Biên, nơi diễn ra chiến dịch Điện Biên Phủ năm 1954, đánh dấu chiến thắng lịch sử của Việt Nam trước thực dân Pháp",
-                description_en: "Dien Bien Phu, Dien Bien Province, the site of the 1954 Dien Bien Phu Campaign, marking a historic victory of Vietnam over French colonial forces"
-            },
-            "Kinh thành Huế": {
-                lat: 16.4697,
-                lng: 107.5777,
-                name: "Kinh thành Huế",
-                name_vi: "Kinh thành Huế",
-                name_en: "Hue Imperial City",
-                description: "Trung tâm triều Nguyễn",
-                description_vi: "Kinh thành Huế, trung tâm chính trị của triều Nguyễn từ 1802-1945",
-                description_en: "Hue Imperial City, political center of the Nguyen Dynasty from 1802-1945"
-            },
-            "Thăng Long": {
-                lat: 21.0333,
-                lng: 105.8500,
-                name: "Thăng Long (Hà Nội)",
-                description: "Kinh đô thời Lý, Trần, Lê",
-                name_vi: "Thăng Long (Hà Nội)",
-                name_en: "Thang Long (Hanoi)",
-                description_vi: "Kinh đô của Việt Nam thời Lý, Trần, Lê",
-                description_en: "Capital of Vietnam during Ly, Tran, and Le dynasties"
-            },
-            "Bạch Đằng": {
-                lat: 20.8667,
-                lng: 106.7333,
-                name: "Sông Bạch Đằng",
-                description: "Nơi diễn ra các trận thủy chiến lừng danh",
-                name_vi: "Sông Bạch Đằng",
-                name_en: "Bach Dang River",
-                description_vi: "Nơi diễn ra các trận thủy chiến lịch sử chống quân xâm lược",
-                description_en: "Site of historic naval battles against invaders"
-            }
-        };
         
         // ==================== TRANSLATIONS ====================
         const translations = {
@@ -1963,7 +1971,6 @@
                 toggleIcon.classList.remove('fa-chevron-left');
                 toggleIcon.classList.add('fa-chevron-right');
                 toggleBtn.classList.add('collapsed');
-                layerPanel.style.left = '20px';
                 if (countryPanel.classList.contains('visible')) {
                     countryPanel.style.left = '20px';
                 }
@@ -1971,9 +1978,8 @@
                 toggleIcon.classList.remove('fa-chevron-right');
                 toggleIcon.classList.add('fa-chevron-left');
                 toggleBtn.classList.remove('collapsed');
-                layerPanel.style.left = '600px';
                 if (countryPanel.classList.contains('visible')) {
-                    countryPanel.style.left = '33%';
+                    countryPanel.style.left = '580px';
                 }
             }
         }
@@ -1995,7 +2001,7 @@
             }, 3000);
         }
         
-        const uiElementsToToggle = [topBarGlobe, layerPanel, timelineGlobe];
+        const uiElementsToToggle = [timelineGlobe];
         function toggleUIElements(hide) {
             for (let i = 0; i < uiElementsToToggle.length; i++) {
                 const el = uiElementsToToggle[i];
@@ -2009,7 +2015,6 @@
             }
         }
         
-        // ==================== HÀM ẨN/HIỆN NÚT ĐÓNG THANH THÔNG TIN ====================
         function toggleCloseButtons(hide) {
             const closeBtns = document.querySelectorAll('.country-info-close, .info-close, #sidebarToggleNew');
             for (let i = 0; i < closeBtns.length; i++) {
@@ -2022,6 +2027,54 @@
         }
         
         // ==================== QUERY DETECTION ====================
+        const battleKeywords = [
+            "trận chiến", "battle", "war", "engagement", "conflict", "campaign", 
+            "chiến tranh", "trận", "cuộc chiến", "chiến dịch", "đánh"
+        ];
+        
+        const vietnamHistoricalLocations = {
+            "Điện Biên Phủ": {
+                lat: 21.3867,
+                lng: 103.0150,
+                name: "Điện Biên Phủ",
+                name_vi: "Điện Biên Phủ",
+                name_en: "Dien Bien Phu",
+                description: "Nơi diễn ra chiến dịch Điện Biên Phủ 1954",
+                description_vi: "Điện Biên Phủ, tỉnh Điện Biên, nơi diễn ra chiến dịch Điện Biên Phủ năm 1954, đánh dấu chiến thắng lịch sử của Việt Nam trước thực dân Pháp",
+                description_en: "Dien Bien Phu, Dien Bien Province, the site of the 1954 Dien Bien Phu Campaign, marking a historic victory of Vietnam over French colonial forces"
+            },
+            "Kinh thành Huế": {
+                lat: 16.4697,
+                lng: 107.5777,
+                name: "Kinh thành Huế",
+                name_vi: "Kinh thành Huế",
+                name_en: "Hue Imperial City",
+                description: "Trung tâm triều Nguyễn",
+                description_vi: "Kinh thành Huế, trung tâm chính trị của triều Nguyễn từ 1802-1945",
+                description_en: "Hue Imperial City, political center of the Nguyen Dynasty from 1802-1945"
+            },
+            "Thăng Long": {
+                lat: 21.0333,
+                lng: 105.8500,
+                name: "Thăng Long (Hà Nội)",
+                description: "Kinh đô thời Lý, Trần, Lê",
+                name_vi: "Thăng Long (Hà Nội)",
+                name_en: "Thang Long (Hanoi)",
+                description_vi: "Kinh đô của Việt Nam thời Lý, Trần, Lê",
+                description_en: "Capital of Vietnam during Ly, Tran, and Le dynasties"
+            },
+            "Bạch Đằng": {
+                lat: 20.8667,
+                lng: 106.7333,
+                name: "Sông Bạch Đằng",
+                description: "Nơi diễn ra các trận thủy chiến lừng danh",
+                name_vi: "Sông Bạch Đằng",
+                name_en: "Bach Dang River",
+                description_vi: "Nơi diễn ra các trận thủy chiến lịch sử chống quân xâm lược",
+                description_en: "Site of historic naval battles against invaders"
+            }
+        };
+        
         function isBattleQuery(query) {
             const lowerQuery = query.toLowerCase();
             for (let i = 0; i < battleKeywords.length; i++) {
@@ -2038,8 +2091,7 @@
                 "nhân vật", "vua", "hoàng đế", "tướng", "anh hùng", "nhà thơ", "nhà văn",
                 "nguyễn huệ", "trần hưng đạo", "nguyễn khuyến", "quang trung",
                 "lý thường kiệt", "ngô quyền", "chủ tịch", "bí thư", "character", "king", 
-                "emperor", "general", "hero", "poet", "writer", "Nguyễn Huệ", "Trần Hưng Đạo", 
-                "Nguyễn Khuyến", "Quang Trung", "Lý Thường Kiệt", "Ngô Quyền", "president", "secretary"
+                "emperor", "general", "hero", "poet", "writer"
             ];
             for (let i = 0; i < figureKeywords.length; i++) {
                 if (lowerQuery.includes(figureKeywords[i].toLowerCase())) {
@@ -2053,9 +2105,7 @@
             const lowerQuery = query.toLowerCase();
             const landmarkKeywords = [
                 "kinh thành", "đền", "chùa", "di tích", "thành", "cung điện", "địa danh", "địa điểm", "lăng", "mộ",
-                "huế", "thăng long", "cổ loa", "mỹ sơn", "văn miếu", "capital city", "temple", 
-                "pagoda", "heritage site", "fortress", "palace", "geographical name", "location", 
-                "tomb", "grave", "Hue", "Thang Long", "Co Loa", "My Son", "Van Mieu"
+                "huế", "thăng long", "cổ loa", "mỹ sơn", "văn miếu"
             ];
             for (let i = 0; i < landmarkKeywords.length; i++) {
                 if (lowerQuery.includes(landmarkKeywords[i].toLowerCase())) {
@@ -2129,7 +2179,6 @@
             infoPanel.classList.remove('visible');
         }
         
-        // ==================== COUNTRY INFO PANEL FUNCTIONS ====================
         function showCountryInfoPanel(title, subtitle, content) {
             countryInfoTitle.textContent = title;
             countryInfoSubtitle.textContent = subtitle;
@@ -2147,7 +2196,7 @@
             countryInfoPanel.classList.remove('visible');
         }
         
-        // ==================== GLOBE FUNCTIONS ====================
+        // ==================== GLOBE & 2D FUNCTIONS ====================
         async function initApp() {
             await initGlobe();
             preloadAllGeoJSON();
@@ -2162,26 +2211,36 @@
             countryInfoClose.addEventListener('click', hideCountryInfoPanel);
             
             setTimeout(() => {
-                loadYearDebounced(30);
+                loadYearDebounced(availableYears.length - 1);
             }, 500);
         }
         
-        // ==================== HÀM LOAD NĂM VỚI DEBOUNCE 0.5s ====================
+        async function preloadAllGeoJSON() {
+            const promises = availableYears.map(async (yearData) => {
+                if (!dataCache[yearData.file]) {
+                    try {
+                        const response = await fetch(`data/geojson/${yearData.file}`);
+                        dataCache[yearData.file] = await response.json();
+                        console.log(`Preloaded: ${yearData.file}`);
+                    } catch(e) { console.warn(`Failed: ${yearData.file}`, e); }
+                }
+            });
+            await Promise.all(promises);
+            allGeoJSONLoaded = true;
+        }
+        
         function loadYearDebounced(index) {
-            // Hủy timer cũ nếu có
             if (pendingYearLoadTimer) {
                 clearTimeout(pendingYearLoadTimer);
                 pendingYearLoadTimer = null;
             }
             
-            // Cập nhật UI ngay lập tức (hiển thị năm đã chọn)
             if (index >= 0 && index < availableYears.length) {
                 const yearData = availableYears[index];
                 document.getElementById('yearDisplay').textContent = yearData.label;
                 document.getElementById('timelineSlider').value = (index / (availableYears.length - 1)) * 100;
             }
             
-            // Tạo timer mới, sau 0.5s mới thực sự load map
             pendingYearLoadTimer = setTimeout(async () => {
                 await loadYearActual(index);
                 pendingYearLoadTimer = null;
@@ -2195,8 +2254,6 @@
             currentGeoJSON = dataCache[yearData.file];
             if (currentGeoJSON) {
                 renderBorders(currentGeoJSON, yearData.year);
-                // Cập nhật bản đồ 2D nếu đang ở chế độ 2D
-                const viewToggle = document.getElementById('view-toggle');
                 if (viewToggle && viewToggle.checked && currentGeoJSON) {
                     render2DPolygons(currentGeoJSON);
                 }
@@ -2206,16 +2263,10 @@
                 currentGeoJSON = await response.json();
                 dataCache[yearData.file] = currentGeoJSON;
                 renderBorders(currentGeoJSON, yearData.year);
-                const viewToggle = document.getElementById('view-toggle');
                 if (viewToggle && viewToggle.checked && currentGeoJSON) {
                     render2DPolygons(currentGeoJSON);
                 }
             }
-        }
-        
-        // Giữ lại hàm loadYear cũ để tương thích
-        async function loadYear(index) {
-            await loadYearActual(index);
         }
         
         function renderBorders(geojson, year) {
@@ -2253,7 +2304,6 @@
             }
             
             globe.polygonsData(polygons);
-            
             updateLabels(geojson);
         }
         
@@ -2385,7 +2435,6 @@ Keep the response under 250 words. Use bullet points.`;
         function setupGlobeControls() {
             const timelineSlider = document.getElementById('timelineSlider');
             
-            // ==================== THỨ 1: TOOLTIP HIỂN THỊ NĂM KHI RÊ CHUỘT ====================
             let tooltip = null;
             
             timelineSlider.addEventListener('mousemove', function(e) {
@@ -2420,14 +2469,11 @@ Keep the response under 250 words. Use bullet points.`;
                 }
             });
             
-            // ==================== THỨ 2: DEBOUNCE 0.5s KHI CLICK CHỌN NĂM ====================
             timelineSlider.addEventListener('input', function(e) {
                 const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
                 stopSpeechForNewAction();
-                // Cập nhật hiển thị năm ngay lập tức
                 const yearData = availableYears[index];
                 document.getElementById('yearDisplay').textContent = yearData.label;
-                // Load với debounce 0.5s
                 loadYearDebounced(index);
             });
             
@@ -2444,6 +2490,50 @@ Keep the response under 250 words. Use bullet points.`;
                     }
                 });
             }
+        }
+        
+        function init2DMap() {
+            if (map2d) return;
+            map2d = L.map('map2dContainer').setView([20, 105], 4);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+            }).addTo(map2d);
+        }
+        
+        function render2DPolygons(geojson) {
+            if (!map2d) init2DMap();
+            
+            currentPolygons.forEach(poly => map2d.removeLayer(poly));
+            currentPolygons = [];
+            
+            if (!geojson || !layers.borders) return;
+            
+            const entities = [...new Set(geojson.features.map(f => 
+                f.properties.SUBJECTO || f.properties.NAME || f.properties.name
+            ).filter(Boolean))];
+            
+            geojson.features.forEach((feature, i) => {
+                const name = feature.properties.SUBJECTO || feature.properties.NAME || feature.properties.name;
+                const colorIndex = entities.indexOf(name) % colorPalette.length;
+                
+                const polygon = L.geoJSON(feature, {
+                    style: {
+                        color: colorPalette[colorIndex],
+                        weight: 1.5,
+                        fillOpacity: 0.4,
+                        fillColor: colorPalette[colorIndex]
+                    },
+                    onEachFeature: (f, layer) => {
+                        layer.on('click', () => {
+                            const coords = layer.getBounds().getCenter();
+                            stopSpeechForNewAction();
+                            queryLocalHistory(coords.lat, coords.lng, name);
+                        });
+                    }
+                }).addTo(map2d);
+                
+                currentPolygons.push(polygon);
+            });
         }
         
         function checkUrlParameters() {
@@ -2527,7 +2617,6 @@ Keep the response under 250 words. Use bullet points.`;
                 img.onload = function() {
                     ctx.fillStyle = '#ffffff';
                     ctx.fillRect(0, 0, width, height);
-                    
                     ctx.drawImage(img, 0, 0, width, height);
                     
                     const link = document.createElement('a');
@@ -3081,6 +3170,17 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                         resultContainer.querySelector('.result-content').appendChild(infoDiv);
                         resultMessages.appendChild(resultContainer);
                         
+                        // ==================== XỬ LÝ MARKER VÀ ZOOM KHI CÓ TỌA ĐỘ ====================
+                        if (parsedData.lat && parsedData.lng) {
+                            addMarkerAndZoom(parsedData.lat, parsedData.lng, parsedData.name);
+                        } else if (parsedData.location) {
+                            const location = await getLocationCoordinates(parsedData.location);
+                            if (location && location.lat && location.lng) {
+                                addMarkerAndZoom(location.lat, location.lng, parsedData.name);
+                            }
+                        }
+                        
+                        // ==================== CHUYỂN NĂM NẾU CÓ ====================
                         if (parsedData.yearValue && !isNaN(parsedData.yearValue)) {
                             let targetYear = parsedData.yearValue;
                             if (parsedData.isBC === true) {
@@ -3092,15 +3192,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                                 setTimeout(function() {
                                     loadYearDebounced(targetIndex);
                                 }, 500);
-                            }
-                        }
-                        
-                        if (parsedData.lat && parsedData.lng) {
-                            globe.pointOfView({ lat: parsedData.lat, lng: parsedData.lng, altitude: 1.2 });
-                        } else if (parsedData.location) {
-                            const location = await getLocationCoordinates(parsedData.location);
-                            if (location && location.lat && location.lng) {
-                                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.2 });
                             }
                         }
                         
@@ -3144,9 +3235,13 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
         function toggleCountry(countryName) {
             const location = getExactLocation(countryName);
             if (location) {
-                globe.pointOfView({ lat: location.lat, lng: location.lng, altitude: 1.2 });
+                addMarkerAndZoom(location.lat, location.lng, countryName);
             } else {
-                globe.pointOfView({ lat: 20, lng: 105, altitude: 2.5 });
+                if (!viewToggle.checked && globe) {
+                    globe.pointOfView({ lat: 20, lng: 105, altitude: 2.5 });
+                } else if (viewToggle.checked && map2d) {
+                    map2d.setView([20, 105], 4);
+                }
             }
             
             const translatedName = translateCountryName(countryName);
@@ -3989,89 +4084,23 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
         }
 
-        // Biến lưu bản đồ 2D
-        let map2d = null;
-        let currentPolygons = [];
-
-        // Hàm khởi tạo bản đồ 2D
-        function init2DMap() {
-            if (map2d) return;
-            map2d = L.map('map2dContainer').setView([20, 105], 4);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-            }).addTo(map2d);
-        }
-
-        // Hàm vẽ polygon lên bản đồ 2D
-        function render2DPolygons(geojson) {
-            if (!map2d) init2DMap();
-            
-            // Xóa polygon cũ
-            currentPolygons.forEach(poly => map2d.removeLayer(poly));
-            currentPolygons = [];
-            
-            if (!geojson || !layers.borders) return;
-            
-            const entities = [...new Set(geojson.features.map(f => 
-                f.properties.SUBJECTO || f.properties.NAME || f.properties.name
-            ).filter(Boolean))];
-            
-            geojson.features.forEach((feature, i) => {
-                const name = feature.properties.SUBJECTO || feature.properties.NAME || feature.properties.name;
-                const colorIndex = entities.indexOf(name) % colorPalette.length;
-                
-                const polygon = L.geoJSON(feature, {
-                    style: {
-                        color: colorPalette[colorIndex],
-                        weight: 1.5,
-                        fillOpacity: 0.4,
-                        fillColor: colorPalette[colorIndex]
-                    },
-                    onEachFeature: (f, layer) => {
-                        layer.on('click', () => {
-                            const coords = layer.getBounds().getCenter();
-                            stopSpeechForNewAction();
-                            queryLocalHistory(coords.lat, coords.lng, name);
-                        });
-                    }
-                }).addTo(map2d);
-                
-                currentPolygons.push(polygon);
-            });
-        }
-
         // Xử lý chuyển đổi 2D/3D
-        const viewToggle = document.getElementById('view-toggle');
-        const globeContainer = document.getElementById('globeContainer');
-        const map2dContainer = document.getElementById('map2dContainer');
-
         viewToggle.addEventListener('change', function() {
             const is2D = this.checked;
             
             if (is2D) {
-                // Chuyển sang 2D
                 globeContainer.style.display = 'none';
                 map2dContainer.style.display = 'block';
                 init2DMap();
                 if (currentGeoJSON) render2DPolygons(currentGeoJSON);
                 if (map2d) map2d.setView([20, 105], 4);
             } else {
-                // Chuyển sang 3D
                 globeContainer.style.display = 'block';
                 map2dContainer.style.display = 'none';
                 if (globe && currentGeoJSON) renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
             }
         });
 
-        // Cập nhật cả 2 bản đồ khi load năm mới
-        const originalLoadYear = loadYear;
-        window.loadYear = async function(index) {
-            await originalLoadYear(index);
-            if (viewToggle.checked && currentGeoJSON) {
-                render2DPolygons(currentGeoJSON);
-            }
-        };
-        
         async function initGlobe() {
             window.addEventListener('resize', function() {
                 if (globe) {
@@ -4107,7 +4136,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             
             globe.pointOfView({ lat: 20, lng: 105, altitude: 2.5 });
             
-            await loadYearDebounced(currentYearIndex);
+            await loadYearDebounced(availableYears.length - 1);
             
             setupGlobeControls();
         }
