@@ -2365,23 +2365,6 @@ Keep the response under 250 words. Use bullet points.`;
                 loadYear(index);
             });
             
-            const prevBtn = document.getElementById('prevBtn');
-            prevBtn.addEventListener('click', function() {
-                stopSpeechForNewAction();
-                loadYear(Math.max(0, currentYearIndex - 1));
-            });
-            
-            const nextBtn = document.getElementById('nextBtn');
-            nextBtn.addEventListener('click', function() {
-                stopSpeechForNewAction();
-                loadYear(Math.min(availableYears.length - 1, currentYearIndex + 1));
-            });
-            
-            const playBtn = document.getElementById('playBtn');
-            playBtn.addEventListener('click', function() {
-                stopSpeechForNewAction();
-                togglePlay();
-            });
             
             const layerBtns = document.querySelectorAll('.layer-btn');
             for (let i = 0; i < layerBtns.length; i++) {
@@ -2398,27 +2381,7 @@ Keep the response under 250 words. Use bullet points.`;
             }
         }
         
-        function togglePlay() {
-            isPlaying = !isPlaying;
-            const btn = document.getElementById('playBtn');
-            
-            if (isPlaying) {
-                btn.textContent = '⏸️';
-                btn.classList.add('active');
-                playInterval = setInterval(function() {
-                    let nextIndex = currentYearIndex + 1;
-                    if (nextIndex >= availableYears.length) {
-                        nextIndex = 0;
-                    }
-                    loadYear(nextIndex);
-                }, 2000);
-            } else {
-                btn.textContent = '▶️';
-                btn.classList.remove('active');
-                clearInterval(playInterval);
-                playInterval = null;
-            }
-        }
+
         
         function checkUrlParameters() {
             const urlParams = new URLSearchParams(window.location.search);
