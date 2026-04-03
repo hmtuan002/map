@@ -827,7 +827,7 @@
         .search-button {
             position: absolute;
             top: 50%;
-            right: 0.5rem;
+            right: 0.4rem;
             transform: translateY(-50%);
             background-color: var(--button-cyan);
             color: white;
@@ -2136,7 +2136,7 @@
                 .polygonsData([])
                 .polygonAltitude(0.01)
                 .polygonCapColor(function(d) { return d.color || '#444'; })
-                .polygonSideColor(function() { return 'rgba(100, 100, 100, 0.2)'; })
+                .polygonSideColor(function() { return 'rgba(100, 100, 100, 1)'; })
                 .polygonStrokeColor(function() { return '#fff'; })
                 .polygonLabel(function(d) { 
                     let name = d.properties?.NAME || d.properties?.SUBJECTO || 'Không xác định';
