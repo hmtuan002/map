@@ -1,550 +1,3 @@
-TRONG CHƯƠNG TRÌNH SAU CÓ 3 CHỖ TÔI MUỐN SỬA. THỨ 1, TÔI MUỐN Ở CÁI THANH LĂN CHỌN NĂM Á, KHI TA ĐƯA CHUỘT VÀO THANH LĂN ĐÓ, CON CHUỘT ĐANG Ở VỊ TRÍ NÀO TRÊN CON LĂN THÌ CODE SẼ HIỂN THỊ NĂM TƯƠNG ỨNG CỦA VỊ TRÍ TRÊN CON LĂN ĐÓ (VỊ DỤ VỊ TRÍ CUỐI CON LĂN LÀ NĂM 2010 CN THÌ ĐƯA CON CHUỘT TỚI NHƯNG CHƯA BẤM NÓ SẼ HIỂN THỊ NĂM 2010 CN, NHỚ LÀ NHỎ NHỎ THÔI, KHI ĐƯA CHUỘT TỚI GIỮA VỊ TRÍ CON LĂN THÌ NÓ SẼ HIỆN NHỎ NHỎ NĂM 1000CN). THỨ 2, KHI NGƯỜI DÙNG CHỌN NĂM Á, TÔI MUỐN KHI NGƯỜI DÙNG CLICK VÀO CON LĂN ĐÓ NĂM NÀO ĐÓ THÌ PHẢI ĐỢI 0.5S SAU THÌ CODE MỚI CHẠY VÀ BẢN ĐỒ MỚI ĐƯỢC LOAD, NẾU CHƯA TỚI 0.5S MÀ NGƯỜI DÙNG CHUYỂN SANG NĂM KHÁC RỒI THÌ CODE NĂM ĐÓ (FILE GEOJSON NĂM ĐÓ) KHÔNG CHẠY, BẢN ĐỒ LỊCH SỬ NĂM ĐÓ KHÔNG ĐƯỢC LOAD. THỨ 3, TÔI MUỐN ĐỔI API VÀ MODEL, TÔI SẼ GỬI CHO BẠN CODE API VÀ MODEL, BẠN HÃY LẤY NÓ ĐỂ THAY VÀO AI HIỆN TẠI CỦA TÔI (NHỚ VẪN ĐẢO API NHÉ), ĐÂY LÀ CODE AI CẦN THAY. 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot - ShopAIKey (Chính thức)</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .chat-container {
-            width: 100%;
-            max-width: 1000px;
-            height: 90vh;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .chat-header h1 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .chat-header p {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        .info-panel {
-            background: #e8f5e9;
-            padding: 12px 20px;
-            font-size: 0.8rem;
-            border-bottom: 1px solid #c8e6c9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .model-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .model-selector select {
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid #4caf50;
-            background: white;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .api-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4caf50;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f7f9fc;
-        }
-
-        .message {
-            margin-bottom: 15px;
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.user {
-            justify-content: flex-end;
-        }
-
-        .message-content {
-            max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            word-wrap: break-word;
-            line-height: 1.5;
-            font-size: 0.95rem;
-        }
-
-        .message.user .message-content {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.bot .message-content {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .typing-indicator {
-            display: flex;
-            padding: 12px 16px;
-            background: white;
-            border-radius: 18px;
-            width: fit-content;
-            gap: 4px;
-        }
-
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: #999;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-            30% { transform: translateY(-10px); opacity: 1; }
-        }
-
-        .chat-input-area {
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-            gap: 10px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 1px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .chat-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .send-btn {
-            padding: 12px 28px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
-
-        .send-btn:hover {
-            transform: scale(1.02);
-        }
-
-        .send-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .status-bar {
-            padding: 8px 20px;
-            background: #f5f5f5;
-            font-size: 0.7rem;
-            color: #666;
-            text-align: center;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        pre {
-            background: #f4f4f4;
-            padding: 10px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 8px 0;
-            font-size: 0.85rem;
-        }
-
-        code {
-            font-family: 'Courier New', monospace;
-        }
-
-        .error-message {
-            color: #c62828;
-            background: #ffebee;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.75rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1>🤖 AI Assistant - ShopAIKey</h1>
-            <p>Định dạng OpenAI | Chạy trực tiếp trên trình duyệt</p>
-        </div>
-        
-        <div class="info-panel">
-            <div class="model-selector">
-                <span>🎯 Model:</span>
-                <select id="modelSelect">
-                    <option value="gpt-5.4-nano">GPT-5.4 Nano (Nhanh)</option>
-                    <option value="gpt-4">GPT-4 (Mạnh mẽ)</option>
-                    <option value="gpt-4-turbo-preview">GPT-4 Turbo (Cân bằng)</option>
-                    <option value="claude-3-opus-20240229">Claude 3 Opus</option>
-                    <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
-                </select>
-            </div>
-            <div class="api-status">
-                <div class="status-dot"></div>
-                <span>API: shopaikey.com/v1</span>
-            </div>
-        </div>
-        
-        <div class="chat-messages" id="chatMessages">
-            <div class="message bot">
-                <div class="message-content">
-                    👋 Xin chào! Tôi là trợ lý AI của ShopAIKey.<br><br>
-                    📘 <strong>Theo tài liệu chính thức:</strong><br>
-                    • Base URL: <code>https://api.shopaikey.com/v1</code><br>
-                    • Endpoint: <code>/chat/completions</code><br>
-                    • Format: OpenAI compatible<br><br>
-                    💬 Hãy nhập tin nhắn để bắt đầu!
-                </div>
-            </div>
-        </div>
-        
-        <div class="chat-input-area">
-            <input type="text" class="chat-input" id="userInput" placeholder="Nhập tin nhắn của bạn..." onkeypress="handleKeyPress(event)">
-            <button class="send-btn" id="sendBtn" onclick="sendMessage()">Gửi ➤</button>
-        </div>
-        <div class="status-bar" id="statusBar">
-            🟢 Sẵn sàng | API: https://api.shopaikey.com/v1
-        </div>
-    </div>
-
-    <script>
-        // ============================================
-        // CẤU HÌNH API THEO TÀI LIỆU SHOPAIKEY
-        // ============================================
-        const API_KEY = "sk-uQmI5tk7o5FdWLq852gCLO2xZTd5OmG2K9RKy7C3raEqGx6v";
-        const BASE_URL = "https://api.shopaikey.com/v1";
-        const CHAT_ENDPOINT = "/chat/completions";
-        const API_URL = BASE_URL + CHAT_ENDPOINT;
-        
-        let isSending = false;
-        let conversationHistory = [];
-        
-        function addMessage(role, content) {
-            const messagesDiv = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}`;
-            
-            // Xử lý hiển thị code block
-            let formattedContent = content;
-            if (content.includes('```')) {
-                formattedContent = content.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-                    return `<pre><code class="language-${lang || 'plaintext'}">${escapeHtml(code.trim())}</code></pre>`;
-                });
-            }
-            formattedContent = formattedContent.replace(/\n/g, '<br>');
-            
-            messageDiv.innerHTML = `<div class="message-content">${formattedContent}</div>`;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            
-            // Lưu vào lịch sử hội thoại
-            if (role !== 'typing') {
-                conversationHistory.push({ role: role === 'user' ? 'user' : 'assistant', content: content });
-                // Giới hạn lịch sử để tránh quá dài
-                if (conversationHistory.length > 20) {
-                    conversationHistory = conversationHistory.slice(-20);
-                }
-            }
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function showTyping() {
-            const messagesDiv = document.getElementById('chatMessages');
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot';
-            typingDiv.id = 'typingIndicator';
-            typingDiv.innerHTML = `
-                <div class="typing-indicator">
-                    <span></span><span></span><span></span>
-                </div>
-            `;
-            messagesDiv.appendChild(typingDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-        
-        function removeTyping() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
-        }
-        
-        function setStatus(msg, isError = false) {
-            const statusBar = document.getElementById('statusBar');
-            statusBar.innerHTML = isError ? `❌ ${msg}` : `🟢 ${msg}`;
-            statusBar.style.color = isError ? '#c62828' : '#666';
-            if (isError) {
-                setTimeout(() => {
-                    if (document.getElementById('statusBar').innerHTML.includes(msg)) {
-                        statusBar.style.color = '#666';
-                        statusBar.innerHTML = '🟢 Sẵn sàng | API: https://api.shopaikey.com/v1';
-                    }
-                }, 5000);
-            }
-        }
-        
-        async function sendMessage() {
-            if (isSending) return;
-            
-            const input = document.getElementById('userInput');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            const model = document.getElementById('modelSelect').value;
-            
-            // Thêm tin nhắn người dùng
-            addMessage('user', message);
-            input.value = '';
-            
-            const sendBtn = document.getElementById('sendBtn');
-            isSending = true;
-            sendBtn.disabled = true;
-            showTyping();
-            setStatus(`Đang gọi API với model: ${model}...`);
-            
-            try {
-                // Chuẩn bị messages với hệ thống và lịch sử
-                const messages = [
-                    {
-                        role: 'system',
-                        content: 'Bạn là trợ lý AI chuyên nghiệp, thân thiện và hữu ích. Hãy trả lời bằng tiếng Việt một cách tự nhiên, chính xác và chi tiết.'
-                    },
-                    ...conversationHistory.slice(-10) // Lấy 10 tin nhắn gần nhất
-                ];
-                
-                // Gọi API theo đúng định dạng OpenAI
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: messages,
-                        temperature: 0.7,
-                        max_tokens: 2000,
-                        top_p: 0.9,
-                        frequency_penalty: 0.5,
-                        presence_penalty: 0.5,
-                        stream: false
-                    })
-                });
-                
-                removeTyping();
-                
-                if (!response.ok) {
-                    let errorMsg = `HTTP ${response.status}`;
-                    try {
-                        const errorData = await response.json();
-                        if (errorData.error) {
-                            errorMsg = errorData.error.message || errorData.error;
-                        }
-                    } catch (e) {
-                        errorMsg = await response.text();
-                    }
-                    throw new Error(errorMsg);
-                }
-                
-                const data = await response.json();
-                
-                // Kiểm tra cấu trúc response theo OpenAI format
-                if (data.choices && data.choices[0] && data.choices[0].message) {
-                    const reply = data.choices[0].message.content;
-                    addMessage('bot', reply);
-                    setStatus(`Thành công! Đã dùng ${data.usage?.total_tokens || '?'} tokens`);
-                } else {
-                    throw new Error('Response không đúng định dạng OpenAI');
-                }
-                
-            } catch (error) {
-                removeTyping();
-                console.error('Chi tiết lỗi:', error);
-                
-                let errorMsg = error.message;
-                
-                if (errorMsg.includes('Failed to fetch') || errorMsg.includes('Network')) {
-                    errorMsg = 'Không thể kết nối đến API. Kiểm tra internet hoặc CORS. Vui lòng dùng Live Server để chạy.';
-                } else if (errorMsg.includes('401')) {
-                    errorMsg = 'API key không hợp lệ. Vui lòng kiểm tra lại key từ ShopAIKey.';
-                } else if (errorMsg.includes('404')) {
-                    errorMsg = `Model "${model}" không tồn tại. Hãy thử model khác trong danh sách.`;
-                } else if (errorMsg.includes('429')) {
-                    errorMsg = 'Quá nhiều request. Vui lòng thử lại sau.';
-                }
-                
-                addMessage('bot', `❌ **Lỗi:** ${errorMsg}\n\n💡 **Gợi ý:**\n• Kiểm tra API key\n• Thử model khác\n• Dùng Live Server để tránh lỗi CORS`);
-                setStatus(`Lỗi: ${errorMsg.substring(0, 80)}`, true);
-            } finally {
-                isSending = false;
-                sendBtn.disabled = false;
-                input.focus();
-            }
-        }
-        
-        function handleKeyPress(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        }
-        
-        function clearHistory() {
-            if (confirm('Bạn có muốn xóa lịch sử chat?')) {
-                conversationHistory = [];
-                document.getElementById('chatMessages').innerHTML = `
-                    <div class="message bot">
-                        <div class="message-content">
-                            🗑️ Đã xóa lịch sử hội thoại. Hãy bắt đầu cuộc trò chuyện mới!
-                        </div>
-                    </div>
-                `;
-                setStatus('Đã xóa lịch sử');
-            }
-        }
-        
-        // Thêm nút xóa lịch sử
-        const style = document.createElement('style');
-        style.textContent = `
-            .clear-btn {
-                position: fixed;
-                bottom: 100px;
-                right: 30px;
-                background: #ff5722;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                cursor: pointer;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-                font-size: 20px;
-                transition: all 0.3s;
-                z-index: 1000;
-            }
-            .clear-btn:hover {
-                transform: scale(1.1);
-                background: #f44336;
-            }
-            pre {
-                background: #f4f4f4;
-                padding: 10px;
-                border-radius: 8px;
-                overflow-x: auto;
-                margin: 10px 0;
-            }
-            code {
-                font-family: 'Courier New', monospace;
-                font-size: 0.85em;
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Thêm nút xóa lịch sử
-        const clearBtn = document.createElement('button');
-        clearBtn.innerHTML = '🗑️';
-        clearBtn.className = 'clear-btn';
-        clearBtn.title = 'Xóa lịch sử chat';
-        clearBtn.onclick = clearHistory;
-        document.body.appendChild(clearBtn);
-        
-        window.onload = () => {
-            document.getElementById('userInput').focus();
-            setStatus('Sẵn sàng | API: https://api.shopaikey.com/v1');
-        };
-    </script>
-</body>
-</html> ĐÂY LÀ CODE CẦN ỬA. VIẾT LẠI TOÀN BỘ CODE, CẤM RÚT GỌN, CHỈ SỬA 3 CÁI TRÊN, CÁC CHỨC NĂNG KHÁC CẤM RÚT GỌN (GIỮ NGUYÊN CODE). 
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -667,6 +120,23 @@ TRONG CHƯƠNG TRÌNH SAU CÓ 3 CHỖ TÔI MUỐN SỬA. THỨ 1, TÔI MUỐN �
         
         .sidebar-toggle-new.collapsed {
             left: 0;
+        }
+        
+        /* ===== TOOLTIP NĂM NHỎ KHI RÊ CHUỘT TRÊN THANH TRƯỢT ===== */
+        .year-tooltip {
+            position: fixed;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: opacity 0.1s;
         }
         
         /* ===== INFO PANEL CONTENT VỚI DẤU CHẤM VÀNG ===== */
@@ -1179,6 +649,7 @@ TRONG CHƯƠNG TRÌNH SAU CÓ 3 CHỖ TÔI MUỐN SỬA. THỨ 1, TÔI MUỐN �
             padding: 12px 20px;
             border: 1px solid var(--border-light);
             width: 100%;
+            position: relative;
         }
         
         .timeline-slider-globe {
@@ -1991,14 +1462,16 @@ TRONG CHƯƠNG TRÌNH SAU CÓ 3 CHỖ TÔI MUỐN SỬA. THỨ 1, TÔI MUỐN �
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
-        // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY ====================
+        // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY (ĐÃ ĐẢO) ====================
         function reverseString(str) {
             return str.split('').reverse().join('');
         }
+        // API key đã được đảo ngược: key gốc "AIzaSyBhehIPxM5o2Mx27bXy3_RVkXNHOVG0M" đã được đảo
         const reversedKey = "M0GVHONkVX_R3yXb27M2xoMqh5PIxhheBySazIA";
         const API_KEY = reverseString(reversedKey);
 
         const genAI = new GoogleGenerativeAI(API_KEY);
+        // SỬ DỤNG MODEL MỚI: gemini-2.5-flash-lite
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
         // ==================== DOM ELEMENTS ====================
@@ -2053,6 +1526,9 @@ TRONG CHƯƠNG TRÌNH SAU CÓ 3 CHỖ TÔI MUỐN SỬA. THỨ 1, TÔI MUỐN �
         let transformer = null;
         let currentGeoJSON = null;
         let currentLanguage = 'vi';
+        
+        // ==================== DEBOUNCE TIMER CHO NĂM ====================
+        let pendingYearLoadTimer = null;
         
         // ==================== SPEECH SYNTHESIS VARIABLES ====================
         let speechSynthesisUtterance = null;
@@ -2686,66 +2162,60 @@ TRONG CHƯƠNG TRÌNH SAU CÓ 3 CHỖ TÔI MUỐN SỬA. THỨ 1, TÔI MUỐN �
             countryInfoClose.addEventListener('click', hideCountryInfoPanel);
             
             setTimeout(() => {
-                loadYear(30);
+                loadYearDebounced(30);
             }, 500);
         }
         
-        async function initGlobe() {
-            window.addEventListener('resize', function() {
-                if (globe) {
-                    globe.width(window.innerWidth);
-                    globe.height(window.innerHeight);
-                }
-            });
+        // ==================== HÀM LOAD NĂM VỚI DEBOUNCE 0.5s ====================
+        function loadYearDebounced(index) {
+            // Hủy timer cũ nếu có
+            if (pendingYearLoadTimer) {
+                clearTimeout(pendingYearLoadTimer);
+                pendingYearLoadTimer = null;
+            }
             
-            globe = Globe()
-                .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-                .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-                .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-                .showAtmosphere(true)
-                .atmosphereColor('#3a7bd5')
-                .atmosphereAltitude(0.25)
-                .polygonsData([])
-                .polygonAltitude(0.01)
-                .polygonCapColor(function(d) { return d.color || 'rgba(100, 100, 100, 0.9)'; })
-                .polygonSideColor(function() { return 'rgba(100, 100, 100, 1)'; })
-                .polygonStrokeColor(function() { return '#fff'; })
-                .polygonLabel(function(d) { 
-                    let name = d.properties?.NAME || d.properties?.SUBJECTO || 'Không xác định';
-                    return '<div class="territory-tooltip">' + name + '</div>';
-                })
-                .onPolygonClick(handleTerritoryClick)
-                .labelsData([])
-                .labelText(function(d) { return d.name; })
-                .labelSize(1.2)
-                .labelColor(function() { return 'rgba(255, 255, 255, 0.9)'; })
-                .labelResolution(2)
-                .labelAltitude(0.02)
-                (document.getElementById('globeContainer'));
+            // Cập nhật UI ngay lập tức (hiển thị năm đã chọn)
+            if (index >= 0 && index < availableYears.length) {
+                const yearData = availableYears[index];
+                document.getElementById('yearDisplay').textContent = yearData.label;
+                document.getElementById('timelineSlider').value = (index / (availableYears.length - 1)) * 100;
+            }
             
-            globe.pointOfView({ lat: 20, lng: 105, altitude: 2.5 });
-            
-            await loadYear(currentYearIndex);
-            
-            setupGlobeControls();
+            // Tạo timer mới, sau 0.5s mới thực sự load map
+            pendingYearLoadTimer = setTimeout(async () => {
+                await loadYearActual(index);
+                pendingYearLoadTimer = null;
+            }, 500);
         }
         
-        async function loadYear(index) {
+        async function loadYearActual(index) {
             if (index < 0 || index >= availableYears.length) return;
             currentYearIndex = index;
             const yearData = availableYears[index];
-            document.getElementById('yearDisplay').textContent = yearData.label;
-            document.getElementById('timelineSlider').value = (index / (availableYears.length - 1)) * 100;
             currentGeoJSON = dataCache[yearData.file];
             if (currentGeoJSON) {
                 renderBorders(currentGeoJSON, yearData.year);
+                // Cập nhật bản đồ 2D nếu đang ở chế độ 2D
+                const viewToggle = document.getElementById('view-toggle');
+                if (viewToggle && viewToggle.checked && currentGeoJSON) {
+                    render2DPolygons(currentGeoJSON);
+                }
             } else {
                 console.warn('Data not preloaded yet, loading now...');
                 const response = await fetch(`data/geojson/${yearData.file}`);
                 currentGeoJSON = await response.json();
                 dataCache[yearData.file] = currentGeoJSON;
                 renderBorders(currentGeoJSON, yearData.year);
+                const viewToggle = document.getElementById('view-toggle');
+                if (viewToggle && viewToggle.checked && currentGeoJSON) {
+                    render2DPolygons(currentGeoJSON);
+                }
             }
+        }
+        
+        // Giữ lại hàm loadYear cũ để tương thích
+        async function loadYear(index) {
+            await loadYearActual(index);
         }
         
         function renderBorders(geojson, year) {
@@ -2914,12 +2384,52 @@ Keep the response under 250 words. Use bullet points.`;
         
         function setupGlobeControls() {
             const timelineSlider = document.getElementById('timelineSlider');
+            
+            // ==================== THỨ 1: TOOLTIP HIỂN THỊ NĂM KHI RÊ CHUỘT ====================
+            let tooltip = null;
+            
+            timelineSlider.addEventListener('mousemove', function(e) {
+                const rect = timelineSlider.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                let percent = mouseX / rect.width;
+                percent = Math.max(0, Math.min(1, percent));
+                const index = Math.round(percent * (availableYears.length - 1));
+                const yearData = availableYears[index];
+                
+                if (!tooltip) {
+                    tooltip = document.createElement('div');
+                    tooltip.className = 'year-tooltip';
+                    document.body.appendChild(tooltip);
+                }
+                
+                tooltip.textContent = yearData.label;
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY - 30) + 'px';
+                tooltip.style.opacity = '1';
+            });
+            
+            timelineSlider.addEventListener('mouseleave', function() {
+                if (tooltip) {
+                    tooltip.style.opacity = '0';
+                    setTimeout(() => {
+                        if (tooltip && tooltip.parentNode) {
+                            tooltip.parentNode.removeChild(tooltip);
+                            tooltip = null;
+                        }
+                    }, 200);
+                }
+            });
+            
+            // ==================== THỨ 2: DEBOUNCE 0.5s KHI CLICK CHỌN NĂM ====================
             timelineSlider.addEventListener('input', function(e) {
                 const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
                 stopSpeechForNewAction();
-                loadYear(index);
+                // Cập nhật hiển thị năm ngay lập tức
+                const yearData = availableYears[index];
+                document.getElementById('yearDisplay').textContent = yearData.label;
+                // Load với debounce 0.5s
+                loadYearDebounced(index);
             });
-            
             
             const layerBtns = document.querySelectorAll('.layer-btn');
             for (let i = 0; i < layerBtns.length; i++) {
@@ -2935,8 +2445,6 @@ Keep the response under 250 words. Use bullet points.`;
                 });
             }
         }
-        
-
         
         function checkUrlParameters() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -3582,7 +3090,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                             if (targetIndex !== -1 && targetIndex !== currentYearIndex) {
                                 console.log(`Tìm thấy năm ${targetYear} (${parsedData.isBC ? 'TCN' : 'CN'}), chuyển đến năm ${availableYears[targetIndex].label}`);
                                 setTimeout(function() {
-                                    loadYear(targetIndex);
+                                    loadYearDebounced(targetIndex);
                                 }, 500);
                             }
                         }
@@ -4481,88 +3989,128 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
         }
 
-// Biến lưu bản đồ 2D
-let map2d = null;
-let currentPolygons = [];
+        // Biến lưu bản đồ 2D
+        let map2d = null;
+        let currentPolygons = [];
 
-// Hàm khởi tạo bản đồ 2D
-function init2DMap() {
-    if (map2d) return;
-    map2d = L.map('map2dContainer').setView([20, 105], 4);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-    }).addTo(map2d);
-}
+        // Hàm khởi tạo bản đồ 2D
+        function init2DMap() {
+            if (map2d) return;
+            map2d = L.map('map2dContainer').setView([20, 105], 4);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+            }).addTo(map2d);
+        }
 
-// Hàm vẽ polygon lên bản đồ 2D
-function render2DPolygons(geojson) {
-    if (!map2d) init2DMap();
-    
-    // Xóa polygon cũ
-    currentPolygons.forEach(poly => map2d.removeLayer(poly));
-    currentPolygons = [];
-    
-    if (!geojson || !layers.borders) return;
-    
-    const entities = [...new Set(geojson.features.map(f => 
-        f.properties.SUBJECTO || f.properties.NAME || f.properties.name
-    ).filter(Boolean))];
-    
-    geojson.features.forEach((feature, i) => {
-        const name = feature.properties.SUBJECTO || feature.properties.NAME || feature.properties.name;
-        const colorIndex = entities.indexOf(name) % colorPalette.length;
-        
-        const polygon = L.geoJSON(feature, {
-            style: {
-                color: colorPalette[colorIndex],
-                weight: 1.5,
-                fillOpacity: 0.4,
-                fillColor: colorPalette[colorIndex]
-            },
-            onEachFeature: (f, layer) => {
-                layer.on('click', () => {
-                    const coords = layer.getBounds().getCenter();
-                    stopSpeechForNewAction();
-                    queryLocalHistory(coords.lat, coords.lng, name);
-                });
+        // Hàm vẽ polygon lên bản đồ 2D
+        function render2DPolygons(geojson) {
+            if (!map2d) init2DMap();
+            
+            // Xóa polygon cũ
+            currentPolygons.forEach(poly => map2d.removeLayer(poly));
+            currentPolygons = [];
+            
+            if (!geojson || !layers.borders) return;
+            
+            const entities = [...new Set(geojson.features.map(f => 
+                f.properties.SUBJECTO || f.properties.NAME || f.properties.name
+            ).filter(Boolean))];
+            
+            geojson.features.forEach((feature, i) => {
+                const name = feature.properties.SUBJECTO || feature.properties.NAME || feature.properties.name;
+                const colorIndex = entities.indexOf(name) % colorPalette.length;
+                
+                const polygon = L.geoJSON(feature, {
+                    style: {
+                        color: colorPalette[colorIndex],
+                        weight: 1.5,
+                        fillOpacity: 0.4,
+                        fillColor: colorPalette[colorIndex]
+                    },
+                    onEachFeature: (f, layer) => {
+                        layer.on('click', () => {
+                            const coords = layer.getBounds().getCenter();
+                            stopSpeechForNewAction();
+                            queryLocalHistory(coords.lat, coords.lng, name);
+                        });
+                    }
+                }).addTo(map2d);
+                
+                currentPolygons.push(polygon);
+            });
+        }
+
+        // Xử lý chuyển đổi 2D/3D
+        const viewToggle = document.getElementById('view-toggle');
+        const globeContainer = document.getElementById('globeContainer');
+        const map2dContainer = document.getElementById('map2dContainer');
+
+        viewToggle.addEventListener('change', function() {
+            const is2D = this.checked;
+            
+            if (is2D) {
+                // Chuyển sang 2D
+                globeContainer.style.display = 'none';
+                map2dContainer.style.display = 'block';
+                init2DMap();
+                if (currentGeoJSON) render2DPolygons(currentGeoJSON);
+                if (map2d) map2d.setView([20, 105], 4);
+            } else {
+                // Chuyển sang 3D
+                globeContainer.style.display = 'block';
+                map2dContainer.style.display = 'none';
+                if (globe && currentGeoJSON) renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
             }
-        }).addTo(map2d);
+        });
+
+        // Cập nhật cả 2 bản đồ khi load năm mới
+        const originalLoadYear = loadYear;
+        window.loadYear = async function(index) {
+            await originalLoadYear(index);
+            if (viewToggle.checked && currentGeoJSON) {
+                render2DPolygons(currentGeoJSON);
+            }
+        };
         
-        currentPolygons.push(polygon);
-    });
-}
-
-// Xử lý chuyển đổi 2D/3D
-const viewToggle = document.getElementById('view-toggle');
-const globeContainer = document.getElementById('globeContainer');
-const map2dContainer = document.getElementById('map2dContainer');
-
-viewToggle.addEventListener('change', function() {
-    const is2D = this.checked;
-    
-    if (is2D) {
-        // Chuyển sang 2D
-        globeContainer.style.display = 'none';
-        map2dContainer.style.display = 'block';
-        init2DMap();
-        if (currentGeoJSON) render2DPolygons(currentGeoJSON);
-        if (map2d) map2d.setView([20, 105], 4);
-    } else {
-        // Chuyển sang 3D
-        globeContainer.style.display = 'block';
-        map2dContainer.style.display = 'none';
-        if (globe && currentGeoJSON) renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
-    }
-});
-
-// Cập nhật cả 2 bản đồ khi load năm mới
-const originalLoadYear = loadYear;
-window.loadYear = async function(index) {
-    await originalLoadYear(index);
-    if (viewToggle.checked && currentGeoJSON) {
-        render2DPolygons(currentGeoJSON);
-    }
-};
+        async function initGlobe() {
+            window.addEventListener('resize', function() {
+                if (globe) {
+                    globe.width(window.innerWidth);
+                    globe.height(window.innerHeight);
+                }
+            });
+            
+            globe = Globe()
+                .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+                .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+                .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+                .showAtmosphere(true)
+                .atmosphereColor('#3a7bd5')
+                .atmosphereAltitude(0.25)
+                .polygonsData([])
+                .polygonAltitude(0.01)
+                .polygonCapColor(function(d) { return d.color || 'rgba(100, 100, 100, 0.9)'; })
+                .polygonSideColor(function() { return 'rgba(100, 100, 100, 1)'; })
+                .polygonStrokeColor(function() { return '#fff'; })
+                .polygonLabel(function(d) { 
+                    let name = d.properties?.NAME || d.properties?.SUBJECTO || 'Không xác định';
+                    return '<div class="territory-tooltip">' + name + '</div>';
+                })
+                .onPolygonClick(handleTerritoryClick)
+                .labelsData([])
+                .labelText(function(d) { return d.name; })
+                .labelSize(1.2)
+                .labelColor(function() { return 'rgba(255, 255, 255, 0.9)'; })
+                .labelResolution(2)
+                .labelAltitude(0.02)
+                (document.getElementById('globeContainer'));
+            
+            globe.pointOfView({ lat: 20, lng: 105, altitude: 2.5 });
+            
+            await loadYearDebounced(currentYearIndex);
+            
+            setupGlobeControls();
+        }
         
         document.addEventListener('DOMContentLoaded', initApp);
         window.copyToClipboard = copyToClipboard;
