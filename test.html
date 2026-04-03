@@ -1476,6 +1476,20 @@
         let globe = null;
         let currentYearIndex = 30;
         let dataCache = {};
+        let allGeoJSONLoaded = false;
+        async function preloadAllGeoJSON() {
+            const promises = availableYears.map(async (yearData) => {
+                if (!dataCache[yearData.file]) {
+                    try {
+                        const response = await fetch(`data/geojson/${yearData.file}`);
+                        dataCache[yearData.file] = await response.json();
+                        console.log(`Preloaded: ${yearData.file}`);
+                    } catch(e) { console.warn(`Failed: ${yearData.file}`, e); }
+                }
+            });
+            await Promise.all(promises);
+            allGeoJSONLoaded = true;
+        }
         let isPlaying = false;
         let playInterval = null;
         let localHistoryCache = new Map();
@@ -2103,6 +2117,7 @@
         // ==================== GLOBE FUNCTIONS ====================
         async function initApp() {
             await initGlobe();
+            preloadAllGeoJSON();
             setupEventListeners();
             updateLanguage('vi');
             languageToggle.addEventListener('change', toggleLanguage);
@@ -2159,35 +2174,21 @@
         }
         
         async function loadYear(index) {
-            if (index < 0 || index >= availableYears.length) {
-                return;
-            }
-            
+            if (index < 0 || index >= availableYears.length) return;
             currentYearIndex = index;
             const yearData = availableYears[index];
-            
             document.getElementById('yearDisplay').textContent = yearData.label;
             document.getElementById('timelineSlider').value = (index / (availableYears.length - 1)) * 100;
-            
-            if (!dataCache[yearData.file]) {
-                try {
-                    const url = `data/geojson/${yearData.file}`;
-                    console.log(`Đang tải: ${url}`);
-                    const response = await fetch(url);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    dataCache[yearData.file] = await response.json();
-                    console.log(`Đã tải thành công: ${yearData.file}`);
-                } catch (err) {
-                    console.error('Lỗi tải GeoJSON:', err);
-                    return;
-                }
-            }
-            
             currentGeoJSON = dataCache[yearData.file];
-            renderBorders(currentGeoJSON, yearData.year);
+            if (currentGeoJSON) {
+                renderBorders(currentGeoJSON, yearData.year);
+            } else {
+                console.warn('Data not preloaded yet, loading now...');
+                const response = await fetch(`data/geojson/${yearData.file}`);
+                currentGeoJSON = await response.json();
+                dataCache[yearData.file] = currentGeoJSON;
+                renderBorders(currentGeoJSON, yearData.year);
+            }
         }
         
         function renderBorders(geojson, year) {
