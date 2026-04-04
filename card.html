@@ -836,7 +836,7 @@
             } catch (error) {
                 console.error('Lỗi khi thêm thẻ:', error);
                 hideLoading();
-                alert('Có lỗi khi thêm thẻ vào Firestore.');
+                alert('Có lỗi khi thêm thẻ vào bộ nhớ.');
                 return false;
             }
         }
@@ -852,7 +852,7 @@
             } catch (error) {
                 console.error('Lỗi khi xóa thẻ:', error);
                 hideLoading();
-                alert('Có lỗi khi xóa thẻ khỏi Firestore.');
+                alert('Có lỗi khi xóa thẻ khỏi bộ nhớ.');
                 return false;
             }
         }
@@ -902,7 +902,7 @@
             const success = await addFlashCardToFirestore(name, imageUrl);
             if (success) {
                 document.getElementById('flashcard-form').reset();
-                alert('Đã thêm thẻ lịch sử mới vào Firestore!');
+                alert('Đã thêm thẻ lịch sử mới vào bộ nhớ!');
             }
         }
         
