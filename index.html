@@ -500,7 +500,7 @@
             border-top: 1px solid var(--border-light);
         }
         
-        /* ===== TOP BAR ===== */
+        /* ===== TOP BAR - ĐÃ THU NHỎ ===== */
         .top-bar-globe {
             position: fixed;
             bottom: 50px;
@@ -513,8 +513,9 @@
             flex-wrap: wrap;
             justify-content: center;
             padding: 0 10px;
-            width: max-content;
-            max-width: 90%;
+            width: 25%;
+            max-width: 300px;
+            min-width: 180px;
             pointer-events: auto;
             transition: opacity 0.3s ease;
         }
@@ -530,6 +531,7 @@
             border: 1px solid var(--border-light);
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            width: 100%;
         }
         
         .stats-pill-globe {
@@ -1049,7 +1051,7 @@
             line-height: 1.5;
         }
         
-        /* ===== IMAGE CONTAINER - TỈ LỆ 4:3 ===== */
+        /* ===== IMAGE CONTAINER - CHIỀU DÀI GẤP ĐÔI ===== */
         .image-container {
             width: 100%;
             margin: 1rem 0;
@@ -1302,11 +1304,12 @@
             .layer-panel { left: 20px; }
             #sidebar { width: 85%; }
             .sidebar-toggle-new { left: 85%; }
+            .top-bar-globe { width: 40%; }
         }
         #map2dContainer .leaflet-control-zoom { display: none; }
         .leaflet-tile-pane { filter: brightness(0.9); }
         
-        /* Marker tùy chỉnh cho bản đồ 2D - CHỈ LÀ CHẤM NHỎ */
+        /* Marker tùy chỉnh cho bản đồ 2D - CHỈ LÀ CHẤM NHỎ MÀU CAM */
         .custom-marker {
             background: transparent;
             border: none;
@@ -1324,7 +1327,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
         
-        /* Marker 3D - CHỈ LÀ CHẤM NHỎ */
+        /* Marker 3D - CHỈ LÀ CHẤM NHỎ MÀU CAM */
         .globe-marker {
             animation: glowPulse 1.5s infinite;
         }
@@ -1408,9 +1411,18 @@
     </div>
     
     <div class="timeline-globe" id="timelineGlobe">
-        <div class="year-pill-globe" id="yearDisplay">2010 CN</div>
+        <div class="top-bar-globe">
+            <div class="year-pill-globe" id="yearDisplay">2010 CN</div>
+        </div>
         <div class="timeline-bar-globe">
             <input type="range" class="timeline-slider-globe" id="timelineSlider" min="0" max="100" value="94">
+        </div>
+    </div>
+    
+    <!-- NÚT BỎ BIÊN GIỚI -->
+    <div class="layer-panel" id="layerPanel">
+        <div class="layer-btn" data-layer="borders" data-tooltip="Bỏ biên giới / Tải lại biên giới" id="toggleBordersBtn">
+            <i class="fas fa-border-all"></i>
         </div>
     </div>
     
@@ -1451,10 +1463,33 @@
         function reverseString(str) {
             return str.split('').reverse().join('');
         }
-        const reversedKey = "AkoD6ymzZhWa-YVAUHplCMNjK1-SJNFCDySazIA";
-        const API_KEY = reverseString(reversedKey);
-        const genAI = new GoogleGenerativeAI(API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+        
+        // Hỏi người dùng nhập API key đã đảo và tự động đảo lại
+        let API_KEY = "";
+        let genAI = null;
+        let model = null;
+        
+        function initializeAPI() {
+            let userReversedKey = prompt("Vui lòng nhập API key đã được đảo ngược (reverse) để sử dụng AI:", "AkoD6ymzZhWa-YVAUHplCMNjK1-SJNFCDySazIA");
+            if (userReversedKey && userReversedKey.trim() !== "") {
+                const reversedInput = userReversedKey.trim();
+                API_KEY = reverseString(reversedInput);
+                console.log("API Key đã được đảo ngược thành công.");
+                genAI = new GoogleGenerativeAI(API_KEY);
+                model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+                return true;
+            } else {
+                // Fallback nếu người dùng không nhập
+                const defaultReversedKey = "AkoD6ymzZhWa-YVAUHplCMNjK1-SJNFCDySazIA";
+                API_KEY = reverseString(defaultReversedKey);
+                genAI = new GoogleGenerativeAI(API_KEY);
+                model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+                return false;
+            }
+        }
+        
+        // Khởi tạo API ngay khi script chạy
+        initializeAPI();
 
         // ==================== DOM ELEMENTS ====================
         const searchForm = document.getElementById('search-form');
@@ -1475,6 +1510,7 @@
         const viewToggle = document.getElementById('view-toggle');
         const globeContainer = document.getElementById('globeContainer');
         const map2dContainer = document.getElementById('map2dContainer');
+        const toggleBordersBtn = document.getElementById('toggleBordersBtn');
         
         // ==================== COUNTRY INFO INLINE ====================
         const countryInfoInline = document.getElementById('countryInfoInline');
@@ -1496,6 +1532,7 @@
         let currentGlobeMarkerObj = null;
         let currentLeafletMarkerObj = null;
         let currentPolygons = [];
+        let currentGlobeLabels = [];
         
         // ==================== SPEECH SYNTHESIS VARIABLES ====================
         let speechSynthesisUtterance = null;
@@ -1597,6 +1634,10 @@
                 globe.pointsData([]);
                 currentGlobeMarkerObj = null;
             }
+            if (currentGlobeLabels && globe) {
+                globe.labelsData([]);
+                currentGlobeLabels = [];
+            }
             if (currentLeafletMarkerObj && map2d) {
                 map2d.removeLayer(currentLeafletMarkerObj);
                 currentLeafletMarkerObj = null;
@@ -1604,43 +1645,46 @@
             currentMarkerData = null;
         }
         
-        // ==================== HÀM THÊM MARKER VÀ ZOOM (KHÔNG CẦN CỘT, CÓ TÊN HIỂN THỊ NGAY) ====================
+        // ==================== HÀM THÊM MARKER (CHẤM CAM, HOVER HIỆN THÔNG TIN) ====================
         function addMarkerAndZoom(lat, lng, title) {
             // Xóa marker cũ trước khi thêm mới
             clearMarker();
             
-            // Lưu marker data để có thể phục hồi sau (nếu cần, nhưng theo yêu cầu thì không phục hồi khi chuyển chức năng)
+            // Lưu marker data để có thể phục hồi sau
             currentMarkerData = { lat: lat, lng: lng, title: title };
             
-            // Thêm marker mới cho 3D - CHỈ LÀ CHẤM NHỎ, KHÔNG CÓ CỘT
+            // Thêm marker mới cho 3D - CHỈ LÀ CHẤM NHỎ MÀU CAM
             if (globe && !viewToggle.checked) {
                 const markerData = [{ lat: lat, lng: lng, size: 0.5, color: '#E67E22', name: title }];
                 globe.pointsData(markerData)
                     .pointColor(() => '#E67E22')
-                    .pointAltitude(0) // Độ cao 0, không có cột
-                    .pointRadius(0.3); // Bán kính nhỏ, chỉ là chấm
+                    .pointAltitude(0)
+                    .pointRadius(0.4);
                 currentGlobeMarkerObj = markerData;
-                // Zoom đến vị trí với animation mượt
-                globe.pointOfView({ lat: lat, lng: lng, altitude: 0.8, duration: 1000 });
                 
-                // Thêm label riêng để hiển thị tên ngay bên cạnh điểm
-                globe.labelsData([{ lat: lat, lng: lng, name: title, size: 0.8, color: 'white', altitude: 0.02 }])
+                // Thêm label để hiển thị tên khi hover
+                const labelData = [{ lat: lat, lng: lng, name: title, size: 0.8, altitude: 0.02 }];
+                globe.labelsData(labelData)
                     .labelText(d => d.name)
                     .labelSize(d => d.size || 0.8)
                     .labelColor(() => 'rgba(0,0,0,0.8)')
                     .labelAltitude(d => d.altitude || 0.02);
+                currentGlobeLabels = labelData;
+                
+                // Zoom đến vị trí với animation mượt
+                globe.pointOfView({ lat: lat, lng: lng, altitude: 0.8, duration: 1000 });
             }
-            // Thêm marker mới cho 2D - CHỈ LÀ CHẤM NHỎ
+            // Thêm marker mới cho 2D - CHỈ LÀ CHẤM NHỎ MÀU CAM, HOVER HIỆN TÊN
             else if (map2d && viewToggle.checked) {
                 const markerIcon = L.divIcon({
                     className: 'custom-marker',
-                    html: '<i class="fas fa-map-marker-alt" style="font-size:24px; color:#E67E22; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>',
-                    iconSize: [24, 24],
-                    popupAnchor: [0, -12]
+                    html: '<i class="fas fa-map-marker-alt" style="font-size:28px; color:#E67E22; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>',
+                    iconSize: [28, 28],
+                    popupAnchor: [0, -14]
                 });
                 const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map2d);
-                // Tạo popup nhưng tự động mở để hiển thị tên ngay lập tức
-                marker.bindPopup(`<b>${title}</b>`).openPopup();
+                // Tạo tooltip hiển thị khi hover
+                marker.bindTooltip(title, { sticky: true, offset: [0, -20] });
                 currentLeafletMarkerObj = marker;
                 // Zoom đến vị trí
                 map2d.setView([lat, lng], 10);
@@ -2473,20 +2517,6 @@ Keep the response under 250 words. Use bullet points.`;
                 document.getElementById('yearDisplay').textContent = yearData.label;
                 loadYearDebounced(index);
             });
-            
-            const layerBtns = document.querySelectorAll('.layer-btn');
-            for (let i = 0; i < layerBtns.length; i++) {
-                const btn = layerBtns[i];
-                btn.addEventListener('click', function() {
-                    const layer = btn.dataset.layer;
-                    layers[layer] = !layers[layer];
-                    btn.classList.toggle('active');
-                    
-                    if (layer === 'borders' && currentGeoJSON) {
-                        renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
-                    }
-                });
-            }
         }
         
         function init2DMap() {
@@ -4077,6 +4107,19 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 return null;
             }
         }
+
+        // ==================== XỬ LÝ NÚT BỎ BIÊN GIỚI ====================
+        toggleBordersBtn.addEventListener('click', () => {
+            layers.borders = !layers.borders;
+            toggleBordersBtn.classList.toggle('active', layers.borders);
+            if (currentGeoJSON) {
+                if (!viewToggle.checked) {
+                    renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
+                } else if (viewToggle.checked) {
+                    render2DPolygons(currentGeoJSON);
+                }
+            }
+        });
 
         // Xử lý chuyển đổi 2D/3D - xóa marker khi chuyển chế độ
         viewToggle.addEventListener('change', function() {
