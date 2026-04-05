@@ -1470,7 +1470,7 @@
         let model = null;
         
         function initializeAPI() {
-            let userReversedKey = prompt("Vui lòng nhập API key đã được đảo ngược (reverse) để sử dụng AI:", "AkoD6ymzZhWa-YVAUHplCMNjK1-SJNFCDySazIA");
+            let userReversedKey = prompt("Vui lòng nhập API key đã được đảo ngược (reverse) để sử dụng AI:", "UfZsnr8Ggsn36w_cPhGqFsX5zitcbqXvDySazIA");
             if (userReversedKey && userReversedKey.trim() !== "") {
                 const reversedInput = userReversedKey.trim();
                 API_KEY = reverseString(reversedInput);
@@ -1480,7 +1480,7 @@
                 return true;
             } else {
                 // Fallback nếu người dùng không nhập
-                const defaultReversedKey = "AkoD6ymzZhWa-YVAUHplCMNjK1-SJNFCDySazIA";
+                const defaultReversedKey = "UfZsnr8Ggsn36w_cPhGqFsX5zitcbqXvDySazIA";
                 API_KEY = reverseString(defaultReversedKey);
                 genAI = new GoogleGenerativeAI(API_KEY);
                 model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
