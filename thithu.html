@@ -125,6 +125,68 @@
             font-size: 1rem;
         }
 
+        /* ==================== TOP BAR - Ô NHẬP MÃ ĐỀ NHỎ GỌN ==================== */
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .load-exam-small {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(139, 69, 19, 0.08);
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid var(--card-outline);
+        }
+
+        .load-exam-small label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .load-exam-small input {
+            width: 110px;
+            padding: 0.3rem 0.6rem;
+            border-radius: 30px;
+            border: 1px solid var(--card-outline);
+            font-size: 0.8rem;
+            font-family: monospace;
+            background: var(--card-bg);
+            transition: var(--transition-fast);
+        }
+
+        .load-exam-small input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+        }
+
+        .load-exam-small button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: var(--transition-fast);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .load-exam-small button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
         /* ==================== PROMPT SECTION ==================== */
         .prompt-section {
             margin-bottom: 2rem;
@@ -141,6 +203,7 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            flex-wrap: wrap;
         }
 
         .mode-badge {
@@ -188,20 +251,9 @@
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-        }
-
-        .action-buttons .left-buttons {
-            display: flex;
-            gap: 1rem;
-            flex: 1;
-        }
-
-        .action-buttons .right-buttons {
-            display: flex;
-            gap: 1rem;
         }
 
         .generate-btn {
@@ -256,13 +308,12 @@
             border-radius: var(--border-radius-md);
             padding: 1.5rem;
             margin-bottom: 2rem;
-            display: none;
             border: 2px solid var(--card-outline);
             animation: fadeIn 0.3s ease;
         }
 
-        .settings-panel.active {
-            display: block;
+        .settings-panel.hidden-settings {
+            display: none;
         }
 
         .settings-grid {
@@ -366,13 +417,16 @@
             border-color: var(--primary-color);
         }
 
-        /* ==================== PROGRESS ==================== */
+        /* ==================== PROGRESS CONTAINER ==================== */
         .progress-container {
             margin-top: 2rem;
             background: var(--card-bg);
             border-radius: var(--border-radius-md);
             padding: 1.5rem;
             border: 2px solid var(--card-outline);
+        }
+
+        .progress-container.hidden-progress {
             display: none;
         }
 
@@ -407,13 +461,16 @@
             width: 0%;
         }
 
-        /* ==================== EXAM RESULT ==================== */
+        /* ==================== EXAM RESULT CONTAINER ==================== */
         .exam-result-container {
             margin-top: 2rem;
             background: var(--card-bg);
             border-radius: var(--border-radius-md);
             padding: 2rem;
             border: 2px solid var(--card-outline);
+        }
+
+        .exam-result-container.hidden-exam {
             display: none;
         }
 
@@ -433,12 +490,37 @@
             font-size: 1.3rem;
         }
 
-        .exam-info {
-            background: rgba(139, 69, 19, 0.05);
-            padding: 1rem;
-            border-radius: var(--border-radius-sm);
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--primary-color);
+        .share-section {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            background: #f0e7db;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+        }
+
+        .share-code {
+            font-family: monospace;
+            font-weight: bold;
+            background: white;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+
+        .copy-link-btn {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition-fast);
+        }
+
+        .copy-link-btn:hover {
+            background: var(--primary-dark);
         }
 
         /* Timer Display */
@@ -463,6 +545,15 @@
         @keyframes timerBlink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
+        }
+
+        /* Exam Info */
+        .exam-info {
+            background: rgba(139, 69, 19, 0.05);
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-color);
         }
 
         /* Question Styles */
@@ -852,40 +943,8 @@
             50% { opacity: 0.7; }
         }
 
-        /* Loading Animation */
-        .loading-essay {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
-
         /* ==================== UTILITIES ==================== */
-        .text-center {
-            text-align: center;
-        }
-
-        .mt-2 {
-            margin-top: 0.5rem;
-        }
-
-        .mt-3 {
-            margin-top: 0.75rem;
-        }
-
-        .mb-2 {
-            margin-bottom: 0.5rem;
-        }
-
-        .mb-3 {
-            margin-bottom: 0.75rem;
-        }
-
-        .hidden {
+        .hidden, .hidden-settings, .hidden-progress, .hidden-exam {
             display: none;
         }
 
@@ -916,11 +975,6 @@
 
             .action-buttons {
                 flex-direction: column;
-            }
-
-            .action-buttons .left-buttons,
-            .action-buttons .right-buttons {
-                width: 100%;
             }
 
             .generate-btn,
@@ -958,258 +1012,310 @@
             .grading-text {
                 font-size: 1rem;
             }
+
+            .top-bar {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <main>
-            <div class="exam-card">
-                <!-- Header -->
-                <div class="header-image">
-                    <h1>
-                        <i class="fas fa-scroll"></i>
-                        HỆ THỐNG THI THỬ LỊCH SỬ
-                        <i class="fas fa-landmark"></i>
-                    </h1>
-                    <p>AI tạo đề thi thông minh - Tạo xong làm bài ngay - Chấm điểm tự động</p>
-                </div>
+<div class="app-container">
+    <main>
+        <div class="exam-card">
+            <!-- ==================== HEADER ==================== -->
+            <div class="header-image">
+                <h1>
+                    <i class="fas fa-scroll"></i>
+                    HỆ THỐNG THI THỬ LỊCH SỬ
+                    <i class="fas fa-landmark"></i>
+                </h1>
+                <p>AI Gemini tạo đề thi thông minh - Tạo xong làm bài ngay - Chấm điểm tự động</p>
+            </div>
 
-                <!-- Prompt Input Section - Chỉ có 1 ô nhập duy nhất -->
-                <div class="prompt-section">
-                    <h3>
-                        <i class="fas fa-comment-dots"></i>
-                        TẠO ĐỀ THI BẰNG AI
-                        <span class="mode-badge" id="detectedModeBadge">Tự động phát hiện</span>
-                    </h3>
-                    <div class="prompt-input-area">
-                        <textarea id="userPrompt" placeholder='Nhập yêu cầu tạo đề thi Lịch sử...
+            <!-- ==================== TOP BAR - Ô NHẬP MÃ ĐỀ NHỎ GỌN ==================== -->
+            <div class="top-bar">
+                <div class="load-exam-small">
+                    <label><i class="fas fa-key"></i> Mã đề:</label>
+                    <input type="text" id="loadExamCodeInput" placeholder="VD: ABC123" maxlength="20">
+                    <button id="loadExamBtn"><i class="fas fa-download"></i> Tải</button>
+                </div>
+            </div>
+
+            <!-- ==================== PROMPT INPUT SECTION ==================== -->
+            <div class="prompt-section" id="promptSection">
+                <h3>
+                    <i class="fas fa-comment-dots"></i>
+                    TẠO ĐỀ THI BẰNG AI GEMINI
+                    <span class="mode-badge" id="detectedModeBadge">Tự động phát hiện</span>
+                </h3>
+                <div class="prompt-input-area">
+                    <textarea id="userPrompt" placeholder='Nhập yêu cầu tạo đề thi Lịch sử...
 
 Ví dụ:
 • "Trắc nghiệm 40 câu về lịch sử Việt Nam 1945-1975"
 • "Đề THPT quốc gia môn Lịch sử"
 • "Tạo đề thi có 20 câu trắc nghiệm và 2 câu tự luận về ASEAN"
 • "Đề thi 60 phút gồm 50 câu trắc nghiệm khó về Chiến tranh thế giới thứ hai"'></textarea>
-                    </div>
                 </div>
+            </div>
 
-                <!-- Action Buttons -->
-                <div class="action-buttons" id="actionButtonsContainer">
-                    <div class="left-buttons">
-                        <button id="generateExamBtn" class="generate-btn">
-                            <i class="fas fa-magic"></i>
-                            Tạo Đề Thi
-                        </button>
-                    </div>
-                    <div class="right-buttons">
-                        <button id="openSettingsBtn" class="settings-btn">
-                            <i class="fas fa-cog"></i>
-                            Cài đặt
-                        </button>
-                    </div>
-                </div>
+            <!-- ==================== ACTION BUTTONS ==================== -->
+            <div class="action-buttons" id="actionButtons">
+                <button id="generateExamBtn" class="generate-btn">
+                    <i class="fas fa-magic"></i>
+                    Tạo Đề Thi
+                </button>
+                <button id="openSettingsBtn" class="settings-btn">
+                    <i class="fas fa-cog"></i>
+                    Cài đặt
+                </button>
+            </div>
 
-                <!-- Settings Panel -->
-                <div class="settings-panel" id="settingsPanel">
-                    <div class="settings-grid">
-                        <div class="settings-card">
-                            <h4>
-                                <i class="fas fa-clock"></i>
-                                Thời gian làm bài
-                            </h4>
-                            <div class="time-slider-container">
-                                <input type="range" id="examTimeSlider" min="15" max="180" step="5" value="45">
-                                <div class="time-value">
-                                    <span id="examTimeValue">45</span> phút
-                                </div>
-                            </div>
-                            <div class="mt-2">
-                                <button type="button" class="preset-time-btn" data-time="30">30 phút</button>
-                                <button type="button" class="preset-time-btn" data-time="45">45 phút</button>
-                                <button type="button" class="preset-time-btn" data-time="60">60 phút</button>
-                                <button type="button" class="preset-time-btn" data-time="90">90 phút</button>
-                            </div>
-                            <div class="info-note" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.75rem;">
-                                <i class="fas fa-info-circle"></i> Áp dụng cho đề ngẫu nhiên (đề THPTQG luôn 50 phút)
+            <!-- ==================== SETTINGS PANEL ==================== -->
+            <div class="settings-panel hidden-settings" id="settingsPanel">
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h4>
+                            <i class="fas fa-clock"></i>
+                            Thời gian làm bài
+                        </h4>
+                        <div class="time-slider-container">
+                            <input type="range" id="examTimeSlider" min="15" max="180" step="5" value="45">
+                            <div class="time-value">
+                                <span id="examTimeValue">45</span> phút
                             </div>
                         </div>
-                        <div class="settings-card">
-                            <h4>
-                                <i class="fas fa-chart-line"></i>
-                                Độ khó đề thi
-                            </h4>
-                            <select id="difficultySelect">
-                                <option value="easy">Dễ</option>
-                                <option value="medium" selected>Trung bình</option>
-                                <option value="hard">Khó</option>
-                            </select>
+                        <div class="mt-2">
+                            <button type="button" class="preset-time-btn" data-time="30">30 phút</button>
+                            <button type="button" class="preset-time-btn" data-time="45">45 phút</button>
+                            <button type="button" class="preset-time-btn" data-time="60">60 phút</button>
+                            <button type="button" class="preset-time-btn" data-time="90">90 phút</button>
                         </div>
-                        <div class="settings-card">
-                            <h4>
-                                <i class="fas fa-sticky-note"></i>
-                                Ghi chú cho đề thi
-                            </h4>
-                            <textarea id="examNotes" rows="4" placeholder="Nhập ghi chú cho đề thi... (Ví dụ: Phân bổ thời gian, trọng tâm kiến thức, tiêu chí chấm điểm...)"></textarea>
+                        <div class="info-note" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.75rem;">
+                            <i class="fas fa-info-circle"></i> Áp dụng cho đề ngẫu nhiên (đề THPTQG luôn 50 phút)
                         </div>
                     </div>
-                </div>
-
-                <!-- Progress Container -->
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-header">
-                        <span class="progress-title">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            Đang tạo đề thi
-                        </span>
-                        <span id="progressStatus">Đang xử lý...</span>
+                    <div class="settings-card">
+                        <h4>
+                            <i class="fas fa-chart-line"></i>
+                            Độ khó đề thi
+                        </h4>
+                        <select id="difficultySelect">
+                            <option value="easy">Dễ</option>
+                            <option value="medium" selected>Trung bình</option>
+                            <option value="hard">Khó</option>
+                        </select>
                     </div>
-                    <div class="progress-bar-wrapper">
-                        <div class="progress-fill" id="progressFill"></div>
+                    <div class="settings-card">
+                        <h4>
+                            <i class="fas fa-sticky-note"></i>
+                            Ghi chú cho đề thi
+                        </h4>
+                        <textarea id="examNotes" rows="4" placeholder="Nhập ghi chú cho đề thi... (Ví dụ: Phân bổ thời gian, trọng tâm kiến thức, tiêu chí chấm điểm...)"></textarea>
                     </div>
                 </div>
+            </div>
 
-                <!-- Exam Result Container -->
-                <div class="exam-result-container" id="examResultContainer"></div>
+            <!-- ==================== PROGRESS CONTAINER ==================== -->
+            <div class="progress-container hidden-progress" id="progressContainer">
+                <div class="progress-header">
+                    <span class="progress-title">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Đang tạo đề thi
+                    </span>
+                    <span id="progressStatus">Đang xử lý...</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
             </div>
-        </main>
-    </div>
 
-    <!-- Result Modal -->
-    <div id="resultModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>
-                    <i class="fas fa-chart-simple"></i>
-                    KẾT QUẢ BÀI THI
-                </h3>
-                <button class="close-modal" id="closeResultModalBtn">&times;</button>
-            </div>
-            <div class="modal-body" id="resultModalBody"></div>
-            <div class="modal-footer">
-                <button id="closeResultFooterBtn" class="exam-action-btn submit-btn" style="background: var(--primary-color);">Đóng</button>
-            </div>
+            <!-- ==================== EXAM RESULT CONTAINER ==================== -->
+            <div class="exam-result-container hidden-exam" id="examResultContainer"></div>
+        </div>
+    </main>
+</div>
+
+<!-- ==================== RESULT MODAL ==================== -->
+<div id="resultModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>
+                <i class="fas fa-chart-simple"></i>
+                KẾT QUẢ BÀI THI
+            </h3>
+            <button class="close-modal" id="closeResultModalBtn">&times;</button>
+        </div>
+        <div class="modal-body" id="resultModalBody"></div>
+        <div class="modal-footer">
+            <button id="closeResultFooterBtn" class="exam-action-btn submit-btn" style="background: var(--primary-color);">Đóng</button>
         </div>
     </div>
+</div>
 
-    <script>
-        // ==================== API CONFIGURATION ====================
-        // Lấy API key và đảo ngược để bảo mật
-        const REVERSED_API_KEY = "85UOBhav6lFf-eqfWNF7_I-9GG4PtJfgAySazIA";
-        const GEMINI_API_KEY = REVERSED_API_KEY.split('').reverse().join('');
-        
-        // ==================== GLOBAL VARIABLES ====================
-        let currentExamData = null;           // Lưu trữ dữ liệu đề thi hiện tại
-        let currentExamCode = '';              // Mã đề thi ngẫu nhiên
-        let userAnswers = {};                  // Lưu câu trả lời của người dùng
-        let examTimerInterval = null;          // Interval của đồng hồ đếm ngược
-        let remainingSeconds = 0;              // Số giây còn lại
-        let isExamActive = false;              // Trạng thái đang làm bài
-        let isExamSubmitted = false;            // Trạng thái đã nộp bài
-        let examSettings = {                   // Cài đặt đề thi
-            time: 45,
-            difficulty: 'medium'
-        };
-        let isTHPTMode = false;                // Có phải đề THPTQG hay không
-        
-        // ==================== HELPER FUNCTIONS ====================
-        function formatDuration(minutes) {
-            if (minutes < 60) {
-                return minutes + ' phút';
-            }
-            let hours = Math.floor(minutes / 60);
-            let mins = minutes % 60;
-            return hours + ' giờ ' + mins + ' phút';
+<script>
+    // ==================== API CONFIGURATION (GEMINI) ====================
+    // Lấy API key và đảo ngược để bảo mật
+    const REVERSED_API_KEY = "ASKzUlPiAjBj9WsfyxpV_r0il8Txs1UCAySazIA";
+    const GEMINI_API_KEY = REVERSED_API_KEY.split('').reverse().join('');
+    
+    // ==================== GLOBAL VARIABLES ====================
+    let currentExamData = null;           // Lưu trữ dữ liệu đề thi hiện tại
+    let currentExamCode = '';              // Mã đề thi ngẫu nhiên
+    let userAnswers = {};                  // Lưu câu trả lời của người dùng
+    let examTimerInterval = null;          // Interval của đồng hồ đếm ngược
+    let remainingSeconds = 0;              // Số giây còn lại
+    let isExamActive = false;              // Trạng thái đang làm bài
+    let isExamSubmitted = false;            // Trạng thái đã nộp bài
+    let examSettings = {                   // Cài đặt đề thi
+        time: 45,
+        difficulty: 'medium'
+    };
+    let isTHPTMode = false;                // Có phải đề THPTQG hay không
+    
+    // ==================== HELPER FUNCTIONS ====================
+    function formatDuration(minutes) {
+        if (minutes < 60) {
+            return minutes + ' phút';
         }
-        
-        function formatTime(seconds) {
-            let minutes = Math.floor(seconds / 60);
-            let secs = seconds % 60;
-            return minutes + ':' + (secs < 10 ? '0' + secs : secs);
+        let hours = Math.floor(minutes / 60);
+        let mins = minutes % 60;
+        return hours + ' giờ ' + mins + ' phút';
+    }
+    
+    function formatTime(seconds) {
+        let minutes = Math.floor(seconds / 60);
+        let secs = seconds % 60;
+        return minutes + ':' + (secs < 10 ? '0' + secs : secs);
+    }
+    
+    function generateExamCode() {
+        return Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+    
+    function markdownToHtml(text) {
+        if (!text) return '';
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/\n/g, '<br>');
+    }
+    
+    // ==================== DETECT MODE FROM PROMPT ====================
+    function detectExamMode(prompt) {
+        const lowerPrompt = prompt.toLowerCase();
+        // Kiểm tra nếu là đề THPTQG
+        if (lowerPrompt.includes('đề thpt quốc gia') || 
+            lowerPrompt.includes('đề thi tốt nghiệp') || 
+            lowerPrompt.includes('thptqg') ||
+            lowerPrompt.includes('thpt quốc gia') ||
+            lowerPrompt.match(/đề\s*thpt/i)) {
+            return 'thpt';
         }
+        return 'ai';
+    }
+    
+    // ==================== API CALL FUNCTION (GEMINI) ====================
+    async function callGeminiAPI(prompt) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
         
-        function generateExamCode() {
-            return Math.random().toString(36).substring(2, 8).toUpperCase();
-        }
-        
-        function escapeHtml(text) {
-            if (!text) return '';
-            return text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#39;');
-        }
-        
-        function markdownToHtml(text) {
-            if (!text) return '';
-            return text
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/\n/g, '<br>');
-        }
-        
-        // ==================== DETECT MODE FROM PROMPT ====================
-        function detectExamMode(prompt) {
-            const lowerPrompt = prompt.toLowerCase();
-            // Kiểm tra nếu là đề THPTQG
-            if (lowerPrompt.includes('đề thpt quốc gia') || 
-                lowerPrompt.includes('đề thi tốt nghiệp') || 
-                lowerPrompt.includes('thptqg') ||
-                lowerPrompt.includes('thpt quốc gia') ||
-                lowerPrompt.match(/đề\s*thpt/i)) {
-                return 'thpt';
-            }
-            return 'ai';
-        }
-        
-        // ==================== API CALL FUNCTION ====================
-        async function callGeminiAPI(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            
-            const requestBody = {
-                contents: [
-                    {
-                        parts: [
-                            {
-                                text: prompt
-                            }
-                        ]
-                    }
-                ],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 16384,
-                    topP: 0.95,
-                    topK: 40
+        const requestBody = {
+            contents: [
+                {
+                    parts: [
+                        {
+                            text: prompt
+                        }
+                    ]
                 }
-            };
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody)
-            });
-            
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error('Gọi API thất bại: ' + (errorData.error?.message || response.statusText));
+            ],
+            generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 16384,
+                topP: 0.95,
+                topK: 40
             }
-            
-            const data = await response.json();
-            
-            if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts) {
-                throw new Error('API trả về dữ liệu không hợp lệ');
-            }
-            
-            return data.candidates[0].content.parts[0].text;
+        };
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error('Gọi API Gemini thất bại: ' + (errorData.error?.message || response.statusText));
         }
         
-        // ==================== GENERATE THPT EXAM (50 PHÚT CỐ ĐỊNH) ====================
-        async function generateTHPTExam(topicDescription) {
-            const prompt = `Bạn là một giáo viên Lịch sử chuyên nghiệp, có kinh nghiệm ra đề thi THPT Quốc gia môn Lịch sử. Hãy tạo một đề thi THPTQG môn Lịch sử hoàn chỉnh với cấu trúc chuẩn của Bộ Giáo dục và Đào tạo dựa trên phạm vi sau:
+        const data = await response.json();
+        
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts) {
+            throw new Error('API Gemini trả về dữ liệu không hợp lệ');
+        }
+        
+        return data.candidates[0].content.parts[0].text;
+    }
+    
+    // Hàm trích xuất JSON thông minh từ response
+    function extractJSONFromResponse(responseText) {
+        console.log("Response text từ Gemini:", responseText.substring(0, 500));
+        
+        // Pattern 1: Tìm JSON object đầu tiên {...}
+        let jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+            try {
+                JSON.parse(jsonMatch[0]);
+                return jsonMatch[0];
+            } catch(e) {}
+        }
+        
+        // Pattern 2: Tìm JSON array đầu tiên [...]
+        jsonMatch = responseText.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+            try {
+                JSON.parse(jsonMatch[0]);
+                return jsonMatch[0];
+            } catch(e) {}
+        }
+        
+        // Pattern 3: Tìm content trong markdown code block ```json ... ```
+        jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
+        if (jsonMatch && jsonMatch[1]) {
+            try {
+                JSON.parse(jsonMatch[1]);
+                return jsonMatch[1];
+            } catch(e) {}
+        }
+        
+        // Pattern 4: Tìm content trong code block ``` ... ```
+        jsonMatch = responseText.match(/```\s*([\s\S]*?)\s*```/);
+        if (jsonMatch && jsonMatch[1]) {
+            try {
+                JSON.parse(jsonMatch[1]);
+                return jsonMatch[1];
+            } catch(e) {}
+        }
+        
+        return null;
+    }
+    
+    // ==================== GENERATE THPT EXAM (50 PHÚT CỐ ĐỊNH) ====================
+    async function generateTHPTExam(topicDescription) {
+        const prompt = `Bạn là một giáo viên Lịch sử chuyên nghiệp, có kinh nghiệm ra đề thi THPT Quốc gia môn Lịch sử. Hãy tạo một đề thi THPTQG môn Lịch sử hoàn chỉnh với cấu trúc chuẩn của Bộ Giáo dục và Đào tạo dựa trên phạm vi sau:
 
 PHẠM VI ĐỀ THI: ${topicDescription || "Toàn bộ chương trình Lịch sử THPTQG"}
 
@@ -1265,17 +1371,17 @@ CHỈ TRẢ VỀ MỘT JSON DUY NHẤT, KHÔNG CÓ BẤT KỲ TEXT NÀO KHÁC NG
     ]
 }`;
 
-            const result = await callGeminiAPI(prompt);
-            const jsonMatch = result.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) {
-                throw new Error('Không thể trích xuất JSON từ phản hồi của AI');
-            }
-            return JSON.parse(jsonMatch[0]);
+        const result = await callGeminiAPI(prompt);
+        const jsonString = extractJSONFromResponse(result);
+        if (!jsonString) {
+            throw new Error('Không thể trích xuất JSON từ phản hồi của Gemini. Response: ' + result.substring(0, 300));
         }
-        
-        // ==================== GENERATE AI EXAM (LINH HOẠT, CÓ THỂ TỰ LUẬN) ====================
-        async function generateAIExam(userPrompt) {
-            const prompt = `Bạn là giáo viên Lịch sử. Hãy tạo một đề thi Lịch sử theo yêu cầu sau:
+        return JSON.parse(jsonString);
+    }
+    
+    // ==================== GENERATE AI EXAM (LINH HOẠT, CÓ THỂ TỰ LUẬN) ====================
+    async function generateAIExam(userPrompt) {
+        const prompt = `Bạn là giáo viên Lịch sử. Hãy tạo một đề thi Lịch sử theo yêu cầu sau:
 
 YÊU CẦU CỦA NGƯỜI DÙNG: ${userPrompt}
 
@@ -1302,17 +1408,17 @@ YÊU CẦU QUAN TRỌNG:
 
 CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
 
-            const result = await callGeminiAPI(prompt);
-            const jsonMatch = result.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) {
-                throw new Error('Không thể trích xuất JSON từ phản hồi của AI');
-            }
-            return JSON.parse(jsonMatch[0]);
+        const result = await callGeminiAPI(prompt);
+        const jsonString = extractJSONFromResponse(result);
+        if (!jsonString) {
+            throw new Error('Không thể trích xuất JSON từ phản hồi của Gemini. Response: ' + result.substring(0, 300));
         }
-        
-        // ==================== GRADE ESSAY USING AI ====================
-        async function gradeEssay(questionContent, studentAnswer, maxPoints) {
-            const prompt = `Bạn là giáo viên Lịch sử. Hãy chấm điểm câu tự luận sau:
+        return JSON.parse(jsonString);
+    }
+    
+    // ==================== GRADE ESSAY USING AI ====================
+    async function gradeEssay(questionContent, studentAnswer, maxPoints) {
+        const prompt = `Bạn là giáo viên Lịch sử. Hãy chấm điểm câu tự luận sau:
 
 CÂU HỎI: ${questionContent}
 BÀI LÀM CỦA HỌC SINH: ${studentAnswer || "Không có câu trả lời"}
@@ -1325,630 +1431,690 @@ Yêu cầu:
 
 CHỈ TRẢ VỀ SỐ ĐIỂM, KHÔNG CÓ TEXT KHÁC.`;
 
-            try {
-                const result = await callGeminiAPI(prompt);
-                const score = parseFloat(result.trim());
-                if (isNaN(score)) return 0;
-                return Math.min(score, maxPoints);
-            } catch (error) {
-                console.error('Lỗi chấm tự luận:', error);
-                return 0;
-            }
+        try {
+            const result = await callGeminiAPI(prompt);
+            const score = parseFloat(result.trim());
+            if (isNaN(score)) return 0;
+            return Math.min(score, maxPoints);
+        } catch (error) {
+            console.error('Lỗi chấm tự luận:', error);
+            return 0;
+        }
+    }
+    
+    // ==================== LƯU TRỮ ĐỀ THI (SHARE) ====================
+    function saveExamToLocalStorage(code, examData) {
+        const store = JSON.parse(localStorage.getItem("histest_exams") || "{}");
+        store[code] = examData;
+        localStorage.setItem("histest_exams", JSON.stringify(store));
+    }
+    
+    function loadExamFromLocalStorage(code) {
+        const store = JSON.parse(localStorage.getItem("histest_exams") || "{}");
+        return store[code] || null;
+    }
+    
+    function copyShareLink() {
+        if (!currentExamCode) {
+            alert('Không có mã đề để chia sẻ!');
+            return;
+        }
+        const url = new URL(window.location.href);
+        url.searchParams.set("code", currentExamCode);
+        navigator.clipboard.writeText(url.toString());
+        alert("✅ Đã sao chép link đề thi!\n\nNgười khác dán link vào trình duyệt sẽ thấy đề y hệt.");
+    }
+    
+    // ==================== TẢI ĐỀ TỪ MÃ ====================
+    function loadExamByCode() {
+        const codeInput = document.getElementById('loadExamCodeInput').value.trim().toUpperCase();
+        if (!codeInput) {
+            alert('Vui lòng nhập mã đề cần tải');
+            return;
         }
         
-        // ==================== RENDER EXAM FOR TAKING ====================
-        function renderExamForTaking(examData) {
-            if (!examData || !examData.blocks) {
-                console.error('Dữ liệu đề thi không hợp lệ');
-                return;
-            }
-            
-            currentExamData = examData;
-            userAnswers = {};
-            isExamActive = true;
-            isExamSubmitted = false;
-            
-            let html = `
-                <div class="exam-header">
-                    <h3>
-                        <i class="fas fa-file-alt"></i>
-                        ${escapeHtml(examData.title || 'ĐỀ THI LỊCH SỬ')}
-                    </h3>
-                    <div>Mã đề: ${currentExamCode}</div>
-                </div>
-                <div id="timerDisplay" class="timer-display">
-                    ⏱️ Thời gian còn lại: ${formatTime(remainingSeconds)}
-                </div>
-                <div class="exam-info">
-                    ${markdownToHtml(examData.description || '')}
-                </div>
-                <div id="examQuestionsContainer"></div>
-                <div class="exam-actions">
-                    <button id="submitExamFinalBtn" class="exam-action-btn submit-btn">
-                        <i class="fas fa-paper-plane"></i> Nộp bài
+        const examData = loadExamFromLocalStorage(codeInput);
+        if (!examData) {
+            alert('❌ Không tìm thấy đề thi với mã: ' + codeInput + '\n\nVui lòng kiểm tra lại mã đề.');
+            return;
+        }
+        
+        currentExamData = examData;
+        currentExamCode = codeInput;
+        isTHPTMode = examData.__metadata?.isTHPT || false;
+        
+        if (isTHPTMode) {
+            remainingSeconds = 50 * 60;
+        } else {
+            remainingSeconds = (examData.__metadata?.timeMinutes || 45) * 60;
+        }
+        
+        isExamSubmitted = false;
+        userAnswers = {};
+        
+        document.getElementById('promptSection').classList.add('hidden');
+        document.getElementById('actionButtons').classList.add('hidden');
+        document.getElementById('settingsPanel').classList.add('hidden-settings');
+        document.getElementById('progressContainer').classList.add('hidden-progress');
+        document.getElementById('examResultContainer').classList.remove('hidden-exam');
+        
+        renderExamForTaking(currentExamData);
+        startExamTimer();
+    }
+    
+    // ==================== HIỂN THỊ ĐỀ THI ====================
+    function renderExamForTaking(examData) {
+        if (!examData || !examData.blocks) {
+            console.error('Dữ liệu đề thi không hợp lệ');
+            return;
+        }
+        
+        let html = `
+            <div class="exam-header">
+                <h3>
+                    <i class="fas fa-file-alt"></i>
+                    ${escapeHtml(examData.title || 'ĐỀ THI LỊCH SỬ')}
+                </h3>
+                <div class="share-section">
+                    <span><i class="fas fa-link"></i> Mã đề: </span>
+                    <span class="share-code" id="shareCodeDisplay">${currentExamCode}</span>
+                    <button id="copyShareLinkBtn" class="copy-link-btn">
+                        <i class="far fa-copy"></i> Sao chép link
                     </button>
-                    <button id="resetExamAnswersBtn" class="exam-action-btn reset-btn">
-                        <i class="fas fa-undo-alt"></i> Làm lại
-                    </button>
                 </div>
-            `;
-            
-            document.getElementById('examResultContainer').innerHTML = html;
-            
-            let questionsHtml = '';
-            let mcCounter = 1;
-            let tfCounter = 1;
-            let essayCounter = 1;
-            
-            examData.blocks.forEach((block, blockIndex) => {
-                if (block.type === 'section_header') {
-                    questionsHtml += `
-                        <div class="section-header">
-                            <h4>${escapeHtml(block.title)}</h4>
-                            <p>${escapeHtml(block.content)}</p>
-                        </div>
-                    `;
-                } else if (block.type === 'mc_question') {
-                    const cleanOptions = block.options.map(opt => opt.replace(/^[A-D]\.\s*/i, ''));
-                    questionsHtml += `
-                        <div class="question-item" data-question-type="mc" data-block-index="${blockIndex}">
-                            <div class="question-header">
-                                <div class="question-text">
-                                    <strong>Câu ${mcCounter} (Trắc nghiệm):</strong> ${markdownToHtml(block.content)}
-                                </div>
-                                <div class="question-points">${block.points || 0.25} điểm</div>
+            </div>
+            <div id="timerDisplay" class="timer-display">
+                ⏱️ Thời gian còn lại: ${formatTime(remainingSeconds)}
+            </div>
+            <div class="exam-info">
+                ${markdownToHtml(examData.description || '')}
+            </div>
+            <div id="examQuestionsContainer"></div>
+            <div class="exam-actions">
+                <button id="submitExamFinalBtn" class="exam-action-btn submit-btn">
+                    <i class="fas fa-paper-plane"></i> Nộp bài
+                </button>
+                <button id="resetExamAnswersBtn" class="exam-action-btn reset-btn">
+                    <i class="fas fa-undo-alt"></i> Làm lại
+                </button>
+            </div>
+        `;
+        
+        document.getElementById('examResultContainer').innerHTML = html;
+        
+        let questionsHtml = '';
+        let mcCounter = 1;
+        let tfCounter = 1;
+        let essayCounter = 1;
+        
+        examData.blocks.forEach((block, blockIndex) => {
+            if (block.type === 'section_header') {
+                questionsHtml += `
+                    <div class="section-header">
+                        <h4>${escapeHtml(block.title)}</h4>
+                        <p>${escapeHtml(block.content)}</p>
+                    </div>
+                `;
+            } else if (block.type === 'mc_question') {
+                const cleanOptions = block.options.map(opt => opt.replace(/^[A-D]\.\s*/i, ''));
+                questionsHtml += `
+                    <div class="question-item" data-question-type="mc" data-block-index="${blockIndex}">
+                        <div class="question-header">
+                            <div class="question-text">
+                                <strong>Câu ${mcCounter} (Trắc nghiệm):</strong> ${markdownToHtml(block.content)}
                             </div>
-                            <div class="mc-options">
-                                ${cleanOptions.map((opt, optIndex) => `
-                                    <div class="mc-option" onclick="selectMCOption(${blockIndex}, ${optIndex})">
-                                        <input type="radio" name="mc_${blockIndex}" value="${optIndex}" id="mc_${blockIndex}_${optIndex}">
-                                        <label for="mc_${blockIndex}_${optIndex}">
-                                            <strong>${String.fromCharCode(65 + optIndex)}.</strong> ${escapeHtml(opt)}
-                                        </label>
+                            <div class="question-points">${block.points || 0.25} điểm</div>
+                        </div>
+                        <div class="mc-options">
+                            ${cleanOptions.map((opt, optIndex) => `
+                                <div class="mc-option" onclick="selectMCOption(${blockIndex}, ${optIndex})">
+                                    <input type="radio" name="mc_${blockIndex}" value="${optIndex}" id="mc_${blockIndex}_${optIndex}">
+                                    <label for="mc_${blockIndex}_${optIndex}">
+                                        <strong>${String.fromCharCode(65 + optIndex)}.</strong> ${escapeHtml(opt)}
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                mcCounter++;
+            } else if (block.type === 'tf_question') {
+                questionsHtml += `
+                    <div class="question-item" data-question-type="tf" data-block-index="${blockIndex}">
+                        <div class="question-header">
+                            <div class="question-text">
+                                <strong>Câu ${tfCounter} (Đúng/Sai):</strong> ${markdownToHtml(block.content)}
+                            </div>
+                            <div class="question-points">${block.points || 1.0} điểm</div>
+                        </div>
+                        <div class="tf-statements">
+                            ${block.statements.map((stmt, stmtIndex) => `
+                                <div class="tf-statement" data-statement-index="${stmtIndex}">
+                                    <div class="tf-statement-text">
+                                        ${escapeHtml(stmt.text)}
                                     </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                    mcCounter++;
-                } else if (block.type === 'tf_question') {
-                    questionsHtml += `
-                        <div class="question-item" data-question-type="tf" data-block-index="${blockIndex}">
-                            <div class="question-header">
-                                <div class="question-text">
-                                    <strong>Câu ${tfCounter} (Đúng/Sai):</strong> ${markdownToHtml(block.content)}
-                                </div>
-                                <div class="question-points">${block.points || 1.0} điểm</div>
-                            </div>
-                            <div class="tf-statements">
-                                ${block.statements.map((stmt, stmtIndex) => `
-                                    <div class="tf-statement" data-statement-index="${stmtIndex}">
-                                        <div class="tf-statement-text">
-                                            ${escapeHtml(stmt.text)}
-                                        </div>
-                                        <div class="tf-buttons">
-                                            <button type="button" class="tf-btn true" onclick="selectTFAnswer(${blockIndex}, ${stmtIndex}, true, this)">ĐÚNG</button>
-                                            <button type="button" class="tf-btn false" onclick="selectTFAnswer(${blockIndex}, ${stmtIndex}, false, this)">SAI</button>
-                                        </div>
+                                    <div class="tf-buttons">
+                                        <button type="button" class="tf-btn true" onclick="selectTFAnswer(${blockIndex}, ${stmtIndex}, true, this)">ĐÚNG</button>
+                                        <button type="button" class="tf-btn false" onclick="selectTFAnswer(${blockIndex}, ${stmtIndex}, false, this)">SAI</button>
                                     </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
-                    tfCounter++;
-                } else if (block.type === 'essay_question') {
-                    questionsHtml += `
-                        <div class="question-item" data-question-type="essay" data-block-index="${blockIndex}">
-                            <div class="question-header">
-                                <div class="question-text">
-                                    <strong>Câu ${essayCounter} (Tự luận):</strong> ${markdownToHtml(block.content)}
                                 </div>
-                                <div class="question-points">${block.points || 1.0} điểm</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                tfCounter++;
+            } else if (block.type === 'essay_question') {
+                questionsHtml += `
+                    <div class="question-item" data-question-type="essay" data-block-index="${blockIndex}">
+                        <div class="question-header">
+                            <div class="question-text">
+                                <strong>Câu ${essayCounter} (Tự luận):</strong> ${markdownToHtml(block.content)}
                             </div>
-                            <div class="essay-area">
-                                <textarea id="essay_${blockIndex}" rows="6" placeholder="Nhập câu trả lời tự luận của bạn..."></textarea>
-                            </div>
+                            <div class="question-points">${block.points || 1.0} điểm</div>
                         </div>
-                    `;
-                    essayCounter++;
-                }
-            });
-            
-            document.getElementById('examQuestionsContainer').innerHTML = questionsHtml;
-            document.getElementById('examResultContainer').style.display = 'block';
-            
-            startExamTimer();
-            
-            // Gắn sự kiện cho nút Nộp bài
-            const submitBtn = document.getElementById('submitExamFinalBtn');
-            if (submitBtn) {
-                const clonedSubmit = submitBtn.cloneNode(true);
-                submitBtn.parentNode.replaceChild(clonedSubmit, submitBtn);
-                clonedSubmit.addEventListener('click', () => submitExam());
-            }
-            
-            // Gắn sự kiện cho nút Làm lại
-            const resetBtn = document.getElementById('resetExamAnswersBtn');
-            if (resetBtn) {
-                const clonedReset = resetBtn.cloneNode(true);
-                resetBtn.parentNode.replaceChild(clonedReset, resetBtn);
-                clonedReset.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    if (!currentExamData) {
-                        alert('Chưa có đề thi để làm lại! Hãy tạo đề thi trước.');
-                        return;
-                    }
-                    if (confirm('Bạn có chắc muốn làm lại toàn bộ bài thi? Các câu trả lời hiện tại sẽ bị xóa.')) {
-                        resetExamAnswers();
-                    }
-                });
-            }
-        }
-        
-        // ==================== EXAM TIMER ====================
-        function startExamTimer() {
-            if (examTimerInterval) {
-                clearInterval(examTimerInterval);
-            }
-            
-            examTimerInterval = setInterval(() => {
-                if (!isExamActive || isExamSubmitted) return;
-                
-                if (remainingSeconds <= 0) {
-                    clearInterval(examTimerInterval);
-                    examTimerInterval = null;
-                    submitExam();
-                } else {
-                    remainingSeconds--;
-                    const timerElement = document.getElementById('timerDisplay');
-                    if (timerElement) {
-                        timerElement.innerHTML = `⏱️ Thời gian còn lại: ${formatTime(remainingSeconds)}`;
-                        if (remainingSeconds <= 60) {
-                            timerElement.classList.add('warning');
-                        }
-                    }
-                }
-            }, 1000);
-        }
-        
-        // ==================== SELECT ANSWER FUNCTIONS ====================
-        window.selectMCOption = function(blockIndex, optionIndex) {
-            if (isExamSubmitted) return;
-            userAnswers[`mc_${blockIndex}`] = optionIndex;
-            const radios = document.querySelectorAll(`input[name="mc_${blockIndex}"]`);
-            radios.forEach((radio, idx) => {
-                radio.checked = (idx === optionIndex);
-            });
-        };
-        
-        window.selectTFAnswer = function(blockIndex, statementIndex, isTrue, btnElement) {
-            if (isExamSubmitted) return;
-            const answerKey = `tf_${blockIndex}_${statementIndex}`;
-            userAnswers[answerKey] = isTrue;
-            
-            const statementDiv = btnElement.closest('.tf-statement');
-            if (statementDiv) {
-                const trueBtn = statementDiv.querySelector('.tf-btn.true');
-                const falseBtn = statementDiv.querySelector('.tf-btn.false');
-                if (trueBtn) trueBtn.classList.remove('selected-true');
-                if (falseBtn) falseBtn.classList.remove('selected-false');
-                if (isTrue && trueBtn) trueBtn.classList.add('selected-true');
-                else if (!isTrue && falseBtn) falseBtn.classList.add('selected-false');
-            }
-        };
-        
-        // ==================== CƠ CHẾ "LÀM LẠI" - RESET EXAM ====================
-        function resetExamAnswers() {
-            // 1. Dừng timer hiện tại
-            if (examTimerInterval) {
-                clearInterval(examTimerInterval);
-                examTimerInterval = null;
-            }
-            
-            // 2. Reset các biến trạng thái
-            isExamActive = false;
-            isExamSubmitted = false;
-            userAnswers = {};
-            
-            // 3. Reset thời gian làm bài dựa theo chế độ
-            if (isTHPTMode) {
-                remainingSeconds = 50 * 60;
-            } else {
-                remainingSeconds = examSettings.time * 60;
-            }
-            
-            // 4. Xóa class exam-submitted (bỏ hiệu ứng mờ)
-            const examContainer = document.getElementById('examResultContainer');
-            if (examContainer) {
-                examContainer.classList.remove('exam-submitted');
-            }
-            
-            // 5. Xóa các class selected trên các nút Đúng/Sai nếu có
-            document.querySelectorAll('.tf-btn.selected-true, .tf-btn.selected-false').forEach(btn => {
-                btn.classList.remove('selected-true', 'selected-false');
-            });
-            
-            // 6. Xóa các radio đã chọn và bật lại radio
-            document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                radio.checked = false;
-                radio.disabled = false;
-            });
-            
-            // 7. Xóa các nút Đúng/Sai bị disable
-            document.querySelectorAll('.tf-btn').forEach(btn => {
-                btn.style.pointerEvents = '';
-                btn.style.opacity = '';
-            });
-            
-            // 8. Xóa nội dung textarea tự luận
-            document.querySelectorAll('.essay-area textarea').forEach(textarea => {
-                textarea.value = '';
-                textarea.disabled = false;
-            });
-            
-            // 9. Render lại đề thi với trạng thái mới
-            if (currentExamData) {
-                renderExamForTaking(currentExamData);
-            } else {
-                const resultContainer = document.getElementById('examResultContainer');
-                if (resultContainer) {
-                    resultContainer.innerHTML = `
-                        <div class="exam-info" style="text-align: center;">
-                            <i class="fas fa-info-circle" style="font-size: 2rem; color: var(--primary-color);"></i>
-                            <p style="margin-top: 1rem;">Chưa có đề thi. Vui lòng tạo đề thi trước.</p>
+                        <div class="essay-area">
+                            <textarea id="essay_${blockIndex}" rows="6" placeholder="Nhập câu trả lời tự luận của bạn..."></textarea>
                         </div>
-                    `;
-                    resultContainer.style.display = 'block';
-                }
+                    </div>
+                `;
+                essayCounter++;
             }
-            
-            console.log('✅ Đã reset toàn bộ bài thi!');
-        }
-        
-        // ==================== SHOW GRADING OVERLAY ====================
-        let gradingOverlay = null;
-        
-        function showGradingOverlay() {
-            if (gradingOverlay) {
-                gradingOverlay.remove();
-            }
-            gradingOverlay = document.createElement('div');
-            gradingOverlay.className = 'grading-overlay';
-            gradingOverlay.innerHTML = `
-                <div class="grading-spinner"></div>
-                <div class="grading-text">HỆ THỐNG ĐANG CHẤM BÀI, VUI LÒNG ĐỢI!</div>
-            `;
-            document.body.appendChild(gradingOverlay);
-        }
-        
-        function hideGradingOverlay() {
-            if (gradingOverlay) {
-                gradingOverlay.remove();
-                gradingOverlay = null;
-            }
-        }
-        
-        // ==================== SUBMIT EXAM ====================
-        async function submitExam() {
-            if (isExamSubmitted) return;
-            
-            // Dừng timer
-            if (examTimerInterval) {
-                clearInterval(examTimerInterval);
-                examTimerInterval = null;
-            }
-            
-            isExamActive = false;
-            isExamSubmitted = true;
-            
-            // Vô hiệu hóa tất cả các input sau khi nộp bài
-            const examContainer = document.getElementById('examResultContainer');
-            if (examContainer) examContainer.classList.add('exam-submitted');
-            
-            const allRadios = document.querySelectorAll('input[type="radio"]');
-            allRadios.forEach(radio => radio.disabled = true);
-            
-            const allTfBtns = document.querySelectorAll('.tf-btn');
-            allTfBtns.forEach(btn => {
-                btn.style.pointerEvents = 'none';
-                btn.style.opacity = '0.7';
-            });
-            
-            const allEssayTextareas = document.querySelectorAll('.essay-area textarea');
-            allEssayTextareas.forEach(textarea => textarea.disabled = true);
-            
-            if (!currentExamData || !currentExamData.blocks) return;
-            
-            // Hiển thị overlay chấm bài
-            showGradingOverlay();
-            
-            // Tính điểm trắc nghiệm và đúng/sai
-            let totalScore = 0;
-            let maxScore = 0;
-            const resultDetails = [];
-            let mcCounter = 1;
-            let tfCounter = 1;
-            let essayCounter = 1;
-            let mcCorrect = 0;
-            let mcTotal = 0;
-            let tfPerfectCount = 0;
-            let tfTotal = 0;
-            
-            // Thu thập các câu tự luận để chấm bằng AI
-            const essayPromises = [];
-            
-            for (let blockIndex = 0; blockIndex < currentExamData.blocks.length; blockIndex++) {
-                const block = currentExamData.blocks[blockIndex];
-                
-                if (block.type === 'mc_question') {
-                    maxScore += block.points;
-                    mcTotal++;
-                    const userAnswer = userAnswers[`mc_${blockIndex}`];
-                    const isCorrect = (userAnswer === block.correct);
-                    if (isCorrect) {
-                        totalScore += block.points;
-                        mcCorrect++;
-                    }
-                    resultDetails.push({
-                        type: 'mc',
-                        number: mcCounter,
-                        isCorrect: isCorrect,
-                        userAnswer: userAnswer !== undefined ? String.fromCharCode(65 + userAnswer) : 'Chưa trả lời',
-                        correctAnswer: String.fromCharCode(65 + block.correct),
-                        points: block.points
-                    });
-                    mcCounter++;
-                } else if (block.type === 'tf_question') {
-                    maxScore += block.points;
-                    tfTotal++;
-                    let correctCount = 0;
-                    block.statements.forEach((stmt, stmtIndex) => {
-                        const userAnswer = userAnswers[`tf_${blockIndex}_${stmtIndex}`];
-                        if (userAnswer === stmt.correct) correctCount++;
-                    });
-                    let pointsEarned = 0;
-                    if (correctCount === 1) pointsEarned = 0.1;
-                    else if (correctCount === 2) pointsEarned = 0.25;
-                    else if (correctCount === 3) pointsEarned = 0.5;
-                    else if (correctCount === 4) pointsEarned = 1.0;
-                    totalScore += pointsEarned;
-                    if (correctCount === 4) tfPerfectCount++;
-                    resultDetails.push({
-                        type: 'tf',
-                        number: tfCounter,
-                        correctCount: correctCount,
-                        pointsEarned: pointsEarned,
-                        maxPoints: block.points
-                    });
-                    tfCounter++;
-                } else if (block.type === 'essay_question') {
-                    maxScore += block.points;
-                    const essayAnswer = document.getElementById(`essay_${blockIndex}`)?.value || '';
-                    // Tạo promise để chấm tự luận
-                    const promise = gradeEssay(block.content, essayAnswer, block.points).then(score => {
-                        resultDetails.push({
-                            type: 'essay',
-                            number: essayCounter,
-                            answer: essayAnswer,
-                            maxPoints: block.points,
-                            content: block.content,
-                            score: score
-                        });
-                        return score;
-                    });
-                    essayPromises.push(promise);
-                    essayCounter++;
-                }
-            }
-            
-            // Chờ tất cả câu tự luận được chấm xong
-            const essayScores = await Promise.all(essayPromises);
-            for (const score of essayScores) {
-                totalScore += score;
-            }
-            
-            // Ẩn overlay sau khi chấm xong
-            hideGradingOverlay();
-            
-            // Tính điểm phần trăm
-            const percentageScore = ((totalScore / maxScore) * 10).toFixed(1);
-            
-            // Hiển thị kết quả
-            let resultHtml = `
-                <div class="score-display">
-                    <div class="score-number">${percentageScore}/10</div>
-                    <div class="score-detail">${totalScore.toFixed(1)} / ${maxScore.toFixed(1)} điểm</div>
-                </div>
-                <div class="result-detail">
-            `;
-            
-            let essayIdx = 0;
-            for (const detail of resultDetails) {
-                if (detail.type === 'mc') {
-                    resultHtml += `
-                        <div class="result-item">
-                            <span>Câu ${detail.number} (Trắc nghiệm)</span>
-                            <span class="${detail.isCorrect ? 'result-correct' : 'result-incorrect'}">
-                                ${detail.isCorrect ? '✓ Đúng' : '✗ Sai'} 
-                                (Đáp án: ${detail.userAnswer}/${detail.correctAnswer}) - ${detail.points} điểm
-                            </span>
-                        </div>
-                    `;
-                } else if (detail.type === 'tf') {
-                    resultHtml += `
-                        <div class="result-item">
-                            <span>Câu ${detail.number} (Đúng/Sai)</span>
-                            <span>Đúng ${detail.correctCount}/4 ý → ${detail.pointsEarned}/${detail.maxPoints} điểm</span>
-                        </div>
-                    `;
-                } else if (detail.type === 'essay') {
-                    const essayScore = essayScores[essayIdx++];
-                    resultHtml += `
-                        <div class="result-item">
-                            <span>Câu ${detail.number} (Tự luận)</span>
-                            <span class="${essayScore >= detail.maxPoints * 0.7 ? 'result-correct' : ''}">${essayScore}/${detail.maxPoints} điểm</span>
-                        </div>
-                        <div class="result-item" style="background: #f9f9f9; flex-direction: column;">
-                            <div style="width: 100%;"><strong>Câu hỏi:</strong> ${escapeHtml(detail.content)}</div>
-                            <div style="width: 100%; margin-top: 0.5rem;"><strong>Câu trả lời:</strong><br>${escapeHtml(detail.answer) || 'Chưa có câu trả lời'}</div>
-                        </div>
-                    `;
-                }
-            }
-            
-            resultHtml += `</div>`;
-            document.getElementById('resultModalBody').innerHTML = resultHtml;
-            document.getElementById('resultModal').classList.add('active');
-        }
-        
-        // ==================== SHOW AND START EXAM IMMEDIATELY ====================
-        function showAndStartExamImmediately(examData, examNotes, examTimeMinutes, isThptMode) {
-            currentExamData = examData;
-            currentExamCode = generateExamCode();
-            isTHPTMode = isThptMode;
-            isExamSubmitted = false;
-            
-            // Cập nhật thời gian còn lại
-            if (isThptMode) {
-                remainingSeconds = 50 * 60;
-            } else {
-                remainingSeconds = examSettings.time * 60;
-            }
-            
-            // Hiển thị và bắt đầu làm bài ngay lập tức
-            renderExamForTaking(examData);
-        }
-        
-        // ==================== GENERATE MAIN FUNCTION ====================
-        async function generateExam() {
-            const generateBtn = document.getElementById('generateExamBtn');
-            const progressContainer = document.getElementById('progressContainer');
-            const progressFill = document.getElementById('progressFill');
-            const progressStatus = document.getElementById('progressStatus');
-            const resultContainer = document.getElementById('examResultContainer');
-            const userPrompt = document.getElementById('userPrompt').value.trim();
-            
-            if (!userPrompt) {
-                alert('Vui lòng nhập yêu cầu tạo đề thi!');
-                return;
-            }
-            
-            // Reset trạng thái trước khi tạo đề mới
-            if (examTimerInterval) {
-                clearInterval(examTimerInterval);
-                examTimerInterval = null;
-            }
-            isExamActive = false;
-            isExamSubmitted = false;
-            userAnswers = {};
-            currentExamData = null;
-            
-            generateBtn.disabled = true;
-            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo...';
-            progressContainer.style.display = 'block';
-            resultContainer.style.display = 'none';
-            progressFill.style.width = '0%';
-            progressStatus.textContent = 'Đang phân tích yêu cầu...';
-            
-            const mode = detectExamMode(userPrompt);
-            const badge = document.getElementById('detectedModeBadge');
-            if (mode === 'thpt') {
-                badge.innerHTML = '📚 Đề THPTQG (50 phút)';
-                badge.style.background = '#2E7D32';
-            } else {
-                badge.innerHTML = '🎲 Đề AI linh hoạt';
-                badge.style.background = '#FF9800';
-            }
-            
-            examSettings.difficulty = document.getElementById('difficultySelect').value;
-            const examNotes = document.getElementById('examNotes').value;
-            const timeSlider = document.getElementById('examTimeSlider');
-            examSettings.time = parseInt(timeSlider.value);
-            
-            try {
-                if (mode === 'thpt') {
-                    progressStatus.textContent = 'Đang tạo đề THPT Quốc gia...';
-                    progressFill.style.width = '30%';
-                    const examData = await generateTHPTExam(userPrompt);
-                    progressFill.style.width = '100%';
-                    progressStatus.textContent = 'Hoàn thành!';
-                    setTimeout(() => progressContainer.style.display = 'none', 500);
-                    // Tạo đề xong - bắt đầu làm bài ngay lập tức
-                    showAndStartExamImmediately(examData, examNotes, 50, true);
-                } else {
-                    progressStatus.textContent = 'Đang tạo đề theo yêu cầu...';
-                    progressFill.style.width = '30%';
-                    progressStatus.textContent = 'Đang gọi AI tạo đề...';
-                    progressFill.style.width = '60%';
-                    const examData = await generateAIExam(userPrompt);
-                    progressFill.style.width = '100%';
-                    progressStatus.textContent = 'Hoàn thành!';
-                    setTimeout(() => progressContainer.style.display = 'none', 500);
-                    // Tạo đề xong - bắt đầu làm bài ngay lập tức
-                    showAndStartExamImmediately(examData, examNotes, examSettings.time, false);
-                }
-            } catch (error) {
-                console.error('Lỗi:', error);
-                progressContainer.style.display = 'none';
-                resultContainer.style.display = 'block';
-                resultContainer.innerHTML = `<div class="exam-info" style="background: rgba(198, 40, 40, 0.1); border-left-color: var(--error-color);"><h4 style="color: var(--error-color);"><i class="fas fa-exclamation-triangle"></i> Lỗi tạo đề thi</h4><p>${escapeHtml(error.message)}</p><p style="margin-top: 0.5rem;">Vui lòng thử lại hoặc kiểm tra kết nối mạng.</p></div>`;
-            } finally {
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = '<i class="fas fa-magic"></i> Tạo Đề Thi';
-            }
-        }
-        
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Time slider setup
-            const timeSlider = document.getElementById('examTimeSlider');
-            const timeValue = document.getElementById('examTimeValue');
-            if (timeSlider && timeValue) {
-                timeSlider.addEventListener('input', function() {
-                    timeValue.textContent = this.value;
-                });
-                document.querySelectorAll('.preset-time-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const time = parseInt(this.dataset.time);
-                        timeSlider.value = time;
-                        timeValue.textContent = time;
-                    });
-                });
-            }
-            
-            // Settings panel toggle
-            const settingsBtn = document.getElementById('openSettingsBtn');
-            const settingsPanel = document.getElementById('settingsPanel');
-            if (settingsBtn && settingsPanel) {
-                settingsBtn.addEventListener('click', function() {
-                    settingsPanel.classList.toggle('active');
-                });
-            }
-            
-            // Generate button
-            const generateBtn = document.getElementById('generateExamBtn');
-            if (generateBtn) {
-                generateBtn.addEventListener('click', generateExam);
-            }
-            
-            // Modal close buttons
-            const closeModalBtns = document.querySelectorAll('.close-modal, #closeResultModalBtn, #closeResultFooterBtn');
-            const resultModal = document.getElementById('resultModal');
-            closeModalBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    resultModal.classList.remove('active');
-                });
-            });
-            resultModal.addEventListener('click', function(e) {
-                if (e.target === resultModal) {
-                    resultModal.classList.remove('active');
-                }
-            });
-            
-            // Expose functions to global scope
-            window.selectMCOption = selectMCOption;
-            window.selectTFAnswer = selectTFAnswer;
         });
-    </script>
+        
+        document.getElementById('examQuestionsContainer').innerHTML = questionsHtml;
+        
+        const copyBtn = document.getElementById('copyShareLinkBtn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', copyShareLink);
+        }
+        
+        const submitBtn = document.getElementById('submitExamFinalBtn');
+        if (submitBtn) {
+            const clonedSubmit = submitBtn.cloneNode(true);
+            submitBtn.parentNode.replaceChild(clonedSubmit, submitBtn);
+            clonedSubmit.addEventListener('click', () => submitExam());
+        }
+        
+        const resetBtn = document.getElementById('resetExamAnswersBtn');
+        if (resetBtn) {
+            const clonedReset = resetBtn.cloneNode(true);
+            resetBtn.parentNode.replaceChild(clonedReset, resetBtn);
+            clonedReset.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!currentExamData) {
+                    alert('Chưa có đề thi để làm lại!');
+                    return;
+                }
+                if (confirm('Bạn có chắc muốn làm lại toàn bộ bài thi? Các câu trả lời hiện tại sẽ bị xóa.')) {
+                    resetExamAnswers();
+                }
+            });
+        }
+    }
+    
+    // ==================== ĐỒNG HỒ ĐẾM NGƯỢC ====================
+    function startExamTimer() {
+        if (examTimerInterval) {
+            clearInterval(examTimerInterval);
+        }
+        
+        examTimerInterval = setInterval(() => {
+            if (!isExamActive || isExamSubmitted) return;
+            
+            if (remainingSeconds <= 0) {
+                clearInterval(examTimerInterval);
+                examTimerInterval = null;
+                submitExam();
+            } else {
+                remainingSeconds--;
+                const timerElement = document.getElementById('timerDisplay');
+                if (timerElement) {
+                    timerElement.innerHTML = `⏱️ Thời gian còn lại: ${formatTime(remainingSeconds)}`;
+                    if (remainingSeconds <= 60) {
+                        timerElement.classList.add('warning');
+                    }
+                }
+            }
+        }, 1000);
+    }
+    
+    // ==================== LỰA CHỌN CÂU TRẢ LỜI ====================
+    window.selectMCOption = function(blockIndex, optionIndex) {
+        if (isExamSubmitted) return;
+        userAnswers[`mc_${blockIndex}`] = optionIndex;
+        const radios = document.querySelectorAll(`input[name="mc_${blockIndex}"]`);
+        radios.forEach((radio, idx) => {
+            radio.checked = (idx === optionIndex);
+        });
+    };
+    
+    window.selectTFAnswer = function(blockIndex, statementIndex, isTrue, btnElement) {
+        if (isExamSubmitted) return;
+        const answerKey = `tf_${blockIndex}_${statementIndex}`;
+        userAnswers[answerKey] = isTrue;
+        
+        const statementDiv = btnElement.closest('.tf-statement');
+        if (statementDiv) {
+            const trueBtn = statementDiv.querySelector('.tf-btn.true');
+            const falseBtn = statementDiv.querySelector('.tf-btn.false');
+            if (trueBtn) trueBtn.classList.remove('selected-true');
+            if (falseBtn) falseBtn.classList.remove('selected-false');
+            if (isTrue && trueBtn) trueBtn.classList.add('selected-true');
+            else if (!isTrue && falseBtn) falseBtn.classList.add('selected-false');
+        }
+    };
+    
+    // ==================== LÀM LẠI BÀI THI ====================
+    function resetExamAnswers() {
+        if (examTimerInterval) {
+            clearInterval(examTimerInterval);
+            examTimerInterval = null;
+        }
+        
+        isExamActive = false;
+        isExamSubmitted = false;
+        userAnswers = {};
+        
+        if (isTHPTMode) {
+            remainingSeconds = 50 * 60;
+        } else {
+            remainingSeconds = examSettings.time * 60;
+        }
+        
+        const examContainer = document.getElementById('examResultContainer');
+        if (examContainer) {
+            examContainer.classList.remove('exam-submitted');
+        }
+        
+        document.querySelectorAll('.tf-btn.selected-true, .tf-btn.selected-false').forEach(btn => {
+            btn.classList.remove('selected-true', 'selected-false');
+        });
+        
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.checked = false;
+            radio.disabled = false;
+        });
+        
+        document.querySelectorAll('.tf-btn').forEach(btn => {
+            btn.style.pointerEvents = '';
+            btn.style.opacity = '';
+        });
+        
+        document.querySelectorAll('.essay-area textarea').forEach(textarea => {
+            textarea.value = '';
+            textarea.disabled = false;
+        });
+        
+        if (currentExamData) {
+            renderExamForTaking(currentExamData);
+        }
+    }
+    
+    // ==================== HIỂN THỊ OVERLAY CHẤM BÀI ====================
+    let gradingOverlay = null;
+    
+    function showGradingOverlay() {
+        if (gradingOverlay) {
+            gradingOverlay.remove();
+        }
+        gradingOverlay = document.createElement('div');
+        gradingOverlay.className = 'grading-overlay';
+        gradingOverlay.innerHTML = `
+            <div class="grading-spinner"></div>
+            <div class="grading-text">HỆ THỐNG ĐANG CHẤM BÀI, VUI LÒNG ĐỢI!</div>
+        `;
+        document.body.appendChild(gradingOverlay);
+    }
+    
+    function hideGradingOverlay() {
+        if (gradingOverlay) {
+            gradingOverlay.remove();
+            gradingOverlay = null;
+        }
+    }
+    
+    // ==================== NỘP BÀI VÀ CHẤM ĐIỂM ====================
+    async function submitExam() {
+        if (isExamSubmitted) return;
+        
+        if (examTimerInterval) {
+            clearInterval(examTimerInterval);
+            examTimerInterval = null;
+        }
+        
+        isExamActive = false;
+        isExamSubmitted = true;
+        
+        const examContainer = document.getElementById('examResultContainer');
+        if (examContainer) examContainer.classList.add('exam-submitted');
+        
+        const allRadios = document.querySelectorAll('input[type="radio"]');
+        allRadios.forEach(radio => radio.disabled = true);
+        
+        const allTfBtns = document.querySelectorAll('.tf-btn');
+        allTfBtns.forEach(btn => {
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.7';
+        });
+        
+        const allEssayTextareas = document.querySelectorAll('.essay-area textarea');
+        allEssayTextareas.forEach(textarea => textarea.disabled = true);
+        
+        if (!currentExamData || !currentExamData.blocks) return;
+        
+        showGradingOverlay();
+        
+        let totalScore = 0;
+        let maxScore = 0;
+        const resultDetails = [];
+        let mcCounter = 1;
+        let tfCounter = 1;
+        let essayCounter = 1;
+        const essayPromises = [];
+        
+        for (let blockIndex = 0; blockIndex < currentExamData.blocks.length; blockIndex++) {
+            const block = currentExamData.blocks[blockIndex];
+            
+            if (block.type === 'mc_question') {
+                maxScore += block.points;
+                const userAnswer = userAnswers[`mc_${blockIndex}`];
+                const isCorrect = (userAnswer === block.correct);
+                if (isCorrect) {
+                    totalScore += block.points;
+                }
+                resultDetails.push({
+                    type: 'mc',
+                    number: mcCounter,
+                    isCorrect: isCorrect,
+                    userAnswer: userAnswer !== undefined ? String.fromCharCode(65 + userAnswer) : 'Chưa trả lời',
+                    correctAnswer: String.fromCharCode(65 + block.correct),
+                    points: block.points
+                });
+                mcCounter++;
+            } else if (block.type === 'tf_question') {
+                maxScore += block.points;
+                let correctCount = 0;
+                block.statements.forEach((stmt, stmtIndex) => {
+                    const userAnswer = userAnswers[`tf_${blockIndex}_${stmtIndex}`];
+                    if (userAnswer === stmt.correct) correctCount++;
+                });
+                let pointsEarned = 0;
+                if (correctCount === 1) pointsEarned = 0.1;
+                else if (correctCount === 2) pointsEarned = 0.25;
+                else if (correctCount === 3) pointsEarned = 0.5;
+                else if (correctCount === 4) pointsEarned = 1.0;
+                totalScore += pointsEarned;
+                resultDetails.push({
+                    type: 'tf',
+                    number: tfCounter,
+                    correctCount: correctCount,
+                    pointsEarned: pointsEarned,
+                    maxPoints: block.points
+                });
+                tfCounter++;
+            } else if (block.type === 'essay_question') {
+                maxScore += block.points;
+                const essayAnswer = document.getElementById(`essay_${blockIndex}`)?.value || '';
+                const promise = gradeEssay(block.content, essayAnswer, block.points).then(score => {
+                    resultDetails.push({
+                        type: 'essay',
+                        number: essayCounter,
+                        answer: essayAnswer,
+                        maxPoints: block.points,
+                        content: block.content,
+                        score: score
+                    });
+                    return score;
+                });
+                essayPromises.push(promise);
+                essayCounter++;
+            }
+        }
+        
+        const essayScores = await Promise.all(essayPromises);
+        for (const score of essayScores) {
+            totalScore += score;
+        }
+        
+        hideGradingOverlay();
+        
+        const percentageScore = ((totalScore / maxScore) * 10).toFixed(1);
+        
+        let resultHtml = `
+            <div class="score-display">
+                <div class="score-number">${percentageScore}/10</div>
+                <div class="score-detail">${totalScore.toFixed(1)} / ${maxScore.toFixed(1)} điểm</div>
+            </div>
+            <div class="result-detail">
+        `;
+        
+        let essayIdx = 0;
+        for (const detail of resultDetails) {
+            if (detail.type === 'mc') {
+                resultHtml += `
+                    <div class="result-item">
+                        <span>Câu ${detail.number} (Trắc nghiệm)</span>
+                        <span class="${detail.isCorrect ? 'result-correct' : 'result-incorrect'}">
+                            ${detail.isCorrect ? '✓ Đúng' : '✗ Sai'} 
+                            (Đáp án: ${detail.userAnswer}/${detail.correctAnswer}) - ${detail.points} điểm
+                        </span>
+                    </div>
+                `;
+            } else if (detail.type === 'tf') {
+                resultHtml += `
+                    <div class="result-item">
+                        <span>Câu ${detail.number} (Đúng/Sai)</span>
+                        <span>Đúng ${detail.correctCount}/4 ý → ${detail.pointsEarned}/${detail.maxPoints} điểm</span>
+                    </div>
+                `;
+            } else if (detail.type === 'essay') {
+                const essayScore = essayScores[essayIdx++];
+                resultHtml += `
+                    <div class="result-item">
+                        <span>Câu ${detail.number} (Tự luận)</span>
+                        <span class="${essayScore >= detail.maxPoints * 0.7 ? 'result-correct' : ''}">${essayScore}/${detail.maxPoints} điểm</span>
+                    </div>
+                    <div class="result-item" style="background: #f9f9f9; flex-direction: column;">
+                        <div style="width: 100%;"><strong>Câu hỏi:</strong> ${escapeHtml(detail.content)}</div>
+                        <div style="width: 100%; margin-top: 0.5rem;"><strong>Câu trả lời:</strong><br>${escapeHtml(detail.answer) || 'Chưa có câu trả lời'}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        resultHtml += `</div>`;
+        document.getElementById('resultModalBody').innerHTML = resultHtml;
+        document.getElementById('resultModal').classList.add('active');
+    }
+    
+    // ==================== HIỂN THỊ ĐỀ THI NGAY SAU KHI TẠO ====================
+    function showAndStartExamImmediately(examData, examTimeMinutes, isThptMode) {
+        currentExamData = examData;
+        currentExamCode = generateExamCode();
+        isTHPTMode = isThptMode;
+        isExamSubmitted = false;
+        userAnswers = {};
+        
+        currentExamData.__metadata = {
+            isTHPT: isThptMode,
+            timeMinutes: isThptMode ? 50 : examSettings.time,
+            created: Date.now()
+        };
+        
+        saveExamToLocalStorage(currentExamCode, currentExamData);
+        
+        if (isThptMode) {
+            remainingSeconds = 50 * 60;
+        } else {
+            remainingSeconds = examSettings.time * 60;
+        }
+        
+        document.getElementById('promptSection').classList.add('hidden');
+        document.getElementById('actionButtons').classList.add('hidden');
+        document.getElementById('settingsPanel').classList.add('hidden-settings');
+        document.getElementById('progressContainer').classList.add('hidden-progress');
+        document.getElementById('examResultContainer').classList.remove('hidden-exam');
+        
+        renderExamForTaking(examData);
+        startExamTimer();
+    }
+    
+    // ==================== TẠO ĐỀ THI CHÍNH ====================
+    async function generateExam() {
+        const generateBtn = document.getElementById('generateExamBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressStatus = document.getElementById('progressStatus');
+        const userPrompt = document.getElementById('userPrompt').value.trim();
+        
+        if (!userPrompt) {
+            alert('Vui lòng nhập yêu cầu tạo đề thi!');
+            return;
+        }
+        
+        if (examTimerInterval) {
+            clearInterval(examTimerInterval);
+            examTimerInterval = null;
+        }
+        isExamActive = false;
+        isExamSubmitted = false;
+        userAnswers = {};
+        currentExamData = null;
+        
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo...';
+        progressContainer.classList.remove('hidden-progress');
+        progressFill.style.width = '0%';
+        progressStatus.textContent = 'Đang phân tích yêu cầu...';
+        
+        const mode = detectExamMode(userPrompt);
+        const badge = document.getElementById('detectedModeBadge');
+        if (mode === 'thpt') {
+            badge.innerHTML = '📚 Đề THPTQG (50 phút)';
+            badge.style.background = '#2E7D32';
+        } else {
+            badge.innerHTML = '🎲 Đề AI linh hoạt';
+            badge.style.background = '#FF9800';
+        }
+        
+        examSettings.difficulty = document.getElementById('difficultySelect').value;
+        const examNotes = document.getElementById('examNotes').value;
+        const timeSlider = document.getElementById('examTimeSlider');
+        examSettings.time = parseInt(timeSlider.value);
+        
+        try {
+            if (mode === 'thpt') {
+                progressStatus.textContent = 'Đang tạo đề THPT Quốc gia...';
+                progressFill.style.width = '30%';
+                const examData = await generateTHPTExam(userPrompt);
+                progressFill.style.width = '100%';
+                progressStatus.textContent = 'Hoàn thành!';
+                setTimeout(() => progressContainer.classList.add('hidden-progress'), 500);
+                showAndStartExamImmediately(examData, 50, true);
+            } else {
+                progressStatus.textContent = 'Đang tạo đề theo yêu cầu...';
+                progressFill.style.width = '30%';
+                progressStatus.textContent = 'Đang gọi Gemini tạo đề...';
+                progressFill.style.width = '60%';
+                const examData = await generateAIExam(userPrompt);
+                progressFill.style.width = '100%';
+                progressStatus.textContent = 'Hoàn thành!';
+                setTimeout(() => progressContainer.classList.add('hidden-progress'), 500);
+                showAndStartExamImmediately(examData, examSettings.time, false);
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            progressContainer.classList.add('hidden-progress');
+            alert('❌ Lỗi tạo đề: ' + error.message + '\n\nVui lòng thử lại.');
+        } finally {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-magic"></i> Tạo Đề Thi';
+        }
+    }
+    
+    // ==================== KHỞI TẠO ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        const timeSlider = document.getElementById('examTimeSlider');
+        const timeValue = document.getElementById('examTimeValue');
+        if (timeSlider && timeValue) {
+            timeSlider.addEventListener('input', function() {
+                timeValue.textContent = this.value;
+            });
+            document.querySelectorAll('.preset-time-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const time = parseInt(this.dataset.time);
+                    timeSlider.value = time;
+                    timeValue.textContent = time;
+                });
+            });
+        }
+        
+        const settingsBtn = document.getElementById('openSettingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        if (settingsBtn && settingsPanel) {
+            settingsBtn.addEventListener('click', function() {
+                settingsPanel.classList.toggle('hidden-settings');
+            });
+        }
+        
+        const generateBtn = document.getElementById('generateExamBtn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', generateExam);
+        }
+        
+        const loadExamBtn = document.getElementById('loadExamBtn');
+        if (loadExamBtn) {
+            loadExamBtn.addEventListener('click', loadExamByCode);
+        }
+        
+        const loadExamInput = document.getElementById('loadExamCodeInput');
+        if (loadExamInput) {
+            loadExamInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loadExamByCode();
+                }
+            });
+        }
+        
+        const closeModalBtns = document.querySelectorAll('.close-modal, #closeResultModalBtn, #closeResultFooterBtn');
+        const resultModal = document.getElementById('resultModal');
+        closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                resultModal.classList.remove('active');
+            });
+        });
+        resultModal.addEventListener('click', function(e) {
+            if (e.target === resultModal) {
+                resultModal.classList.remove('active');
+            }
+        });
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedCode = urlParams.get('code');
+        if (sharedCode) {
+            const examData = loadExamFromLocalStorage(sharedCode);
+            if (examData) {
+                currentExamData = examData;
+                currentExamCode = sharedCode;
+                isTHPTMode = examData.__metadata?.isTHPT || false;
+                remainingSeconds = (isTHPTMode ? 50 : (examData.__metadata?.timeMinutes || 45)) * 60;
+                isExamSubmitted = false;
+                userAnswers = {};
+                
+                document.getElementById('promptSection').classList.add('hidden');
+                document.getElementById('actionButtons').classList.add('hidden');
+                document.getElementById('settingsPanel').classList.add('hidden-settings');
+                document.getElementById('progressContainer').classList.add('hidden-progress');
+                document.getElementById('examResultContainer').classList.remove('hidden-exam');
+                
+                renderExamForTaking(currentExamData);
+                startExamTimer();
+            }
+        }
+        
+        window.selectMCOption = selectMCOption;
+        window.selectTFAnswer = selectTFAnswer;
+    });
+</script>
 </body>
 </html>
