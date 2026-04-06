@@ -6,7 +6,6 @@
     <title>Admin Panel - Quản lý Flashcard Lisu AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
@@ -127,7 +126,7 @@
             color: var(--dark);
         }
 
-        /* Cards */
+        /* Stats Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -180,17 +179,7 @@
             border-radius: var(--border-radius);
             padding: 25px;
             box-shadow: var(--shadow);
-            display: none;
-        }
-
-        .content-panel.active {
             display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Toolbar */
@@ -485,24 +474,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Chart Container */
-        .chart-container {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-container h3 {
-            margin-bottom: 20px;
-            color: var(--dark);
-        }
-
-        canvas {
-            max-height: 400px;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -541,11 +512,7 @@
                 <p>Quản lý hệ thống flashcards</p>
             </div>
             <div class="nav-menu">
-                <div class="nav-item active" data-page="dashboard">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Tổng quan</span>
-                </div>
-                <div class="nav-item" data-page="flashcards">
+                <div class="nav-item active" data-page="flashcards">
                     <i class="fas fa-layer-group"></i>
                     <span>Quản lý Flashcard</span>
                 </div>
@@ -555,11 +522,12 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="top-bar">
-                <h1 class="page-title" id="page-title">Tổng quan</h1>
+                <h1 class="page-title" id="page-title">Quản lý Flashcard</h1>
             </div>
 
-            <!-- Dashboard Page -->
-            <div id="dashboard-page" class="content-panel active">
+            <!-- Flashcards Management Page (merged with dashboard) -->
+            <div id="flashcards-page" class="content-panel active">
+                <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-info">
@@ -581,26 +549,7 @@
                     </div>
                 </div>
 
-                <div class="chart-container">
-                    <h3><i class="fas fa-chart-line"></i> Biểu đồ tăng trưởng flashcards (từ ngày 05/04/2026)</h3>
-                    <canvas id="growth-chart"></canvas>
-                </div>
-
-                <div class="chart-container">
-                    <h3><i class="fas fa-table"></i> Danh sách flashcards mới nhất</h3>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr><th>Tên sự kiện</th><th>Ngày tạo</th></tr>
-                            </thead>
-                            <tbody id="latest-flashcards-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Flashcards Management Page -->
-            <div id="flashcards-page" class="content-panel">
+                <!-- Toolbar -->
                 <div class="toolbar">
                     <div class="search-box">
                         <input type="text" id="search-input" placeholder="Tìm kiếm theo tên sự kiện..." onkeypress="handleSearchKeyPress(event)">
@@ -619,6 +568,7 @@
                     </button>
                 </div>
 
+                <!-- Table -->
                 <div class="table-container">
                     <table id="flashcards-table">
                         <thead>
@@ -630,13 +580,12 @@
                             </tr>
                         </thead>
                         <tbody id="flashcards-tbody">
-                            <tr>
-                                <td colspan="4" style="text-align: center;">Đang tải dữ liệu...</td>
-                            </tr>
+                            <tr><td colspan="4" style="text-align: center;">Đang tải dữ liệu...</td></tr>
                         </tbody>
                     </table>
                 </div>
 
+                <!-- Pagination -->
                 <div class="pagination" id="pagination"></div>
             </div>
         </div>
@@ -689,10 +638,6 @@
         let itemsPerPage = 10;
         let currentSort = 'newest';
         let currentSearch = '';
-        let growthChart = null;
-        
-        // Ngày bắt đầu: 05/04/2026
-        const START_DATE = new Date(2026, 3, 5); // Tháng 3 = Tháng 4 (vì tháng trong JS bắt đầu từ 0)
 
         // Show/Hide Loading
         function showLoading() {
@@ -706,7 +651,7 @@
         // Load all data
         async function loadAllData() {
             await loadFlashcards();
-            await loadDashboardData();
+            await updateStats();
         }
 
         // Load flashcards from Firestore
@@ -741,6 +686,29 @@
                 console.error('Error loading flashcards:', error);
                 hideLoading();
                 document.getElementById('flashcards-tbody').innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Lỗi tải dữ liệu: ' + error.message + '</td></tr>';
+            }
+        }
+
+        // Update statistics
+        async function updateStats() {
+            try {
+                const snapshot = await db.collection('flashcards').get();
+                const total = snapshot.size;
+                document.getElementById('total-flashcards').textContent = total;
+                
+                // Get today's flashcards
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                let todayCount = 0;
+                snapshot.forEach(doc => {
+                    const createdAt = doc.data().createdAt;
+                    if (createdAt && createdAt.toDate() >= today) {
+                        todayCount++;
+                    }
+                });
+                document.getElementById('today-flashcards').textContent = todayCount;
+            } catch (error) {
+                console.error('Error updating stats:', error);
             }
         }
 
@@ -849,172 +817,6 @@
             displayFlashcardsTable();
         }
 
-        // Load dashboard data
-        async function loadDashboardData() {
-            try {
-                const snapshot = await db.collection('flashcards').get();
-                const total = snapshot.size;
-                document.getElementById('total-flashcards').textContent = total;
-                
-                // Get today's flashcards
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                let todayCount = 0;
-                snapshot.forEach(doc => {
-                    const createdAt = doc.data().createdAt;
-                    if (createdAt && createdAt.toDate() >= today) {
-                        todayCount++;
-                    }
-                });
-                document.getElementById('today-flashcards').textContent = todayCount;
-                
-                // Create growth chart from START_DATE (05/04/2026)
-                await createGrowthChart(snapshot);
-                
-                // Load latest flashcards
-                await loadLatestFlashcards();
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-            }
-        }
-
-        async function loadLatestFlashcards() {
-            try {
-                const snapshot = await db.collection('flashcards').orderBy('createdAt', 'desc').limit(10).get();
-                const latestFlashcards = [];
-                snapshot.forEach(doc => {
-                    latestFlashcards.push({
-                        name: doc.data().name,
-                        createdAt: doc.data().createdAt ? doc.data().createdAt.toDate() : new Date()
-                    });
-                });
-                
-                const tbody = document.getElementById('latest-flashcards-tbody');
-                if (latestFlashcards.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="2" style="text-align: center;">Chưa có dữ liệu</td></tr>';
-                } else {
-                    tbody.innerHTML = latestFlashcards.map(card => `
-                        <tr>
-                            <td>${escapeHtml(card.name)}</td>
-                            <td>${formatDate(card.createdAt)}</td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (error) {
-                console.error('Error loading latest flashcards:', error);
-            }
-        }
-
-        async function createGrowthChart(snapshot) {
-            // Filter flashcards từ ngày START_DATE (05/04/2026)
-            let flashcardsByDate = {};
-            
-            snapshot.forEach(doc => {
-                const createdAt = doc.data().createdAt;
-                if (createdAt) {
-                    const date = createdAt.toDate();
-                    // Chỉ lấy từ ngày 05/04/2026 trở đi
-                    if (date >= START_DATE) {
-                        const key = date.toISOString().split('T')[0]; // YYYY-MM-DD
-                        flashcardsByDate[key] = (flashcardsByDate[key] || 0) + 1;
-                    }
-                }
-            });
-            
-            // Tạo mảng các ngày từ START_DATE đến hôm nay
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const allDates = [];
-            let currentDate = new Date(START_DATE);
-            
-            while (currentDate <= today) {
-                const dateStr = currentDate.toISOString().split('T')[0];
-                allDates.push(dateStr);
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-            
-            // Tạo dữ liệu cho biểu đồ (tích lũy)
-            let cumulativeCount = 0;
-            const cumulativeData = [];
-            const labels = [];
-            
-            for (let i = 0; i < allDates.length; i++) {
-                const date = allDates[i];
-                const dailyCount = flashcardsByDate[date] || 0;
-                cumulativeCount += dailyCount;
-                cumulativeData.push(cumulativeCount);
-                
-                // Format label: DD/MM
-                const d = new Date(date);
-                labels.push(`${d.getDate()}/${d.getMonth() + 1}`);
-            }
-            
-            const ctx = document.getElementById('growth-chart').getContext('2d');
-            if (growthChart) growthChart.destroy();
-            
-            growthChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Tổng số flashcards (lũy kế)',
-                        data: cumulativeData,
-                        borderColor: '#e67e22',
-                        backgroundColor: 'rgba(230,126,34,0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#d35400',
-                        pointBorderColor: '#fff',
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Tổng số: ${context.raw} thẻ`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1,
-                                precision: 0
-                            },
-                            title: {
-                                display: true,
-                                text: 'Số lượng flashcards (lũy kế)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Ngày'
-                            },
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 45,
-                                autoSkip: true,
-                                maxTicksLimit: 10
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
         // CRUD Operations
         async function addFlashcard(name, imageUrl) {
             showLoading();
@@ -1025,7 +827,7 @@
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 await loadFlashcards();
-                await loadDashboardData();
+                await updateStats();
                 hideLoading();
                 return true;
             } catch (error) {
@@ -1044,7 +846,7 @@
                     imageUrl: imageUrl
                 });
                 await loadFlashcards();
-                await loadDashboardData();
+                await updateStats();
                 hideLoading();
                 return true;
             } catch (error) {
@@ -1061,7 +863,7 @@
                 try {
                     await db.collection('flashcards').doc(id).delete();
                     await loadFlashcards();
-                    await loadDashboardData();
+                    await updateStats();
                     hideLoading();
                     alert('Đã xóa flashcard thành công!');
                 } catch (error) {
@@ -1128,25 +930,6 @@
             }
         }
 
-        // Navigation
-        function navigateTo(page) {
-            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
-            document.getElementById(`${page}-page`).classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            document.querySelector(`[data-page="${page}"]`).classList.add('active');
-            
-            const titles = {
-                'dashboard': 'Tổng quan',
-                'flashcards': 'Quản lý Flashcard'
-            };
-            document.getElementById('page-title').textContent = titles[page];
-            
-            if (page === 'dashboard') {
-                loadDashboardData();
-            }
-        }
-
         // Utility functions
         function escapeHtml(text) {
             if (!text) return '';
@@ -1166,16 +949,21 @@
             });
         }
 
-        // Event listeners
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                navigateTo(item.getAttribute('data-page'));
+        // Set up real-time listener for Firestore
+        function setupRealtimeListener() {
+            db.collection('flashcards').onSnapshot(() => {
+                console.log("Dữ liệu thay đổi, cập nhật...");
+                loadFlashcards();
+                updateStats();
+            }, (error) => {
+                console.error("Lỗi real-time listener:", error);
             });
-        });
+        }
 
-        // Initialize - No login required
+        // Initialize
         document.getElementById('admin-panel').style.display = 'block';
         loadAllData();
+        setupRealtimeListener();
     </script>
 </body>
 </html>
