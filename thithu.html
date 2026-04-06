@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Hệ Thống Thi Thử Lịch Sử - HISTEST</title>
-    <mã rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📜</text></svg>">
-    <mã rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📜</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -509,7 +509,7 @@
             font-size: 0.9rem;
         }
 
-        .copy-mã-btn {
+        .copy-ma-btn {
             background: var(--primary-color);
             border: none;
             color: white;
@@ -520,7 +520,7 @@
             transition: var(--transition-fast);
         }
 
-        .copy-mã-btn:hover {
+        .copy-ma-btn:hover {
             background: var(--primary-dark);
         }
 
@@ -539,11 +539,11 @@
         }
 
         .timer-display.warning {
-            animation: timerBmã 1s infinite;
+            animation: timerBlink 1s infinite;
             background: linear-gradient(135deg, var(--warning-color), #F57C00);
         }
 
-        @keyframes timerBmã {
+        @keyframes timerBlink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
@@ -939,6 +939,61 @@
             animation: pulse 1.5s ease-in-out infinite;
         }
 
+        /* Toast Notification - Web Notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #2E7D32, #1B5E20);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            animation: slideInRight 0.3s ease-out;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .toast-notification.error {
+            background: linear-gradient(135deg, #C62828, #8E0000);
+        }
+        
+        .toast-notification i {
+            font-size: 1.2rem;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        .toast-notification.hide {
+            animation: slideOutRight 0.3s ease-in forwards;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -1023,6 +1078,14 @@
 
             .grading-text {
                 font-size: 1rem;
+            }
+            
+            .toast-notification {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                text-align: center;
+                justify-content: center;
             }
         }
     </style>
@@ -1205,6 +1268,37 @@ Ví dụ:
     };
     let isTHPTMode = false;
     
+    // ==================== WEB NOTIFICATION (TOAST) ====================
+    function showToast(message, isError = false) {
+        // Remove existing toast if any
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) {
+            existingToast.remove();
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        if (isError) toast.classList.add('error');
+        
+        const icon = document.createElement('i');
+        icon.className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+        
+        const text = document.createElement('span');
+        text.innerText = message;
+        
+        toast.appendChild(icon);
+        toast.appendChild(text);
+        document.body.appendChild(toast);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => {
+                if (toast.parentNode) toast.remove();
+            }, 300);
+        }, 3000);
+    }
+    
     // ==================== HELPER FUNCTIONS ====================
     function formatTime(seconds) {
         let minutes = Math.floor(seconds / 60);
@@ -1287,25 +1381,21 @@ Ví dụ:
     function validateAndFixExamData(data) {
         console.log("Đang kiểm tra dữ liệu đề thi:", data);
         
-        // Kiểm tra nếu data null hoặc undefined
         if (!data) {
             throw new Error("Dữ liệu đề thi rỗng");
         }
         
-        // Tạo cấu trúc mặc định nếu cần
         let fixedData = {
             title: data.title || "ĐỀ THI LỊCH SỬ",
             description: data.description || "Thời gian làm bài: 45 phút",
-            blocks: []
+            blocks: [],
+            __metadata: data.__metadata || { isTHPT: false, timeMinutes: 45 }
         };
         
-        // Nếu có blocks thì sử dụng
         if (data.blocks && Array.isArray(data.blocks) && data.blocks.length > 0) {
             fixedData.blocks = data.blocks;
         } 
-        // Nếu có cấu trúc cũ (phan_i_trac_nghiem)
         else if (data.phan_i_trac_nghiem || data.phan_ii_dung_sai) {
-            // Xử lý phần trắc nghiệm
             if (data.phan_i_trac_nghiem && data.phan_i_trac_nghiem.cau_hoi) {
                 fixedData.blocks.push({
                     type: "section_header",
@@ -1325,7 +1415,6 @@ Ví dụ:
                 });
             }
             
-            // Xử lý phần đúng/sai
             if (data.phan_ii_dung_sai && data.phan_ii_dung_sai.cau_hoi) {
                 fixedData.blocks.push({
                     type: "section_header",
@@ -1344,7 +1433,6 @@ Ví dụ:
                         });
                     }
                     
-                    // Đảm bảo có đủ 4 statements
                     while (statements.length < 4) {
                         statements.push({
                             text: String.fromCharCode(97 + statements.length) + ") Nội dung bổ sung",
@@ -1362,7 +1450,6 @@ Ví dụ:
                 });
             }
         }
-        // Nếu không có cấu trúc nào, tạo đề mẫu
         else if (fixedData.blocks.length === 0) {
             console.warn("Không tìm thấy cấu trúc đề, tạo đề mẫu");
             fixedData.blocks.push({
@@ -1380,11 +1467,9 @@ Ví dụ:
             });
         }
         
-        // Kiểm tra từng block
         for (let i = 0; i < fixedData.blocks.length; i++) {
             const block = fixedData.blocks[i];
             
-            // Sửa block mc_question
             if (block.type === 'mc_question') {
                 if (!block.options || !Array.isArray(block.options) || block.options.length === 0) {
                     block.options = ["A. Đáp án A", "B. Đáp án B", "C. Đáp án C", "D. Đáp án D"];
@@ -1396,7 +1481,6 @@ Ví dụ:
                 if (!block.content) block.content = "Nội dung câu hỏi";
             }
             
-            // Sửa block tf_question
             if (block.type === 'tf_question') {
                 if (!block.statements || !Array.isArray(block.statements) || block.statements.length === 0) {
                     block.statements = [
@@ -1416,7 +1500,6 @@ Ví dụ:
                 if (!block.content) block.content = "Nội dung câu hỏi đúng/sai";
             }
             
-            // Sửa block essay_question
             if (block.type === 'essay_question') {
                 if (!block.points) block.points = 2.0;
                 if (!block.content) block.content = "Nội dung câu hỏi tự luận";
@@ -1469,7 +1552,6 @@ Ví dụ:
     }
     
     function extractJSONFromResponse(responseText) {
-        // Tìm JSON object
         let startIndex = responseText.indexOf('{');
         let endIndex = responseText.lastIndexOf('}');
         
@@ -1483,7 +1565,6 @@ Ví dụ:
             }
         }
         
-        // Thử tìm bằng regex
         let jsonMatches = responseText.match(/\{[\s\S]*?\}/g);
         if (jsonMatches) {
             jsonMatches.sort(function(a, b) { return b.length - a.length; });
@@ -1645,26 +1726,57 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         }
     }
     
+    // ==================== HÀM SAO CHÉP MÃ ĐỀ (ĐÃ SỬA LỖI) ====================
     function copyShareCode() {
         if (!currentExamCode) {
-            alert('Không có mã đề để chia sẻ!');
+            showToast("Không có mã đề để sao chép!", true);
             return;
         }
         
-        const shareUrl = window.location.href.split('?')[0] + '?code=' + currentExamCode;
-        
-        navigator.clipboard.writeText(shareUrl).then(function() {
-            alert("✅ Đã sao chép mã chia sẻ!\n\nmã: " + shareUrl + "\n\nHoặc dùng mã đề: " + currentExamCode);
-        }).catch(function() {
-            alert("✅ Mã đề của bạn: " + currentExamCode + "\n\nmã chia sẻ: " + shareUrl);
-        });
+        // Sử dụng phương thức sao chép hiện đại, hoạt động trên mọi trình duyệt
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(currentExamCode).then(function() {
+                showToast("✅ Đã sao chép mã đề: " + currentExamCode);
+            }).catch(function(err) {
+                console.error("Clipboard error: ", err);
+                // Fallback method
+                fallbackCopyToClipboard(currentExamCode);
+            });
+        } else {
+            // Fallback cho trình duyệt cũ
+            fallbackCopyToClipboard(currentExamCode);
+        }
+    }
+    
+    // Fallback method để sao chép
+    function fallbackCopyToClipboard(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.top = '-1000px';
+        textarea.style.left = '-1000px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, text.length);
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                showToast("✅ Đã sao chép mã đề: " + text);
+            } else {
+                showToast("❌ Không thể sao chép. Mã đề: " + text, true);
+            }
+        } catch (err) {
+            console.error("Fallback copy error: ", err);
+            showToast("❌ Sao chép thất bại. Mã đề: " + text, true);
+        }
+        document.body.removeChild(textarea);
     }
     
     // ==================== TẢI ĐỀ TỪ MÃ ====================
     async function loadExamByCode() {
         const codeInput = document.getElementById('loadExamCodeInput').value.trim().toUpperCase();
         if (!codeInput) {
-            alert('Vui lòng nhập mã đề cần tải');
+            showToast("Vui lòng nhập mã đề cần tải", true);
             return;
         }
         
@@ -1675,7 +1787,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         try {
             const examData = await loadExamFromFirestore(codeInput);
             if (!examData) {
-                alert('❌ Không tìm thấy đề thi với mã: ' + codeInput);
+                showToast("❌ Không tìm thấy đề thi với mã: " + codeInput, true);
                 return;
             }
             
@@ -1685,8 +1797,13 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             
             currentExamData = validExamData;
             currentExamCode = codeInput;
+            
+            // Lấy thời gian từ metadata đã lưu
+            const savedTimeMinutes = validExamData.__metadata?.timeMinutes || 45;
             isTHPTMode = validExamData.__metadata?.isTHPT || false;
-            remainingSeconds = (isTHPTMode ? 50 : (validExamData.__metadata?.timeMinutes || 45)) * 60;
+            
+            // Sử dụng đúng thời gian đã lưu
+            remainingSeconds = savedTimeMinutes * 60;
             isExamSubmitted = false;
             userAnswers = {};
             
@@ -1699,9 +1816,11 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             renderExamForTaking(currentExamData);
             startExamTimer();
             
+            showToast("✅ Đã tải đề thành công! Mã: " + currentExamCode);
+            
         } catch (error) {
             console.error("Lỗi tải đề:", error);
-            alert('❌ Lỗi khi tải đề: ' + error.message);
+            showToast("❌ Lỗi khi tải đề: " + error.message, true);
         } finally {
             loadBtn.disabled = false;
             loadBtn.innerHTML = '<i class="fas fa-download"></i> Tải';
@@ -1722,7 +1841,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
                 <div class="share-section">
                     <span><i class="fas fa-key"></i> Mã đề: </span>
                     <span class="share-code" id="shareCodeDisplay">${currentExamCode}</span>
-                    <button id="copyShareCodeBtn" class="copy-mã-btn">
+                    <button id="copyShareCodeBtn" class="copy-ma-btn">
                         <i class="far fa-copy"></i> Sao chép mã
                     </button>
                 </div>
@@ -1779,7 +1898,13 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         
         const copyBtn = document.getElementById('copyShareCodeBtn');
         if (copyBtn) {
-            copyBtn.addEventListener('click', copyShareCode);
+            // Remove old event listener to avoid duplicates
+            const newCopyBtn = copyBtn.cloneNode(true);
+            copyBtn.parentNode.replaceChild(newCopyBtn, copyBtn);
+            newCopyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                copyShareCode();
+            });
         }
         
         const submitBtn = document.getElementById('submitExamFinalBtn');
@@ -1851,11 +1976,13 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
         isExamActive = false; 
         isExamSubmitted = false; 
         userAnswers = {};
-        remainingSeconds = (isTHPTMode ? 50 : examSettings.time) * 60;
+        const savedTimeMinutes = currentExamData?.__metadata?.timeMinutes || (isTHPTMode ? 50 : examSettings.time);
+        remainingSeconds = savedTimeMinutes * 60;
         const examContainer = document.getElementById('examResultContainer');
         if (examContainer) examContainer.classList.remove('exam-submitted');
         if (currentExamData) renderExamForTaking(currentExamData);
         startExamTimer();
+        showToast("🔄 Đã làm lại bài thi");
     }
     
     let gradingOverlay = null;
@@ -1954,18 +2081,18 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
     async function showAndStartExam(examData, isThptMode) {
         autoResetForNewExam();
         
-        // Kiểm tra và sửa dữ liệu trước khi hiển thị
         const validExamData = validateAndFixExamData(examData);
         
         currentExamData = validExamData;
         currentExamCode = generateExamCode();
         isTHPTMode = isThptMode;
+        
+        const timeMinutes = isThptMode ? 50 : examSettings.time;
         currentExamData.__metadata = { 
             isTHPT: isThptMode, 
-            timeMinutes: isThptMode ? 50 : examSettings.time 
+            timeMinutes: timeMinutes
         };
         
-        // Lưu lên Firebase
         const saved = await saveExamToFirestore(currentExamCode, currentExamData);
         if (!saved) {
             console.warn("Không thể lưu lên Firebase, vẫn tiếp tục với localStorage");
@@ -1974,7 +2101,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             localStorage.setItem("histest_exams", JSON.stringify(store));
         }
         
-        remainingSeconds = (isThptMode ? 50 : examSettings.time) * 60;
+        remainingSeconds = timeMinutes * 60;
         isExamSubmitted = false; 
         userAnswers = {}; 
         isExamActive = true;
@@ -1992,7 +2119,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
     async function generateExam() {
         const prompt = document.getElementById('userPrompt').value.trim();
         if (!prompt) { 
-            alert('Vui lòng nhập yêu cầu tạo đề thi'); 
+            showToast("Vui lòng nhập yêu cầu tạo đề thi", true);
             return; 
         }
         
@@ -2033,7 +2160,7 @@ CHỈ TRẢ VỀ JSON, KHÔNG CÓ TEXT KHÁC.`;
             
         } catch (err) {
             console.error("Lỗi chi tiết:", err);
-            alert('❌ Lỗi tạo đề: ' + err.message + '\n\nVui lòng thử lại với yêu cầu khác.');
+            showToast("❌ Lỗi tạo đề: " + err.message, true);
             document.getElementById('progressContainer').classList.add('hidden-progress');
         } finally {
             genBtn.disabled = false; 
