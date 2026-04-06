@@ -590,68 +590,68 @@
             color: white;
         }
         
-        /* ===== TIMELINE - TĂNG KÍCH THƯỚC ===== */
+        /* ===== TIMELINE - THU NHỎ HƠN 1 CHÚT ===== */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
-            max-width: 900px;
+            width: 70%;
+            max-width: 800px;
             z-index: 15;
             pointer-events: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .timeline-bar-globe {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border-radius: 16px;
-            padding: 10px 20px;
+            border-radius: 12px;
+            padding: 6px 16px;
             border: 1px solid var(--border-light);
             width: 100%;
             position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .timeline-slider-globe {
             -webkit-appearance: none;
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
+            height: 6px;
+            border-radius: 3px;
             background: #ccc;
             outline: none;
         }
         
         .timeline-slider-globe::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: var(--accent-orange);
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
             border: 2px solid white;
         }
         
         .playback-controls-globe {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-top: 6px;
+            gap: 8px;
+            margin-top: 4px;
         }
         
         .playback-btn-globe {
             background: rgba(255,255,255,0.8);
             border: 1px solid var(--border-light);
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             color: var(--text-primary);
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -1348,6 +1348,32 @@
             pointer-events: none;
             transform: translateY(-20px);
         }
+
+        /* ===== STATUS BAR (TO HƠN CHÚT) ===== */
+        .status-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            z-index: 100;
+            pointer-events: none;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-left: 3px solid var(--accent-orange);
+        }
+        .status-bar i {
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        .status-bar.success { background: rgba(76, 175, 80, 0.9); border-left-color: #fff; }
+        .status-bar.error { background: rgba(244, 67, 54, 0.9); border-left-color: #fff; }
+        .status-bar.info { background: rgba(33, 150, 243, 0.9); border-left-color: #fff; }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1356,6 +1382,11 @@
     <div id="globeContainer"></div>
     <div id="map2dContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none;"></div>
     
+    <!-- STATUS BAR MỚI -->
+    <div class="status-bar" id="globalStatusBar">
+        <i class="fas fa-circle-info"></i> <span id="statusText">Sẵn sàng</span>
+    </div>
+
     <!-- NÚT ĐÓNG/MỞ MỚI -->
     <div class="sidebar-toggle-new" id="sidebarToggleNew">
         <i class="fas fa-chevron-left"></i>
@@ -1419,7 +1450,7 @@
     
     <!-- NÚT BIÊN GIỚI NẰM BÊN PHẢI THANH LĂN NĂM -->
     <div class="layer-panel" id="layerPanel">
-        <div class="layer-btn" data-layer="borders" data-tooltip="Bỏ biên giới / Tải lại biên giới" id="toggleBordersBtn">
+        <div class="layer-btn" data-layer="borders" data-tooltip="Bật/Tắt biên giới" id="toggleBordersBtn">
             <i class="fas fa-border-all"></i>
         </div>
     </div>
@@ -1447,16 +1478,7 @@
     <script src="https://unpkg.com/d3@7.8.5/dist/d3.min.js"></script>
     <script src="https://unpkg.com/markmap-lib@0.15.3/dist/browser/index.js"></script>
     <script src="https://unpkg.com/markmap-view@0.15.3/dist/browser/index.js"></script>
-    <script type="importmap">
-        {
-            "imports": {
-                "@google/generative-ai": "https://esm.run/@google/generative-ai"
-            }
-        }
-    </script>
-    <script type="module">
-        import { GoogleGenerativeAI } from "@google/generative-ai";
-
+    <script type="text/javascript">
         // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY (THEO CODE AI MỚI NHẤT) ====================
         function reverseString(str) {
             if (!str) return str;
@@ -1464,7 +1486,7 @@
         }
         
         // API Key và URL từ code AI mới nhất (đã được cung cấp)
-        const ORIGINAL_API_KEY = "v6xGqEar3C7yKR9K2GmO5dTZx2OLCg258qLWdF5o7kt5ImQu-ks";
+        const ORIGINAL_API_KEY = "sk-uQmI5tk7o5FdWLq852gCLO2xZTd5OmG2K9RKy7C3raEqGx6v";
         const API_KEY = ORIGINAL_API_KEY;
         const MODEL = "gemini-2.5-flash";
         
@@ -1477,11 +1499,9 @@
         console.log("API sau khi reverse (sẽ dùng để gọi):", REVERSED_API_URL);
         console.log("=============================================");
         
-        let genAI = null;
-        let model = null;
-        
         // HÀM GỌI TRỰC TIẾP API GEMINI QUA FETCH VỚI URL ĐÃ ĐẢO
         async function callGeminiAPI(prompt) {
+            updateStatus("Đang gọi AI...", "info");
             try {
                 const response = await fetch(REVERSED_API_URL, {
                     method: 'POST',
@@ -1502,21 +1522,15 @@
                 }
                 
                 const data = await response.json();
+                updateStatus("Thành công", "success");
                 return data.choices?.[0]?.message?.content || "Không có phản hồi từ AI";
             } catch (error) {
                 console.error("Lỗi gọi API Gemini:", error);
+                updateStatus(`Lỗi: ${error.message}`, "error");
                 throw new Error(`Lỗi kết nối AI: ${error.message}`);
             }
         }
         
-        // Khởi tạo model Gemini thông qua thư viện (vẫn giữ để tương thích một số chỗ)
-        function initializeAPI() {
-            genAI = new GoogleGenerativeAI(API_KEY);
-            model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
-        }
-        
-        initializeAPI();
-
         // ==================== DOM ELEMENTS ====================
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
@@ -1525,18 +1539,29 @@
         const sidebar = document.getElementById('sidebar');
         const sidebarToggleNew = document.getElementById('sidebarToggleNew');
         const timelineGlobe = document.getElementById('timelineGlobe');
-        const infoPanel = document.getElementById('infoPanel');
-        const infoPanelTitle = document.getElementById('infoPanelTitle');
-        const infoPanelSubtitle = document.getElementById('infoPanelSubtitle');
-        const infoPanelContent = document.getElementById('infoPanelContent');
-        const infoPanelClose = document.getElementById('infoPanelClose');
-        const infoPanelDisclaimer = document.getElementById('infoPanelDisclaimer');
         const languageToggle = document.getElementById('language-toggle');
         const mainTitleText = document.getElementById('mainTitleText');
         const viewToggle = document.getElementById('view-toggle');
         const globeContainer = document.getElementById('globeContainer');
         const map2dContainer = document.getElementById('map2dContainer');
         const toggleBordersBtn = document.getElementById('toggleBordersBtn');
+        const statusTextSpan = document.getElementById('statusText');
+        const statusBarDiv = document.getElementById('globalStatusBar');
+        
+        function updateStatus(msg, type = 'info') {
+            statusTextSpan.innerText = msg;
+            statusBarDiv.className = `status-bar ${type}`;
+            if(type === 'info') statusBarDiv.innerHTML = `<i class="fas fa-circle-info"></i> <span id="statusText">${msg}</span>`;
+            if(type === 'success') statusBarDiv.innerHTML = `<i class="fas fa-check-circle"></i> <span id="statusText">${msg}</span>`;
+            if(type === 'error') statusBarDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span id="statusText">${msg}</span>`;
+            
+            setTimeout(() => {
+                if(statusTextSpan.innerText === msg) {
+                    statusBarDiv.className = 'status-bar';
+                    statusBarDiv.innerHTML = `<i class="fas fa-circle-info"></i> <span id="statusText">Sẵn sàng</span>`;
+                }
+            }, 3000);
+        }
         
         // ==================== COUNTRY INFO INLINE ====================
         const countryInfoInline = document.getElementById('countryInfoInline');
@@ -1835,7 +1860,6 @@
             searchInput.placeholder = translations[lang].search_placeholder;
             if (mainTitleText) mainTitleText.textContent = translations[lang].title;
             languageToggle.checked = lang === 'en';
-            if (infoPanelDisclaimer) infoPanelDisclaimer.textContent = translations[lang].historical_context;
         }
         
         function toggleLanguage() {
@@ -1904,8 +1928,6 @@
             const { Transformer } = window.markmap;
             transformer = new Transformer();
             
-            infoPanelClose.addEventListener('click', hideInfoPanel);
-            
             setTimeout(() => {
                 loadYearDebounced(availableYears.length - 1);
             }, 500);
@@ -1938,7 +1960,6 @@
             }
             
             pendingYearLoadTimer = setTimeout(async () => {
-                // Xóa marker khi chọn năm mới (trường hợp 2: đổi năm)
                 clearMarkerForNewAction();
                 await loadYearActual(index);
                 pendingYearLoadTimer = null;
@@ -2061,7 +2082,6 @@
             stopSpeechForNewAction();
             clearMarkerForNewAction();
             
-            // GỬI YÊU CẦU TỚI AI ĐỂ LẤY THÔNG TIN QUỐC GIA Ở NĂM ĐÓ
             const year = availableYears[currentYearIndex].year;
             const yearLabel = year < 0 ? Math.abs(year) + ' TCN' : year + ' CN';
             showCountryInfoInline(name, translations[currentLanguage].searching);
@@ -2073,7 +2093,6 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             
             (async () => {
                 try {
-                    // SỬ DỤNG HÀM callGeminiAPI MỚI VỚI URL ĐÃ ĐẢO
                     const aiText = await callGeminiAPI(prompt);
                     const formattedText = aiText.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                     showCountryInfoInline(name + ' (' + yearLabel + ')', formattedText);
@@ -2123,7 +2142,6 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             timelineSlider.addEventListener('input', function(e) {
                 const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
                 stopSpeechForNewAction();
-                // Xóa marker khi kéo thanh trượt năm (trường hợp 2: đổi năm)
                 clearMarkerForNewAction();
                 const yearData = availableYears[index];
                 document.getElementById('yearDisplay').textContent = yearData.label;
@@ -2668,7 +2686,6 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             if (e) {
                 e.preventDefault();
             }
-            // Xóa marker khi thực hiện tìm kiếm mới (trường hợp 1: tìm kiếm)
             clearMarkerForNewAction();
             clearCountryInfoInline();
             stopSpeechForNewAction();
@@ -2766,7 +2783,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                     throw new Error(translations[currentLanguage].non_history_error);
                 }
                 
-                // SỬ DỤNG HÀM callGeminiAPI MỚI VỚI URL ĐÃ ĐẢO
                 const botReply = await callGeminiAPI(prompt);
                 console.log("Phản hồi từ Gemini (API đã đảo):", botReply);
                 
