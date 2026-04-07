@@ -1914,6 +1914,10 @@
             const lat = coordinates.lat;
             const lng = coordinates.lng;
             stopSpeechForNewAction();
+            
+            // LỖI 1: Xóa nội dung thanh tìm kiếm và kết quả cũ khi click vào quốc gia
+            searchInput.value = '';
+            clearPreviousData();
             clearMarkerForNewAction();
             
             const year = availableYears[currentYearIndex].year;
