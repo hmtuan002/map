@@ -68,7 +68,6 @@
             pointer-events: none;
         }
         
-        /* ===== SIDEBAR ===== */
         #sidebar {
             width: 28%;
             height: 100%;
@@ -91,13 +90,12 @@
             left: -100%;
         }
         
-        /* LỖI 1: NÚT ĐÓNG/MỞ SIDEBAR - TĂNG KÍCH THƯỚC */
         .sidebar-toggle-new {
             position: fixed;
             top: 20px;
             left: 28%;
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             background-color: var(--accent-orange);
             color: white;
             border-radius: 0 50% 50% 0;
@@ -122,7 +120,6 @@
             left: 0;
         }
         
-        /* LỖI 1: TOOLTIP NĂM NHỎ KHI RÊ CHUỘT - TĂNG KÍCH THƯỚC */
         .year-tooltip {
             position: fixed;
             background: rgba(0,0,0,0.85);
@@ -139,7 +136,6 @@
             transition: opacity 0.1s;
         }
         
-        /* ===== INFO PANEL CONTENT ===== */
         .info-panel-content {
             padding: 16px;
             max-height: 70vh;
@@ -232,51 +228,14 @@
             text-shadow: 0 2px 4px rgba(244, 162, 97, 0.3);
         }
         
-        .numbered-item {
-            position: relative;
-            padding-left: 35px;
-            margin: 6px 0;
-        }
-        
-        .numbered-item::before {
-            content: attr(data-number);
-            position: absolute;
-            left: 8px;
-            color: var(--accent-orange);
-            font-weight: 600;
-            font-size: 13px;
-        }
-        
         @keyframes dotPulse {
-            0%, 100% {
-                opacity: 1;
-                transform: translateY(-50%) scale(1);
-            }
-            50% {
-                opacity: 0.8;
-                transform: translateY(-50%) scale(1.1);
-            }
+            0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+            50% { opacity: 0.8; transform: translateY(-50%) scale(1.1); }
         }
         
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .yellow-dot-list li:hover {
-            background: rgba(244, 162, 97, 0.05);
-            padding-left: 32px;
-        }
-        
-        .yellow-dot-list li:hover::before {
-            color: var(--button-cyan);
-            transform: translateY(-50%) scale(1.2);
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .timeline-with-dots {
@@ -345,7 +304,6 @@
             color: var(--text-primary);
         }
         
-        /* ===== COUNTRY INFO PANEL LEFT ===== */
         .country-info-inline {
             background-color: #E8F4F8;
             border-radius: 12px;
@@ -393,14 +351,6 @@
             justify-content: center;
         }
         
-        .country-info-inline-subtitle {
-            padding: 8px 16px;
-            background: rgba(0,0,0,0.03);
-            font-size: 12px;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-light);
-        }
-        
         .country-info-inline-content {
             padding: 16px;
             font-size: 14px;
@@ -408,99 +358,6 @@
             color: var(--text-primary);
         }
         
-        /* ===== INFO PANEL ===== */
-        .info-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 540px;
-            max-width: 90vw;
-            max-height: 80vh;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            border: 1px solid var(--border-light);
-            overflow: hidden;
-            z-index: 200;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: none;
-        }
-        
-        .info-panel.visible { display: block; }
-        
-        .info-header {
-            padding: 16px;
-            background: linear-gradient(135deg, var(--button-cyan) 0%, var(--accent-orange) 100%);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-        }
-        
-        .info-header-icon {
-            font-size: 24px;
-            color: white;
-        }
-        
-        .info-header-title {
-            flex: 1;
-            font-weight: 600;
-            font-size: 16px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            color: white;
-            padding-right: 30px;
-        }
-        
-        .info-close {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            opacity: 0.8;
-            line-height: 1;
-            padding: 0;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .info-close:hover { opacity: 1; }
-        
-        .info-subtitle {
-            padding: 10px 16px;
-            background: rgba(0,0,0,0.05);
-            font-size: 12px;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-light);
-        }
-        
-        .info-content {
-            padding: 16px;
-            max-height: 400px;
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text-primary);
-        }
-        
-        .info-disclaimer {
-            padding: 10px 16px;
-            background: rgba(244, 162, 97, 0.1);
-            font-size: 11px;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-light);
-        }
-        
-        /* ===== TOP BAR ===== */
         .top-bar-globe {
             position: fixed;
             bottom: 50px;
@@ -538,7 +395,6 @@
             display: none !important;
         }
         
-        /* ===== LAYER PANEL ===== */
         .layer-panel {
             position: fixed;
             right: 20px;
@@ -580,7 +436,6 @@
             box-shadow: 0 4px 14px rgba(244,162,97,0.45);
         }
         
-        /* LỖI 1: TIMELINE - TĂNG KÍCH THƯỚC THANH THÔNG TIN */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
@@ -600,7 +455,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 14px;
-            padding: 8px 16px;
+            padding: 10px 18px;
             border: 1px solid var(--border-light);
             width: 100%;
             position: relative;
@@ -678,7 +533,6 @@
             transition: opacity 0.3s ease;
         }
         
-        /* ===== SIDEBAR CONTENT ===== */
         .sidebar-header {
             border-bottom: 1px solid var(--border-light);
             padding: 1.5rem;
@@ -765,6 +619,7 @@
             width: 100%;
         }
         
+        /* LỖI 1: XÓA text-overflow: ellipsis - không có dấu ... ở cuối */
         #search-input {
             width: 100%;
             padding: 1rem 6rem 1rem 1.5rem;
@@ -781,7 +636,6 @@
             height: 56px;
             overflow: hidden;
             white-space: nowrap;
-            text-overflow: ellipsis;
             display: block;
         }
         
@@ -797,7 +651,6 @@
             font-size: 1rem;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis;
         }
         
         .search-button {
@@ -813,7 +666,6 @@
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            transition: none;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -845,6 +697,12 @@
             border-radius: 1rem 1rem 0 0;
         }
         
+        /* LỖI 2: Country Info ở trên, Result Messages ở dưới */
+        #countryInfoInline {
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        
         #result-messages {
             display: flex;
             flex-direction: column;
@@ -861,7 +719,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* ===== AUDIO CONTROLS ===== */
         .audio-controls {
             display: flex;
             flex-direction: column;
@@ -933,7 +790,6 @@
             transition: width 0.1s linear;
         }
         
-        /* ===== LOADING SCREEN ===== */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -1039,7 +895,6 @@
             line-height: 1.5;
         }
         
-        /* ===== IMAGE CONTAINER ===== */
         .image-container {
             width: 100%;
             margin: 1rem 0;
@@ -1106,7 +961,6 @@
             padding-right: 40px;
         }
         
-        /* ===== MINDMAP ===== */
         .mindmap-sieu-ngau {
             width: 100%;
             height: 300px;
@@ -1244,7 +1098,6 @@
             background: rgba(244, 162, 97, 0.1);
         }
         
-        /* ===== NOTIFICATION ===== */
         .notification {
             position: fixed;
             top: 20px;
@@ -1279,29 +1132,23 @@
         }
         
         @media (max-width: 768px) {
-            .timeline-globe {
-                width: 90%;
-                bottom: 15px;
-            }
+            .timeline-globe { width: 90%; bottom: 15px; }
             .timeline-bar-globe { padding: 6px 12px; }
-            .playback-btn-globe {
-                width: 28px;
-                height: 28px;
-                font-size: 10px;
-            }
+            .playback-btn-globe { width: 28px; height: 28px; font-size: 10px; }
             .layer-panel { right: 10px; bottom: 100px; }
             #sidebar { width: 85%; }
             .sidebar-toggle-new { left: 85%; }
             .top-bar-globe { width: 40%; }
         }
+        
         #map2dContainer .leaflet-control-zoom { display: none; }
         .leaflet-tile-pane { filter: brightness(0.9); }
         
-        /* LỖI 3: Marker tùy chỉnh cho bản đồ 2D - CHỈ LÀ CHẤM NHỎ MÀU CAM, NẰM SÁT BẢN ĐỒ */
         .custom-marker {
             background: transparent;
             border: none;
         }
+        
         .custom-marker i {
             font-size: 28px;
             color: #E67E22;
@@ -1315,62 +1162,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
         
-        /* LỖI 3: Marker 3D - CHỈ LÀ CHẤM NHỎ MÀU CAM, NẰM SÁT TRÊN BẢN ĐỒ */
-        .globe-marker {
-            animation: glowPulse 1.5s infinite;
-        }
-        
-        @keyframes glowPulse {
-            0%, 100% { filter: drop-shadow(0 0 2px #E67E22); }
-            50% { filter: drop-shadow(0 0 6px #E67E22); }
-        }
-        
-        /* Style cho label của marker - CHỈ HIỆN KHI HOVER */
-        .marker-label {
-            font-size: 12px;
-            font-weight: 600;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            white-space: nowrap;
-            font-family: 'Inter', sans-serif;
-            pointer-events: none;
-            transform: translateY(-20px);
-            display: none;
-        }
-        
-        .marker-label.visible {
-            display: block;
-        }
-
-        /* LỖI 1: Tăng kích thước thanh thông tin - TĂNG LÊN 1 CHÚT XÍU */
-        .status-bar {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(8px);
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-size: 15px;
-            font-weight: 600;
-            color: white;
-            z-index: 100;
-            pointer-events: none;
-            font-family: 'Inter', sans-serif;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-left: 3px solid var(--accent-orange);
-        }
-        .status-bar i {
-            margin-right: 8px;
-            font-size: 15px;
-        }
-        .status-bar.success { background: rgba(76, 175, 80, 0.9); border-left-color: #fff; }
-        .status-bar.error { background: rgba(244, 67, 54, 0.9); border-left-color: #fff; }
-        .status-bar.info { background: rgba(33, 150, 243, 0.9); border-left-color: #fff; }
-        
-        /* Tooltip marker style */
         .marker-tooltip {
             position: fixed;
             background: rgba(0,0,0,0.85);
@@ -1386,15 +1177,41 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             transition: opacity 0.1s;
         }
+        
+        .status-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            padding: 14px 30px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            z-index: 100;
+            pointer-events: none;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-left: 3px solid var(--accent-orange);
+        }
+        
+        .status-bar i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        .status-bar.success { background: rgba(76, 175, 80, 0.9); border-left-color: #fff; }
+        .status-bar.error { background: rgba(244, 67, 54, 0.9); border-left-color: #fff; }
+        .status-bar.info { background: rgba(33, 150, 243, 0.9); border-left-color: #fff; }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
-<body class="h-screen flex flex-col transition-all bg-total">
+<body>
     <div id="globeContainer"></div>
     <div id="map2dContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none;"></div>
     
-    <!-- NÚT ĐÓNG/MỞ MỚI -->
     <div class="sidebar-toggle-new" id="sidebarToggleNew">
         <i class="fas fa-chevron-left"></i>
     </div>
@@ -1428,11 +1245,9 @@
                 </div>
                 <form id="search-form" class="mt-2">
                     <div class="search-wrapper">
-                        <textarea id="search-input" rows="1"
-                            class="w-full"
-                            placeholder="Nhập trận chiến, nhân vật, địa điểm"></textarea>
+                        <textarea id="search-input" rows="1" class="w-full" placeholder="Nhập trận chiến, nhân vật, địa điểm lịch sử"></textarea>
                         <button type="submit" class="search-button">
-                            <i class="fas fa-paper-plane"></i>
+                            <i class="fas fa-paper-plane"></i> Tìm kiếm
                         </button>
                     </div>
                 </form>
@@ -1442,8 +1257,7 @@
                 <div id="result-messages" class="flex flex-col gap-4 w-full"></div>
             </div>
         </div>
-        <div id="map-container" class="flex-1 flex flex-col h-full overflow-hidden relative">
-        </div>
+        <div id="map-container" class="flex-1 flex flex-col h-full overflow-hidden relative"></div>
     </div>
     
     <div class="timeline-globe" id="timelineGlobe">
@@ -1455,28 +1269,20 @@
         </div>
     </div>
     
-    <!-- Nút biên giới với icon mới và tooltip -->
     <div class="layer-panel" id="layerPanel">
         <div class="layer-btn active" data-layer="borders" id="toggleBordersBtn" title="Bật/Tắt biên giới">
             <i class="fas fa-map"></i>
         </div>
     </div>
     
-    <!-- LOADING SCREEN -->
     <div id="loading-screen" class="loading-screen">
         <div class="loader-container">
             <div class="spinner-box">
-                <div class="leo-border-1">
-                    <div class="leo-core-1"></div>
-                </div>
-                <div class="leo-border-2">
-                    <div class="leo-core-2"></div>
-                </div>
+                <div class="leo-border-1"><div class="leo-core-1"></div></div>
+                <div class="leo-border-2"><div class="leo-core-2"></div></div>
             </div>
             <div class="loading-text" id="loadingText">AI đang tạo nội dung...</div>
-            <div class="loader-info" id="loaderInfo">
-                Đang xử lý yêu cầu của bạn. Vui lòng chờ trong giây lát...
-            </div>
+            <div class="loader-info" id="loaderInfo">Đang xử lý yêu cầu của bạn. Vui lòng chờ trong giây lát...</div>
         </div>
     </div>
     
@@ -1485,7 +1291,7 @@
     <script src="https://unpkg.com/d3@7.8.5/dist/d3.min.js"></script>
     <script src="https://unpkg.com/markmap-lib@0.15.3/dist/browser/index.js"></script>
     <script src="https://unpkg.com/markmap-view@0.15.3/dist/browser/index.js"></script>
-    <script type="text/javascript">
+    <script>
         // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY ====================
         function reverseString(str) {
             if (!str) return str;
@@ -1505,7 +1311,6 @@
         console.log("API Key gốc (sau khi reverse):", getAPIKey());
         console.log("=========================================");
         
-        // HÀM GỌI API MỚI
         async function callGeminiAPI(prompt) {
             console.log("[API] Đang gọi AI với prompt:", prompt.substring(0, 100) + "...");
             try {
@@ -1552,13 +1357,6 @@
         const globeContainer = document.getElementById('globeContainer');
         const map2dContainer = document.getElementById('map2dContainer');
         const toggleBordersBtn = document.getElementById('toggleBordersBtn');
-        
-        // Hàm log status - chỉ log ra console
-        function logStatus(msg, type = 'info') {
-            console.log(`[Status ${type}]: ${msg}`);
-        }
-        
-        // ==================== COUNTRY INFO INLINE ====================
         const countryInfoInline = document.getElementById('countryInfoInline');
         
         // ==================== GLOBAL VARIABLES ====================
@@ -1579,8 +1377,6 @@
         let currentLeafletMarkerObj = null;
         let currentPolygons = [];
         let currentGlobeLabels = [];
-        
-        // LỖI 3: Biến lưu marker hover state
         let currentMarkerTooltip = null;
         
         // ==================== SPEECH SYNTHESIS VARIABLES ====================
@@ -1598,7 +1394,7 @@
             '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
             '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FFD700'
         ];
-
+        
         // ==================== DANH SÁCH NĂM ====================
         const availableYears = [
             { year: -123000, file: 'world_bc123000.geojson', label: '123.000 TCN' },
@@ -1656,15 +1452,13 @@
             { year: 2010, file: 'world_2010.geojson', label: '2.010 CN' }
         ];
         
-        // LỖI 2: SỬA - Tìm năm LỚN HƠN gần nhất (>= targetYear)
+        // Tìm năm LỚN HƠN gần nhất (>= targetYear)
         function findYearIndexByTargetYear(targetYear) {
-            // Tìm năm lớn hơn hoặc bằng targetYear gần nhất
             let closestIndex = -1;
             let minDiff = Infinity;
             
             for (let idx = 0; idx < availableYears.length; idx++) {
                 const yearVal = availableYears[idx].year;
-                // Chỉ xét các năm >= targetYear
                 if (yearVal >= targetYear) {
                     const diff = yearVal - targetYear;
                     if (diff < minDiff) {
@@ -1674,7 +1468,6 @@
                 }
             }
             
-            // Nếu không tìm thấy năm nào lớn hơn, lấy năm lớn nhất có sẵn
             if (closestIndex === -1 && availableYears.length > 0) {
                 closestIndex = availableYears.length - 1;
             }
@@ -1682,9 +1475,8 @@
             return closestIndex !== -1 ? closestIndex : availableYears.length - 1;
         }
         
-        // LỖI 3: Xóa marker và tooltip
+        // Xóa marker và tooltip
         function clearMarker() {
-            // Xóa marker 3D
             if (currentGlobeMarkerObj && globe) {
                 globe.pointsData([]);
                 currentGlobeMarkerObj = null;
@@ -1693,12 +1485,10 @@
                 globe.labelsData([]);
                 currentGlobeLabels = [];
             }
-            // Xóa marker 2D
             if (currentLeafletMarkerObj && map2d) {
                 map2d.removeLayer(currentLeafletMarkerObj);
                 currentLeafletMarkerObj = null;
             }
-            // Xóa tooltip
             if (currentMarkerTooltip) {
                 currentMarkerTooltip.remove();
                 currentMarkerTooltip = null;
@@ -1706,7 +1496,6 @@
             currentMarkerData = null;
         }
         
-        // LỖI 3: Hàm hiển thị tooltip khi hover vào marker
         function showMarkerTooltip(event, title) {
             if (currentMarkerTooltip) {
                 currentMarkerTooltip.remove();
@@ -1726,42 +1515,31 @@
             }
         }
         
-        // LỖI 3: Thêm marker với màu CAM và nằm sát bản đồ, chỉ hiện tooltip khi hover
+        // LỖI 3: Thêm marker với màu CAM, nằm SÁT BỀ MẶT và TRÊN biên giới
         function addMarkerAndZoom(lat, lng, title) {
             clearMarker();
             currentMarkerData = { lat: lat, lng: lng, title: title };
             
             if (globe && !viewToggle.checked) {
-                // Marker 3D - màu cam, altitude=0 (nằm sát bề mặt)
-                const markerData = [{ lat: lat, lng: lng, size: 0.5, color: '#E67E22', name: title }];
+                // Marker 3D - màu cam, altitude=0 (nằm sát bề mặt), radius nhỏ hơn
+                const markerData = [{ lat: lat, lng: lng, size: 0.35, color: '#E67E22', name: title }];
                 globe.pointsData(markerData)
                     .pointColor(() => '#E67E22')
-                    .pointAltitude(0) // Nằm sát bề mặt
-                    .pointRadius(0.5);
+                    .pointAltitude(0)
+                    .pointRadius(0.35);
                 currentGlobeMarkerObj = markerData;
                 
-                // Thêm label với altitude thấp, ẩn đi và sẽ hiện khi hover
-                const labelData = [{ lat: lat, lng: lng, name: title, size: 0.6, altitude: 0.01 }];
+                const labelData = [{ lat: lat, lng: lng, name: title, size: 0.5, altitude: 0.01 }];
                 globe.labelsData(labelData)
                     .labelText(d => d.name)
-                    .labelSize(d => d.size || 0.6)
-                    .labelColor(() => 'rgba(0,0,0,0)') // Ẩn label mặc định
+                    .labelSize(d => d.size || 0.5)
+                    .labelColor(() => 'rgba(0,0,0,0)')
                     .labelAltitude(d => d.altitude || 0.01);
                 currentGlobeLabels = labelData;
                 
                 globe.pointOfView({ lat: lat, lng: lng, altitude: 0.8, duration: 1000 });
-                
-                // Thêm sự kiện hover cho marker 3D thông qua DOM (khá phức tạp, tạm thời dùng label ẩn/hiện)
-                // Chúng ta sẽ thêm một listener cho globe canvas để detect marker click/hover? 
-                // Thay vào đó, dùng label ẩn và hiện khi hover vào điểm? WebGL không dễ.
-                // Giải pháp đơn giản: Hiện tooltip khi click vào marker 3D? Yêu cầu là hover.
-                // Sử dụng Three.js Raycaster là phức tạp. Tôi sẽ giữ label ẩn và dùng console log.
-                // Thực tế, với Globe.gl, việc thêm hover vào point khá khó. 
-                // Tôi sẽ thêm một tooltip tạm thời khi click vào marker để demo.
-                console.log("Marker 3D đã được thêm tại", lat, lng, title);
             }
             else if (map2d && viewToggle.checked) {
-                // Marker 2D - màu cam
                 const markerIcon = L.divIcon({
                     className: 'custom-marker',
                     html: '<i class="fas fa-map-marker-alt" style="font-size:28px; color:#E67E22; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>',
@@ -1770,7 +1548,6 @@
                 });
                 const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map2d);
                 
-                // Thêm sự kiện hover cho marker 2D
                 marker.on('mouseover', function(e) {
                     showMarkerTooltip(e.originalEvent, title);
                 });
@@ -1856,7 +1633,6 @@
                 career: "Sự nghiệp",
                 quotes: "Câu nói",
                 legacy: "Di sản"
-                // Đã bỏ battles và works
             },
             en: {
                 title: "Lisu Map",
@@ -1905,7 +1681,6 @@
                 career: "Career",
                 quotes: "Quotes",
                 legacy: "Legacy"
-                // Đã bỏ battles và works
             }
         };
         
@@ -2018,7 +1793,8 @@
             }
             
             pendingYearLoadTimer = setTimeout(async () => {
-                // clearMarkerForNewAction(); // LỖI 3: KHÔNG XÓA MARKER KHI TẢI NĂM MỚI
+                // LỖI 3: KHÔNG xóa marker khi tải năm mới từ thanh trượt
+                // clearMarkerForNewAction(); // ĐÃ COMMENT
                 await loadYearActual(index);
                 pendingYearLoadTimer = null;
             }, 500);
@@ -2200,7 +1976,8 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             timelineSlider.addEventListener('input', function(e) {
                 const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
                 stopSpeechForNewAction();
-                // clearMarkerForNewAction(); // LỖI 3: KHÔNG XÓA MARKER KHI KÉO THANH TRƯỢT
+                // LỖI 3: KHÔNG xóa marker khi kéo thanh trượt năm
+                // clearMarkerForNewAction(); // ĐÃ COMMENT
                 const yearData = availableYears[index];
                 document.getElementById('yearDisplay').textContent = yearData.label;
                 loadYearDebounced(index);
@@ -2387,40 +2164,6 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             }
         }
         
-        function getFieldTitle(key) {
-            const titles = {
-                'name': '📛 Tên',
-                'time': '⏰ Thời gian',
-                'location': '📍 Địa điểm',
-                'summary': '📝 Tóm tắt',
-                'troops': '⚔️ Quân số',
-                'tactics': '🎯 Chiến thuật',
-                'casualties': '💔 Thương vong',
-                'heroes': '🦸 Anh hùng',
-                'key_locations': '🏰 Địa điểm quan trọng',
-                'factions': '🚩 Các phe',
-                'commanders': '👑 Chỉ huy',
-                'timeline': '📅 Diễn biến',
-                'outcome': '🏆 Kết quả',
-                'significance': '✨ Ý nghĩa',
-                'achievements': '🌟 Thành tựu',
-                'build_time': '⏳ Thời gian xây dựng',
-                'purpose': '🎯 Mục đích',
-                'architecture': '🏛️ Kiến trúc',
-                'contents': '📦 Nội dung',
-                'builders': '👷 Người xây dựng',
-                'dynasty': '👑 Triều đại',
-                'biography': '📖 Tiểu sử',
-                'family': '👨‍👩‍👧‍👦 Gia đình',
-                'education': '🎓 Học vấn',
-                'career': '💼 Sự nghiệp',
-                'quotes': '💬 Câu nói nổi tiếng',
-                'legacy': '🏛️ Di sản để lại'
-                // Đã bỏ battles, works
-            };
-            return titles[key] || key.charAt(0).toUpperCase() + key.slice(1);
-        }
-        
         function formatBattleWithYellowDots(data) {
             let html = '';
             
@@ -2601,8 +2344,6 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
                 html += '</ul>';
                 html += '</div>';
             }
-            
-            // ĐÃ BỎ MỤC BATTLES VÀ WORKS
             
             if (data.quotes && data.quotes.length > 0) {
                 html += '<div class="info-section">';
@@ -2872,7 +2613,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                             }
                         }
                         
-                        // LỖI 2: SỬA - Tìm năm LỚN HƠN gần nhất
                         if (parsedData.yearValue && !isNaN(parsedData.yearValue)) {
                             let targetYear = parsedData.yearValue;
                             if (parsedData.isBC === true) {
@@ -3469,8 +3209,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 }
             }
             
-            // Đã bỏ phần battles và works
-            
             if (figureData.quotes && figureData.quotes.length > 0) {
                 markdown += '\n## 💬 ' + translations[currentLanguage].quotes + '\n';
                 const quoteCount = Math.min(3, figureData.quotes.length);
@@ -3753,8 +3491,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 return null;
             }
         }
-
-        // ==================== XỬ LÝ NÚT BIÊN GIỚI ====================
+        
         toggleBordersBtn.addEventListener('click', () => {
             layers.borders = !layers.borders;
             toggleBordersBtn.classList.toggle('active', layers.borders);
@@ -3766,8 +3503,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 }
             }
         });
-
-        // Xử lý chuyển đổi 2D/3D - xóa marker khi chuyển chế độ
+        
         viewToggle.addEventListener('change', function() {
             const is2D = this.checked;
             
@@ -3785,7 +3521,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 if (globe && currentGeoJSON) renderBorders(currentGeoJSON, availableYears[currentYearIndex].year);
             }
         });
-
+        
         async function initGlobe() {
             window.addEventListener('resize', function() {
                 if (globe) {
@@ -3830,7 +3566,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
         window.copyToClipboard = copyToClipboard;
         window.toggleSidebarNew = toggleSidebarNew;
         
-        // Các hàm cần thiết khác
         function isCountryQuery(query) {
             const countryKeywords = ['quốc gia', 'đất nước', 'vương quốc', 'đế chế', 'lãnh thổ', 'vùng'];
             const lowerQuery = query.toLowerCase();
@@ -3901,7 +3636,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
         }
         
-        // Dữ liệu lịch sử cho các quốc gia
         const historyData = {
             Vietnam: {
                 history: {
@@ -3929,7 +3663,6 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
         };
         
-        // Dữ liệu địa điểm lịch sử Việt Nam
         const vietnamHistoricalLocations = {
             "Điện Biên Phủ": {
                 lat: 21.386,
