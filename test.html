@@ -91,7 +91,6 @@
             left: -100%;
         }
         
-        /* LỖI 1: NÚT ĐÓNG/MỞ SIDEBAR - TĂNG KÍCH THƯỚC */
         .sidebar-toggle-new {
             position: fixed;
             top: 20px;
@@ -122,7 +121,6 @@
             left: 0;
         }
         
-        /* LỖI 1: TOOLTIP NĂM NHỎ KHI RÊ CHUỘT - TĂNG KÍCH THƯỚC */
         .year-tooltip {
             position: fixed;
             background: rgba(0,0,0,0.85);
@@ -580,7 +578,6 @@
             box-shadow: 0 4px 14px rgba(244,162,97,0.45);
         }
         
-        /* LỖI 1: TIMELINE - TĂNG KÍCH THƯỚC THANH THÔNG TIN */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
@@ -1394,7 +1391,6 @@
     <div id="globeContainer"></div>
     <div id="map2dContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none;"></div>
     
-    <!-- NÚT ĐÓNG/MỞ MỚI -->
     <div class="sidebar-toggle-new" id="sidebarToggleNew">
         <i class="fas fa-chevron-left"></i>
     </div>
@@ -1455,14 +1451,12 @@
         </div>
     </div>
     
-    <!-- Nút biên giới với icon mới và tooltip -->
     <div class="layer-panel" id="layerPanel">
         <div class="layer-btn active" data-layer="borders" id="toggleBordersBtn" title="Bật/Tắt biên giới">
             <i class="fas fa-map"></i>
         </div>
     </div>
     
-    <!-- LOADING SCREEN -->
     <div id="loading-screen" class="loading-screen">
         <div class="loader-container">
             <div class="spinner-box">
@@ -1553,7 +1547,6 @@
         const map2dContainer = document.getElementById('map2dContainer');
         const toggleBordersBtn = document.getElementById('toggleBordersBtn');
         
-        // Hàm log status - chỉ log ra console
         function logStatus(msg, type = 'info') {
             console.log(`[Status ${type}]: ${msg}`);
         }
@@ -1658,13 +1651,11 @@
         
         // LỖI 2: SỬA - Tìm năm LỚN HƠN gần nhất (>= targetYear)
         function findYearIndexByTargetYear(targetYear) {
-            // Tìm năm lớn hơn hoặc bằng targetYear gần nhất
             let closestIndex = -1;
             let minDiff = Infinity;
             
             for (let idx = 0; idx < availableYears.length; idx++) {
                 const yearVal = availableYears[idx].year;
-                // Chỉ xét các năm >= targetYear
                 if (yearVal >= targetYear) {
                     const diff = yearVal - targetYear;
                     if (diff < minDiff) {
@@ -1674,7 +1665,6 @@
                 }
             }
             
-            // Nếu không tìm thấy năm nào lớn hơn, lấy năm lớn nhất có sẵn
             if (closestIndex === -1 && availableYears.length > 0) {
                 closestIndex = availableYears.length - 1;
             }
@@ -1682,9 +1672,8 @@
             return closestIndex !== -1 ? closestIndex : availableYears.length - 1;
         }
         
-        // LỖI 3: Xóa marker và tooltip
+        // LỖI 3: Xóa marker và tooltip - ĐÃ SỬA
         function clearMarker() {
-            // Xóa marker 3D
             if (currentGlobeMarkerObj && globe) {
                 globe.pointsData([]);
                 currentGlobeMarkerObj = null;
@@ -1693,12 +1682,10 @@
                 globe.labelsData([]);
                 currentGlobeLabels = [];
             }
-            // Xóa marker 2D
             if (currentLeafletMarkerObj && map2d) {
                 map2d.removeLayer(currentLeafletMarkerObj);
                 currentLeafletMarkerObj = null;
             }
-            // Xóa tooltip
             if (currentMarkerTooltip) {
                 currentMarkerTooltip.remove();
                 currentMarkerTooltip = null;
@@ -1706,7 +1693,6 @@
             currentMarkerData = null;
         }
         
-        // LỖI 3: Hàm hiển thị tooltip khi hover vào marker
         function showMarkerTooltip(event, title) {
             if (currentMarkerTooltip) {
                 currentMarkerTooltip.remove();
@@ -1726,21 +1712,19 @@
             }
         }
         
-        // LỖI 3: Thêm marker với màu CAM và nằm sát bản đồ, chỉ hiện tooltip khi hover
+        // LỖI 1 & 3: Thêm marker với màu CAM và nằm sát bản đồ - ĐÃ SỬA
         function addMarkerAndZoom(lat, lng, title) {
             clearMarker();
             currentMarkerData = { lat: lat, lng: lng, title: title };
             
             if (globe && !viewToggle.checked) {
-                // Marker 3D - màu cam, altitude=0 (nằm sát bề mặt)
                 const markerData = [{ lat: lat, lng: lng, size: 0.5, color: '#E67E22', name: title }];
                 globe.pointsData(markerData)
                     .pointColor(() => '#E67E22')
-                    .pointAltitude(0) // Nằm sát bề mặt
+                    .pointAltitude(0)
                     .pointRadius(0.5);
                 currentGlobeMarkerObj = markerData;
                 
-                // Thêm label với altitude thấp
                 const labelData = [{ lat: lat, lng: lng, name: title, size: 0.6, altitude: 0.01 }];
                 globe.labelsData(labelData)
                     .labelText(d => d.name)
@@ -1752,7 +1736,6 @@
                 globe.pointOfView({ lat: lat, lng: lng, altitude: 0.8, duration: 1000 });
             }
             else if (map2d && viewToggle.checked) {
-                // Marker 2D - màu cam
                 const markerIcon = L.divIcon({
                     className: 'custom-marker',
                     html: '<i class="fas fa-map-marker-alt" style="font-size:28px; color:#E67E22; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>',
@@ -1761,7 +1744,6 @@
                 });
                 const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map2d);
                 
-                // Thêm sự kiện hover cho marker 2D
                 marker.on('mouseover', function(e) {
                     showMarkerTooltip(e.originalEvent, title);
                 });
@@ -1771,18 +1753,6 @@
                 
                 currentLeafletMarkerObj = marker;
                 map2d.setView([lat, lng], 10);
-            }
-            
-            // Thêm sự kiện hover cho marker 3D (thông qua DOM)
-            if (globe && !viewToggle.checked) {
-                setTimeout(function() {
-                    const canvas = document.querySelector('#globeContainer canvas');
-                    if (canvas) {
-                        // Tìm vị trí của marker trên màn hình
-                        const raycaster = new THREE.Raycaster();
-                        // Không thể dễ dàng thêm hover vào WebGL marker, thay vào đó dùng label đã hiển thị sẵn
-                    }
-                }, 500);
             }
         }
         
@@ -2851,22 +2821,40 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 
                 if (responseType === "landmark" || responseType === "figure" || responseType === "battle") {
                     try {
-                        let jsonStr = botReply;
-                        if (jsonStr.includes('```json')) {
-                            jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
-                        } else if (jsonStr.includes('```')) {
-                            jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+                        // LỖI 2: SỬA - Xử lý JSON tốt hơn, loại bỏ markdown code blocks
+                        let jsonStr = botReply.trim();
+                        
+                        // Loại bỏ ```json và ``` nếu có
+                        if (jsonStr.startsWith('```json')) {
+                            jsonStr = jsonStr.substring(7);
                         }
+                        if (jsonStr.startsWith('```')) {
+                            jsonStr = jsonStr.substring(3);
+                        }
+                        if (jsonStr.endsWith('```')) {
+                            jsonStr = jsonStr.substring(0, jsonStr.length - 3);
+                        }
+                        jsonStr = jsonStr.trim();
+                        
+                        // Xử lý các lỗi JSON phổ biến
+                        jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
+                        jsonStr = jsonStr.replace(/'/g, '"');
+                        jsonStr = jsonStr.replace(/,\s*}/g, '}');
+                        jsonStr = jsonStr.replace(/,\s*]/g, ']');
+                        jsonStr = jsonStr.replace(/\n/g, ' ');
                         
                         let parsedData;
                         try {
                             parsedData = JSON.parse(jsonStr);
                         } catch (e) {
-                            jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
-                            jsonStr = jsonStr.replace(/'/g, '"');
-                            jsonStr = jsonStr.replace(/,\s*}/g, '}');
-                            jsonStr = jsonStr.replace(/,\s*]/g, ']');
-                            parsedData = JSON.parse(jsonStr);
+                            console.error("Lỗi parse JSON lần 1:", e);
+                            // Thử cách khác: tìm phần JSON trong response
+                            const jsonMatch = botReply.match(/\{[\s\S]*\}/);
+                            if (jsonMatch) {
+                                parsedData = JSON.parse(jsonMatch[0]);
+                            } else {
+                                throw e;
+                            }
                         }
                         
                         const resultContainer = createResultContainer(parsedData.name || userQuery);
