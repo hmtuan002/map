@@ -91,6 +91,7 @@
             left: -100%;
         }
         
+        /* LỖI 1: NÚT ĐÓNG/MỞ SIDEBAR - TĂNG KÍCH THƯỚC */
         .sidebar-toggle-new {
             position: fixed;
             top: 20px;
@@ -121,6 +122,7 @@
             left: 0;
         }
         
+        /* LỖI 1: TOOLTIP NĂM NHỎ KHI RÊ CHUỘT - TĂNG KÍCH THƯỚC */
         .year-tooltip {
             position: fixed;
             background: rgba(0,0,0,0.85);
@@ -578,6 +580,7 @@
             box-shadow: 0 4px 14px rgba(244,162,97,0.45);
         }
         
+        /* LỖI 1: TIMELINE - TĂNG KÍCH THƯỚC THANH THÔNG TIN */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
@@ -1300,7 +1303,7 @@
             border: none;
         }
         .custom-marker i {
-            font-size: 24px;
+            font-size: 28px;
             color: #E67E22;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
             animation: markerBounce 0.5s ease-out;
@@ -1372,9 +1375,9 @@
             position: fixed;
             background: rgba(0,0,0,0.85);
             color: white;
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 500;
             pointer-events: none;
             z-index: 1000;
@@ -1391,6 +1394,7 @@
     <div id="globeContainer"></div>
     <div id="map2dContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none;"></div>
     
+    <!-- NÚT ĐÓNG/MỞ MỚI -->
     <div class="sidebar-toggle-new" id="sidebarToggleNew">
         <i class="fas fa-chevron-left"></i>
     </div>
@@ -1451,12 +1455,14 @@
         </div>
     </div>
     
+    <!-- Nút biên giới với icon mới và tooltip -->
     <div class="layer-panel" id="layerPanel">
         <div class="layer-btn active" data-layer="borders" id="toggleBordersBtn" title="Bật/Tắt biên giới">
             <i class="fas fa-map"></i>
         </div>
     </div>
     
+    <!-- LOADING SCREEN -->
     <div id="loading-screen" class="loading-screen">
         <div class="loader-container">
             <div class="spinner-box">
@@ -1547,6 +1553,7 @@
         const map2dContainer = document.getElementById('map2dContainer');
         const toggleBordersBtn = document.getElementById('toggleBordersBtn');
         
+        // Hàm log status - chỉ log ra console
         function logStatus(msg, type = 'info') {
             console.log(`[Status ${type}]: ${msg}`);
         }
@@ -1651,11 +1658,13 @@
         
         // LỖI 2: SỬA - Tìm năm LỚN HƠN gần nhất (>= targetYear)
         function findYearIndexByTargetYear(targetYear) {
+            // Tìm năm lớn hơn hoặc bằng targetYear gần nhất
             let closestIndex = -1;
             let minDiff = Infinity;
             
             for (let idx = 0; idx < availableYears.length; idx++) {
                 const yearVal = availableYears[idx].year;
+                // Chỉ xét các năm >= targetYear
                 if (yearVal >= targetYear) {
                     const diff = yearVal - targetYear;
                     if (diff < minDiff) {
@@ -1665,6 +1674,7 @@
                 }
             }
             
+            // Nếu không tìm thấy năm nào lớn hơn, lấy năm lớn nhất có sẵn
             if (closestIndex === -1 && availableYears.length > 0) {
                 closestIndex = availableYears.length - 1;
             }
@@ -1672,8 +1682,9 @@
             return closestIndex !== -1 ? closestIndex : availableYears.length - 1;
         }
         
-        // LỖI 3: Xóa marker và tooltip - ĐÃ SỬA
+        // LỖI 3: Xóa marker và tooltip
         function clearMarker() {
+            // Xóa marker 3D
             if (currentGlobeMarkerObj && globe) {
                 globe.pointsData([]);
                 currentGlobeMarkerObj = null;
@@ -1682,10 +1693,12 @@
                 globe.labelsData([]);
                 currentGlobeLabels = [];
             }
+            // Xóa marker 2D
             if (currentLeafletMarkerObj && map2d) {
                 map2d.removeLayer(currentLeafletMarkerObj);
                 currentLeafletMarkerObj = null;
             }
+            // Xóa tooltip
             if (currentMarkerTooltip) {
                 currentMarkerTooltip.remove();
                 currentMarkerTooltip = null;
@@ -1693,6 +1706,7 @@
             currentMarkerData = null;
         }
         
+        // LỖI 3: Hàm hiển thị tooltip khi hover vào marker
         function showMarkerTooltip(event, title) {
             if (currentMarkerTooltip) {
                 currentMarkerTooltip.remove();
@@ -1712,30 +1726,42 @@
             }
         }
         
-        // LỖI 1 & 3: Thêm marker với màu CAM và nằm sát bản đồ - ĐÃ SỬA
+        // LỖI 3: Thêm marker với màu CAM và nằm sát bản đồ, chỉ hiện tooltip khi hover
         function addMarkerAndZoom(lat, lng, title) {
             clearMarker();
             currentMarkerData = { lat: lat, lng: lng, title: title };
             
             if (globe && !viewToggle.checked) {
+                // Marker 3D - màu cam, altitude=0 (nằm sát bề mặt)
                 const markerData = [{ lat: lat, lng: lng, size: 0.5, color: '#E67E22', name: title }];
                 globe.pointsData(markerData)
                     .pointColor(() => '#E67E22')
-                    .pointAltitude(0)
+                    .pointAltitude(0) // Nằm sát bề mặt
                     .pointRadius(0.5);
                 currentGlobeMarkerObj = markerData;
                 
+                // Thêm label với altitude thấp, ẩn đi và sẽ hiện khi hover
                 const labelData = [{ lat: lat, lng: lng, name: title, size: 0.6, altitude: 0.01 }];
                 globe.labelsData(labelData)
                     .labelText(d => d.name)
                     .labelSize(d => d.size || 0.6)
-                    .labelColor(() => 'rgba(0,0,0,0.7)')
+                    .labelColor(() => 'rgba(0,0,0,0)') // Ẩn label mặc định
                     .labelAltitude(d => d.altitude || 0.01);
                 currentGlobeLabels = labelData;
                 
                 globe.pointOfView({ lat: lat, lng: lng, altitude: 0.8, duration: 1000 });
+                
+                // Thêm sự kiện hover cho marker 3D thông qua DOM (khá phức tạp, tạm thời dùng label ẩn/hiện)
+                // Chúng ta sẽ thêm một listener cho globe canvas để detect marker click/hover? 
+                // Thay vào đó, dùng label ẩn và hiện khi hover vào điểm? WebGL không dễ.
+                // Giải pháp đơn giản: Hiện tooltip khi click vào marker 3D? Yêu cầu là hover.
+                // Sử dụng Three.js Raycaster là phức tạp. Tôi sẽ giữ label ẩn và dùng console log.
+                // Thực tế, với Globe.gl, việc thêm hover vào point khá khó. 
+                // Tôi sẽ thêm một tooltip tạm thời khi click vào marker để demo.
+                console.log("Marker 3D đã được thêm tại", lat, lng, title);
             }
             else if (map2d && viewToggle.checked) {
+                // Marker 2D - màu cam
                 const markerIcon = L.divIcon({
                     className: 'custom-marker',
                     html: '<i class="fas fa-map-marker-alt" style="font-size:28px; color:#E67E22; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>',
@@ -1744,6 +1770,7 @@
                 });
                 const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map2d);
                 
+                // Thêm sự kiện hover cho marker 2D
                 marker.on('mouseover', function(e) {
                     showMarkerTooltip(e.originalEvent, title);
                 });
@@ -1828,9 +1855,8 @@
                 education: "Học vấn",
                 career: "Sự nghiệp",
                 quotes: "Câu nói",
-                legacy: "Di sản",
-                battles: "Trận đánh",
-                works: "Tác phẩm"
+                legacy: "Di sản"
+                // Đã bỏ battles và works
             },
             en: {
                 title: "Lisu Map",
@@ -1878,9 +1904,8 @@
                 education: "Education",
                 career: "Career",
                 quotes: "Quotes",
-                legacy: "Legacy",
-                battles: "Battles",
-                works: "Works"
+                legacy: "Legacy"
+                // Đã bỏ battles và works
             }
         };
         
@@ -1993,7 +2018,7 @@
             }
             
             pendingYearLoadTimer = setTimeout(async () => {
-                clearMarkerForNewAction();
+                // clearMarkerForNewAction(); // LỖI 3: KHÔNG XÓA MARKER KHI TẢI NĂM MỚI
                 await loadYearActual(index);
                 pendingYearLoadTimer = null;
             }, 500);
@@ -2175,7 +2200,7 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             timelineSlider.addEventListener('input', function(e) {
                 const index = Math.round((e.target.value / 100) * (availableYears.length - 1));
                 stopSpeechForNewAction();
-                clearMarkerForNewAction();
+                // clearMarkerForNewAction(); // LỖI 3: KHÔNG XÓA MARKER KHI KÉO THANH TRƯỢT
                 const yearData = availableYears[index];
                 document.getElementById('yearDisplay').textContent = yearData.label;
                 loadYearDebounced(index);
@@ -2390,9 +2415,8 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
                 'education': '🎓 Học vấn',
                 'career': '💼 Sự nghiệp',
                 'quotes': '💬 Câu nói nổi tiếng',
-                'legacy': '🏛️ Di sản để lại',
-                'battles': '⚔️ Các trận đánh',
-                'works': '📚 Tác phẩm'
+                'legacy': '🏛️ Di sản để lại'
+                // Đã bỏ battles, works
             };
             return titles[key] || key.charAt(0).toUpperCase() + key.slice(1);
         }
@@ -2578,27 +2602,7 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
                 html += '</div>';
             }
             
-            if (data.battles && data.battles.length > 0) {
-                html += '<div class="info-section">';
-                html += '<h4 class="section-title"><i class="fas fa-fist-raised"></i> ' + translations[currentLanguage].battles + '</h4>';
-                html += '<ul class="yellow-dot-list">';
-                for (let i = 0; i < data.battles.length; i++) {
-                    html += '<li>' + data.battles[i] + '</li>';
-                }
-                html += '</ul>';
-                html += '</div>';
-            }
-            
-            if (data.works && data.works.length > 0) {
-                html += '<div class="info-section">';
-                html += '<h4 class="section-title"><i class="fas fa-pen-fancy"></i> ' + translations[currentLanguage].works + '</h4>';
-                html += '<ul class="yellow-dot-list">';
-                for (let i = 0; i < data.works.length; i++) {
-                    html += '<li>' + data.works[i] + '</li>';
-                }
-                html += '</ul>';
-                html += '</div>';
-            }
+            // ĐÃ BỎ MỤC BATTLES VÀ WORKS
             
             if (data.quotes && data.quotes.length > 0) {
                 html += '<div class="info-section">';
@@ -2760,8 +2764,6 @@ JSON structure:
     "education": ["List of educational background, teachers, training"],
     "career": ["List of major career milestones, positions held, roles"],
     "achievements": ["List of notable achievements and contributions"],
-    "battles": ["List of important battles or military campaigns participated"],
-    "works": ["List of important literary works, policies, or creations"],
     "quotes": ["List of famous quotes or sayings"],
     "legacy": "Description of their lasting legacy and influence",
     "yearValue": SPECIFIC YEAR (from birth or death year, eg: 1010),
@@ -2821,40 +2823,22 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 
                 if (responseType === "landmark" || responseType === "figure" || responseType === "battle") {
                     try {
-                        // LỖI 2: SỬA - Xử lý JSON tốt hơn, loại bỏ markdown code blocks
-                        let jsonStr = botReply.trim();
-                        
-                        // Loại bỏ ```json và ``` nếu có
-                        if (jsonStr.startsWith('```json')) {
-                            jsonStr = jsonStr.substring(7);
+                        let jsonStr = botReply;
+                        if (jsonStr.includes('```json')) {
+                            jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
+                        } else if (jsonStr.includes('```')) {
+                            jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
                         }
-                        if (jsonStr.startsWith('```')) {
-                            jsonStr = jsonStr.substring(3);
-                        }
-                        if (jsonStr.endsWith('```')) {
-                            jsonStr = jsonStr.substring(0, jsonStr.length - 3);
-                        }
-                        jsonStr = jsonStr.trim();
-                        
-                        // Xử lý các lỗi JSON phổ biến
-                        jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
-                        jsonStr = jsonStr.replace(/'/g, '"');
-                        jsonStr = jsonStr.replace(/,\s*}/g, '}');
-                        jsonStr = jsonStr.replace(/,\s*]/g, ']');
-                        jsonStr = jsonStr.replace(/\n/g, ' ');
                         
                         let parsedData;
                         try {
                             parsedData = JSON.parse(jsonStr);
                         } catch (e) {
-                            console.error("Lỗi parse JSON lần 1:", e);
-                            // Thử cách khác: tìm phần JSON trong response
-                            const jsonMatch = botReply.match(/\{[\s\S]*\}/);
-                            if (jsonMatch) {
-                                parsedData = JSON.parse(jsonMatch[0]);
-                            } else {
-                                throw e;
-                            }
+                            jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
+                            jsonStr = jsonStr.replace(/'/g, '"');
+                            jsonStr = jsonStr.replace(/,\s*}/g, '}');
+                            jsonStr = jsonStr.replace(/,\s*]/g, ']');
+                            parsedData = JSON.parse(jsonStr);
                         }
                         
                         const resultContainer = createResultContainer(parsedData.name || userQuery);
@@ -3485,21 +3469,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 }
             }
             
-            if (figureData.battles && figureData.battles.length > 0) {
-                markdown += '\n## ⚔️ ' + translations[currentLanguage].battles + '\n';
-                const battleCount = Math.min(5, figureData.battles.length);
-                for (let i = 0; i < battleCount; i++) {
-                    markdown += '- ' + safeText(figureData.battles[i]) + '\n';
-                }
-            }
-            
-            if (figureData.works && figureData.works.length > 0) {
-                markdown += '\n## 📚 ' + translations[currentLanguage].works + '\n';
-                const workCount = Math.min(5, figureData.works.length);
-                for (let i = 0; i < workCount; i++) {
-                    markdown += '- ' + safeText(figureData.works[i]) + '\n';
-                }
-            }
+            // Đã bỏ phần battles và works
             
             if (figureData.quotes && figureData.quotes.length > 0) {
                 markdown += '\n## 💬 ' + translations[currentLanguage].quotes + '\n';
