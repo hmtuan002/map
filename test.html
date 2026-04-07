@@ -1525,7 +1525,7 @@
                 const markerData = [{ lat: lat, lng: lng, size: 0.35, color: '#E67E22', name: title }];
                 globe.pointsData(markerData)
                     .pointColor(() => '#E67E22')
-                    .pointAltitude(0.01)
+                    .pointAltitude(0.011)
                     .pointRadius(0.25);
                 currentGlobeMarkerObj = markerData;
                 
@@ -2493,7 +2493,7 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
                 } else if (isFigureQuery(userQuery)) {
                     responseType = "figure";
                     prompt = `
-RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide comprehensive information about the historical figure "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}.
+RESPOND EXCLUSIVELY IN VALID JSON FORMAT — UNDER NO CIRCUMSTANCES MAY YOU INCLUDE ANY EXTRA TEXT, EXPLANATION, COMMENTARY, PREFIX, SUFFIX, OR FORMATTING OUTSIDE OF THE JSON STRUCTURE. ANY DEVIATION IS STRICTLY FORBIDDEN. Provide comprehensive information about the historical figure "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}.
 
 IMPORTANT: All text fields MUST be in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}.
 
@@ -2518,7 +2518,7 @@ JSON structure:
                 } else if (isBattleQuery(userQuery)) {
                     responseType = "battle";
                     prompt = `
-RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide detailed information about the historical battle "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
+RESPOND EXCLUSIVELY IN VALID JSON FORMAT — UNDER NO CIRCUMSTANCES MAY YOU INCLUDE ANY EXTRA TEXT, EXPLANATION, COMMENTARY, PREFIX, SUFFIX, OR FORMATTING OUTSIDE OF THE JSON STRUCTURE. ANY DEVIATION IS STRICTLY FORBIDDEN. Provide detailed information about the historical battle "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
 {
     "name": "Battle name",
     "time": "Time of battle - MUST HAVE SPECIFIC YEAR (eg: 1288, 1954)",
@@ -2543,7 +2543,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide detailed information about the hi
                 } else if (isLandmarkQuery(userQuery)) {
                     responseType = "landmark";
                     prompt = `
-RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical landmark "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
+RESPOND EXCLUSIVELY IN VALID JSON FORMAT — UNDER NO CIRCUMSTANCES MAY YOU INCLUDE ANY EXTRA TEXT, EXPLANATION, COMMENTARY, PREFIX, SUFFIX, OR FORMATTING OUTSIDE OF THE JSON STRUCTURE. ANY DEVIATION IS STRICTLY FORBIDDEN. Provide information about the historical landmark "${userQuery}" in ${currentLanguage === 'vi' ? 'Vietnamese' : 'English'}. JSON must have structure:
 {
     "name": "Landmark name",
     "location": "Specific location",
