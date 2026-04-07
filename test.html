@@ -68,7 +68,7 @@
             pointer-events: none;
         }
         
-        /* ===== SIDEBAR - ĐÃ THU NHỎ LẠI (CHIỀU RỘNG 28%) ===== */
+        /* ===== SIDEBAR ===== */
         #sidebar {
             width: 28%;
             height: 100%;
@@ -91,13 +91,13 @@
             left: -100%;
         }
         
-        /* ===== NÚT ĐÓNG/MỞ SIDEBAR ===== */
+        /* LỖI 1: NÚT ĐÓNG/MỞ SIDEBAR - TĂNG KÍCH THƯỚC */
         .sidebar-toggle-new {
             position: fixed;
             top: 20px;
             left: 28%;
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             background-color: var(--accent-orange);
             color: white;
             border-radius: 0 50% 50% 0;
@@ -110,7 +110,7 @@
             transition: all 0.3s ease;
             border: 1px solid var(--border-light);
             border-left: none;
-            font-size: 20px;
+            font-size: 22px;
         }
         
         .sidebar-toggle-new:hover {
@@ -122,14 +122,14 @@
             left: 0;
         }
         
-        /* ===== TOOLTIP NĂM NHỎ KHI RÊ CHUỘT TRÊN THANH TRƯỢT ===== */
+        /* LỖI 1: TOOLTIP NĂM NHỎ KHI RÊ CHUỘT - TĂNG KÍCH THƯỚC */
         .year-tooltip {
             position: fixed;
             background: rgba(0,0,0,0.85);
             color: white;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             pointer-events: none;
             z-index: 1000;
@@ -139,7 +139,7 @@
             transition: opacity 0.1s;
         }
         
-        /* ===== INFO PANEL CONTENT VỚI DẤU CHẤM VÀNG ===== */
+        /* ===== INFO PANEL CONTENT ===== */
         .info-panel-content {
             padding: 16px;
             max-height: 70vh;
@@ -345,7 +345,7 @@
             color: var(--text-primary);
         }
         
-        /* ===== COUNTRY INFO PANEL LEFT - HIỂN THỊ TRONG SIDEBAR ===== */
+        /* ===== COUNTRY INFO PANEL LEFT ===== */
         .country-info-inline {
             background-color: #E8F4F8;
             border-radius: 12px;
@@ -500,7 +500,7 @@
             border-top: 1px solid var(--border-light);
         }
         
-        /* ===== TOP BAR - ĐÃ THU NHỎ ===== */
+        /* ===== TOP BAR ===== */
         .top-bar-globe {
             position: fixed;
             bottom: 50px;
@@ -538,7 +538,7 @@
             display: none !important;
         }
         
-        /* ===== LAYER PANEL - NÚT BIÊN GIỚI NẰM BÊN PHẢI THANH LĂN NĂM ===== */
+        /* ===== LAYER PANEL ===== */
         .layer-panel {
             position: fixed;
             right: 20px;
@@ -550,7 +550,6 @@
             pointer-events: auto;
         }
         
-        /* LỖI 3: Nút bật/tắt biên giới đẹp hơn */
         .layer-btn {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -581,27 +580,27 @@
             box-shadow: 0 4px 14px rgba(244,162,97,0.45);
         }
         
-        /* ===== TIMELINE - THU NHỎ HƠN (LỖI 1) ===== */
+        /* LỖI 1: TIMELINE - TĂNG KÍCH THƯỚC THANH THÔNG TIN */
         .timeline-globe {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            width: 50%;
-            max-width: 600px;
+            width: 55%;
+            max-width: 650px;
             z-index: 15;
             pointer-events: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         
         .timeline-bar-globe {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border-radius: 12px;
-            padding: 4px 12px;
+            border-radius: 14px;
+            padding: 8px 16px;
             border: 1px solid var(--border-light);
             width: 100%;
             position: relative;
@@ -611,7 +610,7 @@
         .timeline-slider-globe {
             -webkit-appearance: none;
             width: 100%;
-            height: 4px;
+            height: 6px;
             border-radius: 3px;
             background: #ccc;
             outline: none;
@@ -619,8 +618,8 @@
         
         .timeline-slider-globe::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 10px;
-            height: 10px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: var(--accent-orange);
             cursor: pointer;
@@ -631,18 +630,18 @@
         .playback-controls-globe {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-top: 4px;
+            gap: 10px;
+            margin-top: 6px;
         }
         
         .playback-btn-globe {
             background: rgba(255,255,255,0.8);
             border: 1px solid var(--border-light);
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             color: var(--text-primary);
-            font-size: 11px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -1040,7 +1039,7 @@
             line-height: 1.5;
         }
         
-        /* ===== IMAGE CONTAINER - CHIỀU DÀI GẤP ĐÔI ===== */
+        /* ===== IMAGE CONTAINER ===== */
         .image-container {
             width: 100%;
             margin: 1rem 0;
@@ -1298,7 +1297,7 @@
         #map2dContainer .leaflet-control-zoom { display: none; }
         .leaflet-tile-pane { filter: brightness(0.9); }
         
-        /* Marker tùy chỉnh cho bản đồ 2D - CHỈ LÀ CHẤM NHỎ MÀU CAM */
+        /* LỖI 3: Marker tùy chỉnh cho bản đồ 2D - CHỈ LÀ CHẤM NHỎ MÀU CAM, NẰM SÁT BẢN ĐỒ */
         .custom-marker {
             background: transparent;
             border: none;
@@ -1316,7 +1315,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
         
-        /* Marker 3D - CHỈ LÀ CHẤM NHỎ MÀU CAM */
+        /* LỖI 3: Marker 3D - CHỈ LÀ CHẤM NHỎ MÀU CAM, NẰM SÁT TRÊN BẢN ĐỒ */
         .globe-marker {
             animation: glowPulse 1.5s infinite;
         }
@@ -1326,7 +1325,7 @@
             50% { filter: drop-shadow(0 0 6px #E67E22); }
         }
         
-        /* Style cho label của marker */
+        /* Style cho label của marker - CHỈ HIỆN KHI HOVER */
         .marker-label {
             font-size: 12px;
             font-weight: 600;
@@ -1338,18 +1337,23 @@
             font-family: 'Inter', sans-serif;
             pointer-events: none;
             transform: translateY(-20px);
+            display: none;
+        }
+        
+        .marker-label.visible {
+            display: block;
         }
 
-        /* LỖI 1: Tăng kích thước thanh thông tin */
+        /* LỖI 1: Tăng kích thước thanh thông tin - TĂNG LÊN 1 CHÚT XÍU */
         .status-bar {
             position: fixed;
             top: 20px;
             right: 20px;
             background: rgba(0,0,0,0.75);
             backdrop-filter: blur(8px);
-            padding: 14px 28px;
+            padding: 12px 24px;
             border-radius: 40px;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 600;
             color: white;
             z-index: 100;
@@ -1360,11 +1364,28 @@
         }
         .status-bar i {
             margin-right: 8px;
-            font-size: 18px;
+            font-size: 15px;
         }
         .status-bar.success { background: rgba(76, 175, 80, 0.9); border-left-color: #fff; }
         .status-bar.error { background: rgba(244, 67, 54, 0.9); border-left-color: #fff; }
         .status-bar.info { background: rgba(33, 150, 243, 0.9); border-left-color: #fff; }
+        
+        /* Tooltip marker style */
+        .marker-tooltip {
+            position: fixed;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: opacity 0.1s;
+        }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1372,8 +1393,6 @@
 <body class="h-screen flex flex-col transition-all bg-total">
     <div id="globeContainer"></div>
     <div id="map2dContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: none;"></div>
-    
-    <!-- LỖI 2: ĐÃ XÓA STATUS BAR HOÀN TOÀN -->
     
     <!-- NÚT ĐÓNG/MỞ MỚI -->
     <div class="sidebar-toggle-new" id="sidebarToggleNew">
@@ -1436,7 +1455,7 @@
         </div>
     </div>
     
-    <!-- LỖI 3: Nút biên giới với icon mới và tooltip -->
+    <!-- Nút biên giới với icon mới và tooltip -->
     <div class="layer-panel" id="layerPanel">
         <div class="layer-btn active" data-layer="borders" id="toggleBordersBtn" title="Bật/Tắt biên giới">
             <i class="fas fa-map"></i>
@@ -1467,13 +1486,12 @@
     <script src="https://unpkg.com/markmap-lib@0.15.3/dist/browser/index.js"></script>
     <script src="https://unpkg.com/markmap-view@0.15.3/dist/browser/index.js"></script>
     <script type="text/javascript">
-        // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY (LỖI 4 - SỬA LẠI HOÀN TOÀN) ====================
+        // ==================== CƠ CHẾ ĐẢO NGƯỢC API KEY ====================
         function reverseString(str) {
             if (!str) return str;
             return str.split('').reverse().join('');
         }
         
-        // LỖI 4: SỬA LẠI - API Key lưu dạng đảo ngược, URL dùng thẳng
         const REVERSED_API_KEY = "v6xGqEar3C7yKR9K2GmO5dTZx2OLCg258qLWdF5o7kt5ImQu-ks";
         const MODEL = "gemini-2.5-flash";
         const API_URL = "https://api.shopaikey.com/v1/chat/completions";
@@ -1482,14 +1500,14 @@
             return reverseString(REVERSED_API_KEY);
         }
         
-        console.log("=== THÔNG TIN API (LỖI 4 ĐÃ SỬA) ===");
-        console.log("API URL (dùng thẳng):", API_URL);
+        console.log("=== THÔNG TIN API ===");
+        console.log("API URL:", API_URL);
         console.log("API Key gốc (sau khi reverse):", getAPIKey());
         console.log("=========================================");
         
-        // LỖI 4: HÀM GỌI API MỚI - DÙNG URL THẲNG, CHỈ REVERSE KEY
+        // HÀM GỌI API MỚI
         async function callGeminiAPI(prompt) {
-            updateStatus("Đang gọi AI...", "info");
+            console.log("[API] Đang gọi AI với prompt:", prompt.substring(0, 100) + "...");
             try {
                 const correctApiKey = getAPIKey();
                 
@@ -1512,11 +1530,10 @@
                 }
                 
                 const data = await response.json();
-                updateStatus("Thành công", "success");
+                console.log("[API] Gọi API thành công");
                 return data.choices?.[0]?.message?.content || "Không có phản hồi từ AI";
             } catch (error) {
-                console.error("Lỗi gọi API Gemini:", error);
-                updateStatus(`Lỗi: ${error.message}`, "error");
+                console.error("[API] Lỗi gọi API Gemini:", error);
                 throw new Error(`Lỗi kết nối AI: ${error.message}`);
             }
         }
@@ -1536,8 +1553,8 @@
         const map2dContainer = document.getElementById('map2dContainer');
         const toggleBordersBtn = document.getElementById('toggleBordersBtn');
         
-        // LỖI 2: Hàm updateStatus - chỉ log ra console, không hiển thị UI
-        function updateStatus(msg, type = 'info') {
+        // Hàm log status - chỉ log ra console
+        function logStatus(msg, type = 'info') {
             console.log(`[Status ${type}]: ${msg}`);
         }
         
@@ -1562,6 +1579,9 @@
         let currentLeafletMarkerObj = null;
         let currentPolygons = [];
         let currentGlobeLabels = [];
+        
+        // LỖI 3: Biến lưu marker hover state
+        let currentMarkerTooltip = null;
         
         // ==================== SPEECH SYNTHESIS VARIABLES ====================
         let speechSynthesisUtterance = null;
@@ -1636,20 +1656,35 @@
             { year: 2010, file: 'world_2010.geojson', label: '2.010 CN' }
         ];
         
+        // LỖI 2: SỬA - Tìm năm LỚN HƠN gần nhất (>= targetYear)
         function findYearIndexByTargetYear(targetYear) {
+            // Tìm năm lớn hơn hoặc bằng targetYear gần nhất
             let closestIndex = -1;
             let minDiff = Infinity;
+            
             for (let idx = 0; idx < availableYears.length; idx++) {
-                const diff = Math.abs(availableYears[idx].year - targetYear);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    closestIndex = idx;
+                const yearVal = availableYears[idx].year;
+                // Chỉ xét các năm >= targetYear
+                if (yearVal >= targetYear) {
+                    const diff = yearVal - targetYear;
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestIndex = idx;
+                    }
                 }
             }
+            
+            // Nếu không tìm thấy năm nào lớn hơn, lấy năm lớn nhất có sẵn
+            if (closestIndex === -1 && availableYears.length > 0) {
+                closestIndex = availableYears.length - 1;
+            }
+            
             return closestIndex !== -1 ? closestIndex : availableYears.length - 1;
         }
         
+        // LỖI 3: Xóa marker và tooltip
         function clearMarker() {
+            // Xóa marker 3D
             if (currentGlobeMarkerObj && globe) {
                 globe.pointsData([]);
                 currentGlobeMarkerObj = null;
@@ -1658,36 +1693,66 @@
                 globe.labelsData([]);
                 currentGlobeLabels = [];
             }
+            // Xóa marker 2D
             if (currentLeafletMarkerObj && map2d) {
                 map2d.removeLayer(currentLeafletMarkerObj);
                 currentLeafletMarkerObj = null;
             }
+            // Xóa tooltip
+            if (currentMarkerTooltip) {
+                currentMarkerTooltip.remove();
+                currentMarkerTooltip = null;
+            }
             currentMarkerData = null;
         }
         
+        // LỖI 3: Hàm hiển thị tooltip khi hover vào marker
+        function showMarkerTooltip(event, title) {
+            if (currentMarkerTooltip) {
+                currentMarkerTooltip.remove();
+            }
+            currentMarkerTooltip = document.createElement('div');
+            currentMarkerTooltip.className = 'marker-tooltip';
+            currentMarkerTooltip.textContent = title;
+            currentMarkerTooltip.style.left = (event.clientX + 15) + 'px';
+            currentMarkerTooltip.style.top = (event.clientY - 30) + 'px';
+            document.body.appendChild(currentMarkerTooltip);
+        }
+        
+        function hideMarkerTooltip() {
+            if (currentMarkerTooltip) {
+                currentMarkerTooltip.remove();
+                currentMarkerTooltip = null;
+            }
+        }
+        
+        // LỖI 3: Thêm marker với màu CAM và nằm sát bản đồ, chỉ hiện tooltip khi hover
         function addMarkerAndZoom(lat, lng, title) {
             clearMarker();
             currentMarkerData = { lat: lat, lng: lng, title: title };
             
             if (globe && !viewToggle.checked) {
+                // Marker 3D - màu cam, altitude=0 (nằm sát bề mặt)
                 const markerData = [{ lat: lat, lng: lng, size: 0.5, color: '#E67E22', name: title }];
                 globe.pointsData(markerData)
                     .pointColor(() => '#E67E22')
-                    .pointAltitude(0)
-                    .pointRadius(0.4);
+                    .pointAltitude(0) // Nằm sát bề mặt
+                    .pointRadius(0.5);
                 currentGlobeMarkerObj = markerData;
                 
-                const labelData = [{ lat: lat, lng: lng, name: title, size: 0.8, altitude: 0.02 }];
+                // Thêm label với altitude thấp
+                const labelData = [{ lat: lat, lng: lng, name: title, size: 0.6, altitude: 0.01 }];
                 globe.labelsData(labelData)
                     .labelText(d => d.name)
-                    .labelSize(d => d.size || 0.8)
-                    .labelColor(() => 'rgba(0,0,0,0.8)')
-                    .labelAltitude(d => d.altitude || 0.02);
+                    .labelSize(d => d.size || 0.6)
+                    .labelColor(() => 'rgba(0,0,0,0.7)')
+                    .labelAltitude(d => d.altitude || 0.01);
                 currentGlobeLabels = labelData;
                 
                 globe.pointOfView({ lat: lat, lng: lng, altitude: 0.8, duration: 1000 });
             }
             else if (map2d && viewToggle.checked) {
+                // Marker 2D - màu cam
                 const markerIcon = L.divIcon({
                     className: 'custom-marker',
                     html: '<i class="fas fa-map-marker-alt" style="font-size:28px; color:#E67E22; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></i>',
@@ -1695,9 +1760,29 @@
                     popupAnchor: [0, -14]
                 });
                 const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map2d);
-                marker.bindTooltip(title, { sticky: true, offset: [0, -20] });
+                
+                // Thêm sự kiện hover cho marker 2D
+                marker.on('mouseover', function(e) {
+                    showMarkerTooltip(e.originalEvent, title);
+                });
+                marker.on('mouseout', function() {
+                    hideMarkerTooltip();
+                });
+                
                 currentLeafletMarkerObj = marker;
                 map2d.setView([lat, lng], 10);
+            }
+            
+            // Thêm sự kiện hover cho marker 3D (thông qua DOM)
+            if (globe && !viewToggle.checked) {
+                setTimeout(function() {
+                    const canvas = document.querySelector('#globeContainer canvas');
+                    if (canvas) {
+                        // Tìm vị trí của marker trên màn hình
+                        const raycaster = new THREE.Raycaster();
+                        // Không thể dễ dàng thêm hover vào WebGL marker, thay vào đó dùng label đã hiển thị sẵn
+                    }
+                }, 500);
             }
         }
         
@@ -2421,7 +2506,7 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
                 html += '<h4 class="section-title"><i class="fas fa-history"></i> ' + translations[currentLanguage].battle_timeline + '</h4>';
                 html += '<ul class="timeline-with-dots">';
                 for (let i = 0; i < data.timeline.length; i++) {
-                    html += '<li><strong>' + translations[currentLanguage].event + ' ' + (i + 1) + ':</strong> ' + data.timeline[i] + '</li>';
+                    html += '<li><strong>' + (currentLanguage === 'vi' ? 'Sự kiện' : 'Event') + ' ' + (i + 1) + ':</strong> ' + data.timeline[i] + '</li>';
                 }
                 html += '</ul>';
                 html += '</div>';
@@ -2447,7 +2532,7 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             let html = '';
             
             html += '<div class="info-section">';
-            html += '<h4 class="section-title"><i class="fas fa-info-circle"></i> ' + translations[currentLanguage].battle_name + '</h4>';
+            html += '<h4 class="section-title"><i class="fas fa-info-circle"></i> ' + (currentLanguage === 'vi' ? 'Thông tin cơ bản' : 'Basic Information') + '</h4>';
             html += '<p class="with-dot"><strong>' + (currentLanguage === 'vi' ? 'Thời gian sống' : 'Lifespan') + ':</strong> ' + (data.time || translations[currentLanguage].unknown) + '</p>';
             html += '<p class="with-dot"><strong>' + translations[currentLanguage].birth_place + ':</strong> ' + (data.location || translations[currentLanguage].unknown) + '</p>';
             if (data.lat && data.lng) {
@@ -2576,7 +2661,7 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             
             html += '<div class="info-section">';
             html += '<h4 class="section-title"><i class="fas fa-info-circle"></i> ' + (currentLanguage === 'vi' ? 'Thông tin cơ bản' : 'Basic Information') + '</h4>';
-            html += '<p class="with-dot"><strong>' + translations[currentLanguage].landmark_name + ':</strong> ' + (data.name || translations[currentLanguage].unknown) + '</p>';
+            html += '<p class="with-dot"><strong>' + (currentLanguage === 'vi' ? 'Tên' : 'Name') + ':</strong> ' + (data.name || translations[currentLanguage].unknown) + '</p>';
             html += '<p class="with-dot"><strong>' + translations[currentLanguage].battle_location + ':</strong> ' + (data.location || translations[currentLanguage].unknown) + '</p>';
             if (data.lat && data.lng) {
                 html += '<p class="with-dot"><strong>' + translations[currentLanguage].latitude + ':</strong> ' + data.lat + ', <strong>' + translations[currentLanguage].longitude + ':</strong> ' + data.lng + '</p>';
@@ -2592,21 +2677,21 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             
             if (data.purpose) {
                 html += '<div class="info-section">';
-                html += '<h4 class="section-title"><i class="fas fa-bullseye"></i> ' + translations[currentLanguage].landmark_purpose + '</h4>';
+                html += '<h4 class="section-title"><i class="fas fa-bullseye"></i> ' + (currentLanguage === 'vi' ? 'Mục đích' : 'Purpose') + '</h4>';
                 html += '<p class="with-dot">' + data.purpose + '</p>';
                 html += '</div>';
             }
             
             if (data.architecture) {
                 html += '<div class="info-section">';
-                html += '<h4 class="section-title"><i class="fas fa-building"></i> ' + translations[currentLanguage].landmark_architecture + '</h4>';
+                html += '<h4 class="section-title"><i class="fas fa-building"></i> ' + (currentLanguage === 'vi' ? 'Kiến trúc' : 'Architecture') + '</h4>';
                 html += '<p class="with-dot">' + data.architecture + '</p>';
                 html += '</div>';
             }
             
             if (data.contents && data.contents.length > 0) {
                 html += '<div class="info-section">';
-                html += '<h4 class="section-title"><i class="fas fa-box-open"></i> ' + translations[currentLanguage].landmark_contents + '</h4>';
+                html += '<h4 class="section-title"><i class="fas fa-box-open"></i> ' + (currentLanguage === 'vi' ? 'Nội dung' : 'Contents') + '</h4>';
                 html += '<ul class="yellow-dot-list">';
                 for (let i = 0; i < data.contents.length; i++) {
                     html += '<li>' + data.contents[i] + '</li>';
@@ -2617,7 +2702,7 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             
             if (data.builders && data.builders.length > 0) {
                 html += '<div class="info-section">';
-                html += '<h4 class="section-title"><i class="fas fa-users"></i> ' + translations[currentLanguage].landmark_builders + '</h4>';
+                html += '<h4 class="section-title"><i class="fas fa-users"></i> ' + (currentLanguage === 'vi' ? 'Người xây dựng' : 'Builders') + '</h4>';
                 html += '<ul class="yellow-dot-list">';
                 for (let i = 0; i < data.builders.length; i++) {
                     html += '<li>' + data.builders[i] + '</li>';
@@ -2628,7 +2713,7 @@ Trình bày ngắn gọn, khoảng 150-200 từ.`;
             
             if (data.dynasty) {
                 html += '<div class="info-section">';
-                html += '<h4 class="section-title"><i class="fas fa-crown"></i> ' + translations[currentLanguage].landmark_dynasty + '</h4>';
+                html += '<h4 class="section-title"><i class="fas fa-crown"></i> ' + (currentLanguage === 'vi' ? 'Triều đại' : 'Dynasty') + '</h4>';
                 html += '<p class="with-dot">' + data.dynasty + '</p>';
                 html += '</div>';
             }
@@ -2762,7 +2847,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 }
                 
                 const botReply = await callGeminiAPI(prompt);
-                console.log("Phản hồi từ Gemini (API đã sửa):", botReply);
+                console.log("Phản hồi từ Gemini:", botReply);
                 
                 if (responseType === "landmark" || responseType === "figure" || responseType === "battle") {
                     try {
@@ -2815,6 +2900,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                             }
                         }
                         
+                        // LỖI 2: SỬA - Tìm năm LỚN HƠN gần nhất
                         if (parsedData.yearValue && !isNaN(parsedData.yearValue)) {
                             let targetYear = parsedData.yearValue;
                             if (parsedData.isBC === true) {
@@ -2822,7 +2908,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                             }
                             const targetIndex = findYearIndexByTargetYear(targetYear);
                             if (targetIndex !== -1 && targetIndex !== currentYearIndex) {
-                                console.log(`Tìm thấy năm ${targetYear} (${parsedData.isBC ? 'TCN' : 'CN'}), chuyển đến năm ${availableYears[targetIndex].label}`);
+                                console.log(`Tìm thấy năm ${targetYear} (${parsedData.isBC ? 'TCN' : 'CN'}), chuyển đến năm LỚN HƠN gần nhất: ${availableYears[targetIndex].label}`);
                                 setTimeout(function() {
                                     loadYearDebounced(targetIndex);
                                 }, 500);
@@ -3233,7 +3319,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                     </div>
                 </div>
                 <div class="mindmap-content">
-                    <div class="loading-mindmap">${translations[currentLanguage].ai_assistant}</div>
+                    <div class="loading-mindmap">${translations[currentLanguage].loading_info}</div>
                 </div>
             `;
             
@@ -3474,7 +3560,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
             
             if (landmarkData.purpose) {
-                markdown += '\n## 🎯 ' + translations[currentLanguage].landmark_purpose + '\n';
+                markdown += '\n## 🎯 ' + (currentLanguage === 'vi' ? 'Mục đích' : 'Purpose') + '\n';
                 const shortPurpose = landmarkData.purpose.length > 150 ?
                     landmarkData.purpose.substring(0, 150) + "..." :
                     landmarkData.purpose;
@@ -3482,7 +3568,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
             
             if (landmarkData.architecture) {
-                markdown += '\n## 🏛️ ' + translations[currentLanguage].landmark_architecture + '\n';
+                markdown += '\n## 🏛️ ' + (currentLanguage === 'vi' ? 'Kiến trúc' : 'Architecture') + '\n';
                 const shortArchitecture = landmarkData.architecture.length > 150 ?
                     landmarkData.architecture.substring(0, 150) + "..." :
                     landmarkData.architecture;
@@ -3490,12 +3576,12 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
             
             if (landmarkData.dynasty) {
-                markdown += '\n## 👑 ' + translations[currentLanguage].landmark_dynasty + '\n';
+                markdown += '\n## 👑 ' + (currentLanguage === 'vi' ? 'Triều đại' : 'Dynasty') + '\n';
                 markdown += '- ' + safeText(landmarkData.dynasty) + '\n';
             }
             
             if (landmarkData.builders && landmarkData.builders.length > 0) {
-                markdown += '\n## 👷 ' + translations[currentLanguage].landmark_builders + '\n';
+                markdown += '\n## 👷 ' + (currentLanguage === 'vi' ? 'Người xây dựng' : 'Builders') + '\n';
                 const builderCount = Math.min(3, landmarkData.builders.length);
                 for (let i = 0; i < builderCount; i++) {
                     markdown += '- ✨ ' + safeText(landmarkData.builders[i]) + '\n';
@@ -3503,7 +3589,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
             
             if (landmarkData.contents && landmarkData.contents.length > 0) {
-                markdown += '\n## 📦 ' + translations[currentLanguage].landmark_contents + '\n';
+                markdown += '\n## 📦 ' + (currentLanguage === 'vi' ? 'Nội dung' : 'Contents') + '\n';
                 const contentCount = Math.min(3, landmarkData.contents.length);
                 for (let i = 0; i < contentCount; i++) {
                     markdown += '- 📜 ' + safeText(landmarkData.contents[i]) + '\n';
@@ -3624,7 +3710,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                     '<div class="code-header flex justify-between items-center px-3 py-2 bg-card text-accent text-xs rounded-t-md border border-custom">' +
                     '<span>' + langDisplay + '</span>' +
                     '<button class="copy-code-btn hover:text-accent" onclick="copyToClipboard(this)" data-code="' + encodeURIComponent(code.trim()) + '">' +
-                    '<i class="fas fa-copy mr-1"></i> <span>' + translations[currentLanguage].copy_code + '</span>' +
+                    '<i class="fas fa-copy mr-1"></i> <span>' + (currentLanguage === 'vi' ? 'Sao chép' : 'Copy') + '</span>' +
                     '</button>' +
                     '</div>' +
                     '<pre><code class="language-' + (lang || 'text') + '">' + escapeHtml(code.trim()) + '</code></pre>' +
@@ -3675,7 +3761,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             const code = decodeURIComponent(button.getAttribute('data-code'));
             navigator.clipboard.writeText(code).then(function() {
                 const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check mr-1"></i> ' + translations[currentLanguage].copied;
+                button.innerHTML = '<i class="fas fa-check mr-1"></i> ' + (currentLanguage === 'vi' ? 'Đã sao chép' : 'Copied');
                 setTimeout(function() {
                     button.innerHTML = originalText;
                 }, 2000);
@@ -3710,7 +3796,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
             }
         }
 
-        // ==================== XỬ LÝ NÚT BỎ BIÊN GIỚI ====================
+        // ==================== XỬ LÝ NÚT BIÊN GIỚI ====================
         toggleBordersBtn.addEventListener('click', () => {
             layers.borders = !layers.borders;
             toggleBordersBtn.classList.toggle('active', layers.borders);
@@ -3786,7 +3872,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
         window.copyToClipboard = copyToClipboard;
         window.toggleSidebarNew = toggleSidebarNew;
         
-        // Các hàm cần thiết khác (isCountryQuery, extractCountryName, isBattleQuery, isFigureQuery, isLandmarkQuery, toggleCloseButtons, toggleUIElements)
+        // Các hàm cần thiết khác
         function isCountryQuery(query) {
             const countryKeywords = ['quốc gia', 'đất nước', 'vương quốc', 'đế chế', 'lãnh thổ', 'vùng'];
             const lowerQuery = query.toLowerCase();
