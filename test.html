@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>Lisu Map - Bản Đồ Lịch Sử Tương Tác</title>
+    <title>Lisu Map - Bản Đồ Tương Tác</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
@@ -1245,7 +1245,7 @@
                 </div>
                 <form id="search-form" class="mt-2">
                     <div class="search-wrapper">
-                        <textarea id="search-input" rows="1" class="w-full" placeholder="Nhập trận chiến, nhân vật, địa điểm lịch sử"></textarea>
+                        <textarea id="search-input" rows="1" class="w-full" placeholder="Nhập trận chiến, nhân vật, địa điểm"></textarea>
                         <button type="submit" class="search-button">
                             <i class="fas fa-paper-plane"></i>
                         </button>
@@ -1588,7 +1588,7 @@
         const translations = {
             vi: {
                 title: "Lisu Map",
-                search_placeholder: "Nhập trận chiến, nhân vật, địa điểm lịch sử",
+                search_placeholder: "Nhập trận chiến, nhân vật, địa điểm",
                 battle_name: "Tên",
                 battle_time: "Thời Gian",
                 battle_location: "Địa Điểm",
@@ -1607,7 +1607,7 @@
                 mindmap_title: "🧠 SƠ ĐỒ TƯ DUY",
                 figure_mindmap_title: "🧠 SƠ ĐỒ - NHÂN VẬT",
                 landmark_mindmap_title: "🧠 SƠ ĐỒ - ĐỊA DANH",
-                non_history_error: "Xin lỗi, tôi chỉ trả lời lịch sử!",
+                non_history_error: "Xin lỗi, tôi chỉ trả lời!",
                 processing_error: "Lỗi xử lý!",
                 birth_place: "Nơi sinh",
                 battle_achievements: "Thành Tựu",
@@ -1626,7 +1626,7 @@
                 save_error: "Lỗi lưu!",
                 loading_info: "Đang xử lý...",
                 searching: "Đang tìm...",
-                historical_context: "⚠️ Bối cảnh lịch sử do AI tạo.",
+                historical_context: "⚠️ Bối cảnh do AI tạo.",
                 biography: "Tiểu sử",
                 family: "Gia đình",
                 education: "Học vấn",
@@ -2839,7 +2839,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                     narration += (currentLanguage === 'vi' ? 'Kết quả: ' : 'Outcome: ') + data.outcome + '. ';
                 }
                 if (data.significance) {
-                    narration += (currentLanguage === 'vi' ? 'Ý nghĩa lịch sử: ' : 'Historical significance: ') + data.significance + '. ';
+                    narration += (currentLanguage === 'vi' ? 'Ý nghĩa: ' : 'Historical significance: ') + data.significance + '. ';
                 }
                 return narration;
             } else if (isLandmark) {
@@ -2865,7 +2865,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 }
                 return narration;
             } else if (isFigure) {
-                let narration = (currentLanguage === 'vi' ? 'Nhân vật lịch sử ' : 'Historical figure ') + (data.name || (currentLanguage === 'vi' ? 'không xác định' : 'unknown')) + ' ';
+                let narration = (currentLanguage === 'vi' ? 'Nhân vật ' : 'Historical figure ') + (data.name || (currentLanguage === 'vi' ? 'không xác định' : 'unknown')) + ' ';
                 narration += (currentLanguage === 'vi' ? 'sống vào ' : 'lived in ') + (data.time || (currentLanguage === 'vi' ? 'thời gian không xác định' : 'unknown time')) + '. ';
                 if (data.location) {
                     narration += (currentLanguage === 'vi' ? 'Nơi sinh hoặc hoạt động chính: ' : 'Place of birth or main activity: ') + data.location + '. ';
@@ -2881,7 +2881,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 if (data.legacy) {
                     narration += (currentLanguage === 'vi' ? 'Di sản để lại: ' : 'Legacy: ') + data.legacy + '. ';
                 } else if (data.significance) {
-                    narration += (currentLanguage === 'vi' ? 'Ý nghĩa lịch sử: ' : 'Historical significance: ') + data.significance + '. ';
+                    narration += (currentLanguage === 'vi' ? 'Ý nghĩa: ' : 'Historical significance: ') + data.significance + '. ';
                 }
                 return narration;
             }
@@ -3372,7 +3372,7 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
                 : 'bg-card text-primary rounded-tl-none border border-custom';
                 
             let translatedContent = content;
-            if (content.includes("Xin lỗi, tôi chỉ trả lời các câu hỏi liên quan đến lịch sử")) {
+            if (content.includes("Xin lỗi, tôi chỉ trả lời các câu hỏi liên quan đến")) {
                 translatedContent = translations[currentLanguage].non_history_error;
             } else if (content.includes("Lỗi tải dữ liệu bản đồ")) {
                 translatedContent = translations[currentLanguage].map_error;
@@ -3639,13 +3639,13 @@ RESPOND ONLY WITH JSON, NO OTHER TEXT. Provide information about the historical 
         const historyData = {
             Vietnam: {
                 history: {
-                    vi: "Việt Nam là một quốc gia có lịch sử lâu đời, bắt đầu từ thời kỳ Văn Lang - Âu Lạc. Trải qua hàng nghìn năm dựng nước và giữ nước, Việt Nam đã có những chiến công hiển hách như chiến thắng Bạch Đằng, Chi Lăng, Đống Đa và Điện Biên Phủ.",
+                    vi: "Việt Nam là một quốc gia có lâu đời, bắt đầu từ thời kỳ Văn Lang - Âu Lạc. Trải qua hàng nghìn năm dựng nước và giữ nước, Việt Nam đã có những chiến công hiển hách như chiến thắng Bạch Đằng, Chi Lăng, Đống Đa và Điện Biên Phủ.",
                     en: "Vietnam is a country with a long history, starting from the Van Lang - Au Lac period. Through thousands of years of building and defending the country, Vietnam has had glorious victories such as Bach Dang, Chi Lang, Dong Da and Dien Bien Phu."
                 }
             },
             France: {
                 history: {
-                    vi: "Pháp là một quốc gia có lịch sử phong phú, từ thời Gaulois, qua các triều đại Capet, Valois, Bourbon, đến Cách mạng Pháp, thời Napoleon, và hai cuộc thế chiến.",
+                    vi: "Pháp là một quốc gia có phong phú, từ thời Gaulois, qua các triều đại Capet, Valois, Bourbon, đến Cách mạng Pháp, thời Napoleon, và hai cuộc thế chiến.",
                     en: "France is a country with a rich history, from the Gaulish era, through the Capetian, Valois, Bourbon dynasties, to the French Revolution, the Napoleonic era, and the two world wars."
                 }
             },
